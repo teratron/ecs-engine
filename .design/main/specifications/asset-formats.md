@@ -1,0 +1,110 @@
+# Asset Formats
+**Version:** 0.1.0
+**Status:** Draft
+**Layer:** concept
+
+## Overview
+This specification enumerates the file formats the engine can load and describes how each format maps to one or more engine asset types. Every format is handled by a dedicated `AssetLoader` registered with the `AssetServer`. Format support is modular — each loader can be included or excluded via build tags, keeping the binary size minimal for projects that do not need every format.
+
+## Related Specifications
+- [Asset System](asset-system.md)
+- [Mesh & Image](mesh-and-image.md)
+- [Audio System](audio-system.md)
+
+## 1. Motivation
+A game engine must consume diverse content authored in external tools. Centralizing format knowledge in well-defined loaders keeps the rest of the engine format-agnostic. Modular inclusion means a 2D-only project need not compile glTF parsing, and a headless server need not compile image decoders.
+
+## 2. Constraints & Assumptions
+- Loaders are stateless — all context comes from the `AssetServer` and load settings.
+- A single file may produce multiple assets (e.g., a glTF file yields scenes, meshes, materials, textures, and animations).
+- Loaders must report structured errors; panicking inside a loader is not permitted.
+- Format auto-detection is by file extension; an explicit format override can be passed at load time.
+- All loaders execute asynchronously on the asset task pool.
+
+## 3. Core Invariants
+1. Each file extension maps to exactly one loader; duplicate registrations are a hard error.
+2. A loader must return a fully constructed asset or an error — partial assets are never inserted into the asset store.
+3. Disabling a format via build tags removes its loader entirely; attempting to load that format yields a clear "unsupported format" error rather than a silent failure.
+4. Sub-asset addressing (e.g., a specific mesh inside a glTF) uses a label scheme that is stable across reloads.
+
+## 4. Detailed Design
+
+### 4.1 glTF 2.0 Loader
+The glTF loader consumes `.gltf` (JSON + separate binary) and `.glb` (single binary) files. It produces:
+
+```plaintext
+GltfAsset
+ ├── Scene(index)      → Scene asset
+ ├── Mesh(index)       → Mesh asset (with primitives)
+ ├── Material(index)   → Material asset
+ ├── Texture(index)    → Image asset
+ ├── Animation(index)  → AnimationClip asset
+ ├── Skin(index)       → Skeletal skin data
+ └── MorphTarget(mesh, primitive, target) → MorphWeights data
+```
+
+`GltfAssetLabel` is an enum addressing each sub-asset by type and index. Labels are deterministic: `Mesh(0)` always refers to the first mesh regardless of load order.
+
+Supported glTF extensions: `KHR_materials_unlit`, `KHR_texture_transform`, `KHR_draco_mesh_compression` (behind build tag), `KHR_lights_punctual`.
+
+### 4.2 Image Format Loaders
+Each image format has its own loader producing an `Image` asset:
+
+| Format | Extensions | Notes |
+| :--- | :--- | :--- |
+| PNG | `.png` | RGBA, 8/16-bit |
+| JPEG | `.jpg`, `.jpeg` | RGB, lossy |
+| HDR | `.hdr` | Radiance RGBE, used for environment maps |
+| DDS | `.dds` | GPU-compressed (BC1-BC7), loaded without CPU decode |
+| KTX2 | `.ktx2` | Basis Universal or ASTC, GPU-compressed |
+| BMP | `.bmp` | Uncompressed RGB/RGBA |
+| WebP | `.webp` | Lossy and lossless |
+| TGA | `.tga` | Legacy format, uncompressed or RLE |
+
+GPU-compressed formats (DDS, KTX2) are uploaded directly; the loader selects a transcode target matching the current GPU backend capabilities.
+
+### 4.3 Audio Format Loaders
+Each audio format produces an `AudioSource` asset:
+
+| Format | Extensions | Notes |
+| :--- | :--- | :--- |
+| WAV | `.wav` | Uncompressed PCM, lowest latency |
+| OGG/Vorbis | `.ogg` | Compressed, good quality-to-size ratio |
+| FLAC | `.flac` | Lossless compression |
+| MP3 | `.mp3` | Lossy, wide compatibility |
+| AAC | `.aac`, `.m4a` | Lossy, behind optional build tag |
+
+### 4.4 Font Loader
+Loads `.ttf` and `.otf` files into a `Font` asset containing glyph outlines and metrics. Rasterization into glyph atlases is deferred to the text pipeline at render time.
+
+### 4.5 Scene File Format
+The engine defines its own JSON-based scene format (`.scene.json`). A scene file is a serialized snapshot of entities and their components, using the reflection system for type resolution. The loader produces a `DynamicScene` asset that can be spawned into any World.
+
+```plaintext
+{
+  "entities": [
+    { "components": [ { "type": "Transform", "value": { ... } }, ... ] },
+    ...
+  ]
+}
+```
+
+### 4.6 Loader Registration
+At app build time, each format plugin registers its loader:
+
+```
+AssetServer.register_loader(PngImageLoader, &["png"])
+AssetServer.register_loader(GltfLoader, &["gltf", "glb"])
+```
+
+Build tags control which registration calls are compiled. A convenience `DefaultFormatsPlugin` registers all enabled loaders in one step.
+
+## 5. Open Questions
+- Should the engine support a custom binary scene format for faster load times in shipping builds?
+- How should format-specific load settings (e.g., JPEG quality threshold, glTF coordinate system override) be passed through the asset pipeline?
+- Is runtime format detection (magic bytes) worth the complexity, or is extension-based sufficient?
+
+## Document History
+| Version | Date | Description |
+| :--- | :--- | :--- |
+| 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |

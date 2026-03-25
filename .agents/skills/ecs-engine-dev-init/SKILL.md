@@ -7,35 +7,28 @@ description: Initialize ECS engine development environment with junctions and ha
 
 This skill sets up the mapping between project-level directories and agent-level interfaces. It creates junctions and hardlinks so Claude Code, Gemini, and Qwen can discover workflows, skills, and rules through `.claude/`, `.qwen/`, and respective instruction files, while keeping `.agents/` as the canonical source.
 
-## Procedures
+## Bootstrap (First Run)
 
-### 1. Identify Environment
+This skill cannot be invoked via `/ecs-engine-dev-init` until the environment is initialized — `.claude/skills/` does not exist yet. Run the setup script directly from the project root:
 
-Identify the operating system (Windows vs. Unix/macOS).
-
-### 2. Execute Initialization Script
-
-Establish all links using the platform-specific script. Key tasks include:
-
-- Linking `.claude/commands`, `.claude/skills`, `.claude/rules`, `.qwen/commands`, `.qwen/skills`, and `.qwen/rules` to `.agents/` subdirectories.
-- Linking root `CLAUDE.md`, `GEMINI.md`, and `QWEN.md` to `AGENTS.md` as hardlinks so agent instructions stay in sync.
-- Maintaining the git index by removing linked paths from tracking.
-
-**On Windows (PowerShell):**
-
+**Windows:**
 ```powershell
-pwsh -NoProfile -File .agents/skills/ecs-engine-dev-init/scripts/setup_windows.ps1
+powershell -NoProfile -File .agents/skills/ecs-engine-dev-init/scripts/setup_windows.ps1
 ```
 
-**On Unix (Bash):**
-
+**Unix:**
 ```bash
 bash .agents/skills/ecs-engine-dev-init/scripts/setup_unix.sh
 ```
 
-### 3. Verification
+After the script runs, `.claude/skills/` will be a junction pointing to `.agents/skills/`, and the skill becomes available as `/ecs-engine-dev-init` for subsequent re-initialization.
 
-Confirm that all junctions resolve correctly and that `CLAUDE.md`, `GEMINI.md`, `QWEN.md` hardlinks all point to `AGENTS.md`.
+## What It Does
+
+1. Links `.claude/` and `.qwen/` subdirectories (`commands`, `skills`, `rules`) to `.agents/` counterparts (`workflows`, `skills`, `rules`).
+2. Creates hardlinks `CLAUDE.md`, `GEMINI.md`, `QWEN.md` → `AGENTS.md`.
+3. Removes linked paths from the git index to prevent accidental tracking.
+4. Verifies all junctions and hardlinks resolve correctly.
 
 ## Resources
 
