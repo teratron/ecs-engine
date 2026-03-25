@@ -102,4 +102,4 @@ When a system calls `commands.Spawn(...)`, the entity ID is reserved immediately
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-25 | Initial draft from Bevy analysis |
+| 0.1.0 | 2026-03-25 | Initial draft |

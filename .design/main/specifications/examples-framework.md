@@ -40,9 +40,9 @@ A game engine without runnable examples is untestable and undocumented. The exam
 - **INV-5**: 2D/3D examples must work through the render backend abstraction, never through a specific graphics library directly.
 - **INV-6**: Each example is self-contained — no shared state or imports between examples.
 
-## 5. Detailed Design
+## 4. Detailed Design
 
-### 5.1 Directory Structure
+### 4.1 Directory Structure
 
 ```plaintext
 examples/
@@ -406,7 +406,7 @@ examples/
     └── text_pipeline/                   # Text layout pipeline stress test
 ```
 
-### 5.2 Example Template
+### 4.2 Example Template
 
 Each example follows a consistent structure:
 
@@ -454,7 +454,7 @@ func main() {
 {Description or screenshot of what the user should see.}
 ```
 
-### 5.3 Category-to-Specification Mapping
+### 4.3 Category-to-Specification Mapping
 
 | Category | Specifications Covered | Examples | Priority |
 | :--- | :--- | :--- | :--- |
@@ -487,7 +487,7 @@ func main() {
 | `showcase/` | cross-cutting (complete demos) | 4 | P5 |
 | `stress_test/` | performance benchmarks (all specs) | 17 | P2 |
 
-### 5.4 Example Lifecycle
+### 4.4 Example Lifecycle
 
 ```mermaid
 graph LR
@@ -503,7 +503,7 @@ graph LR
 2. **RFC**: The example is implemented using the spec's API, even if the engine code is not yet written (compile errors expected).
 3. **Stable**: The example compiles, runs, and produces the expected output. It becomes a CI gate.
 
-### 5.5 CI Integration
+### 4.5 CI Integration
 
 All examples are validated in CI:
 
@@ -515,7 +515,7 @@ go test ./examples/stress_test/... -bench -benchmem  # Benchmarks run with memor
 
 Render-dependent examples (2D/3D) run in headless mode with a mock render backend for CI.
 
-## 6. Implementation Notes
+## 5. Implementation Notes
 
 1. **Start with `ecs/hello_ecs/`** — the simplest possible example to validate the ECS core works.
 2. **Then `ecs/` category** — one example per core spec, aligned with P1 batch.
@@ -523,7 +523,7 @@ Render-dependent examples (2D/3D) run in headless mode with a mock render backen
 4. **2D examples before 3D** — 2D requires less render infrastructure.
 5. **3D examples** — after render pipeline abstraction is defined.
 
-## 7. Drawbacks & Alternatives
+## 6. Drawbacks & Alternatives
 
 **Drawback**: Maintaining 280+ examples is a significant effort. Each engine API change may break multiple examples.
 **Mitigation**: Examples are small (50–200 lines). CI catches breakage immediately. Examples follow a single template, making bulk updates feasible. Categories are independent — changes to one subsystem only affect its category.

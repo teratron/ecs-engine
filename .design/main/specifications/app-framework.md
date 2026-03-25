@@ -295,4 +295,4 @@ Exit sequence:
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-25 | Initial draft from Bevy analysis |
+| 0.1.0 | 2026-03-25 | Initial draft |
