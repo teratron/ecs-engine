@@ -206,7 +206,7 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 
 1. **Load Skill**: Read `.agents/skills/ecs-engine-reference/SKILL.md` before starting spec work to ensure full architectural context is loaded.
 2. **Cross-Reference**: Verify that new specs are consistent with the module map, dependency graph, and Go conventions defined in the skill.
-3. **No External Branding**: The engine is a standalone project. Never reference external engines or frameworks in specifications, rules, or public documentation. The `bevy/` directory is a private reference source — internal use only.
+3. **No External Branding**: The engine is a standalone project. Never reference external engines or frameworks in specifications, rules, or public documentation.
 
 ## Document History
 

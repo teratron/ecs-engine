@@ -15,9 +15,6 @@ architectural map of the engine's ECS system and its Go implementation guideline
 - Understanding how engine modules map to Go packages
 - Resolving architectural questions about ECS design
 
-> **Reference source code** is located in `bevy/` directory — use it for
-> studying implementation patterns. Never reference it in specifications or public docs.
-
 ## ECS Engine Architecture
 
 ### Layer 1: ECS Core
