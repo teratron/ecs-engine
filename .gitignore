@@ -6,9 +6,6 @@
 */settings.json
 */settings.*.json
 
-# Claude
-.claude/
-
 # Agents
 CLAUDE.md
 GEMINI.md
@@ -25,7 +22,6 @@ QWEN.md
 # Magic Spec
 .magic/
 .agents/workflows/magic.*.md
-
 
 # Go
 # Binaries for programs and plugins

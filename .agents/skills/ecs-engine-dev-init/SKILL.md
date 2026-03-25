@@ -5,7 +5,7 @@ description: Initialize ECS engine development environment with junctions and ha
 
 # ECS Engine Dev Init Skill
 
-This skill sets up the mapping between project-level directories and agent-level interfaces. It creates junctions and hardlinks so Claude Code and Qwen can discover workflows, skills, and rules through `.claude/` and `.qwen/`, while keeping `.agents/` as the canonical source.
+This skill sets up the mapping between project-level directories and agent-level interfaces. It creates junctions and hardlinks so Claude Code, Gemini, and Qwen can discover workflows, skills, and rules through `.claude/`, `.qwen/`, and respective instruction files, while keeping `.agents/` as the canonical source.
 
 ## Procedures
 

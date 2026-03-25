@@ -1,5 +1,5 @@
 ---
-name: ECS Engine Architecture Reference
+name: ecs-engine-reference
 description: Architectural reference for the ECS game engine project. Use when creating or reviewing specifications.
 ---
 

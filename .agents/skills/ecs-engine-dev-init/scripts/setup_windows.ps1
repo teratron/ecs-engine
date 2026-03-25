@@ -20,7 +20,7 @@ function Remove-Existing($path) {
     if (Test-Path $path) {
         Write-Host "Removing: $path" -ForegroundColor Yellow
         if ((Get-Item $path).Attributes -match "ReparsePoint") {
-            if ((Get-Item $path).PSIsContainer) { cmd /c "rmdir $path" } else { cmd /c "del $path" }
+            if ((Get-Item $path).PSIsContainer) { cmd /c "rmdir ""$path""" } else { cmd /c "del ""$path""" }
         } else {
             Remove-Item -Recurse -Force $path
         }
@@ -36,12 +36,12 @@ Write-Host ">>> Initializing Windows Agent Environment..." -ForegroundColor Cyan
 # 3.1. Git Index Maintenance (MUST run BEFORE creating junctions)
 Write-Host "Synchronizing git index (pre-link)..." -ForegroundColor Cyan
 $linksToRemove = @(
-    ".claude\commands",
-    ".claude\skills",
-    ".claude\rules",
-    ".qwen\commands",
-    ".qwen\skills",
-    ".qwen\rules"
+    ".claude/commands",
+    ".claude/skills",
+    ".claude/rules",
+    ".qwen/commands",
+    ".qwen/skills",
+    ".qwen/rules"
 )
 foreach ($f in $agentFiles) { $linksToRemove += "$f" }
 git rm -r --cached --ignore-unmatch $linksToRemove 2>$null
@@ -51,24 +51,24 @@ if (-not (Test-Path ".claude")) { New-Item -ItemType Directory -Path ".claude" -
 Remove-Existing ".claude\commands"
 Remove-Existing ".claude\skills"
 Remove-Existing ".claude\rules"
-cmd /c "mklink /J .claude\commands .agents\workflows"
-cmd /c "mklink /J .claude\skills .agents\skills"
-cmd /c "mklink /J .claude\rules .agents\rules"
+cmd /c 'mklink /J ".claude\commands" ".agents\workflows"'
+cmd /c 'mklink /J ".claude\skills" ".agents\skills"'
+cmd /c 'mklink /J ".claude\rules" ".agents\rules"'
 
 # 3.3. .qwen junctions
 if (-not (Test-Path ".qwen")) { New-Item -ItemType Directory -Path ".qwen" -Force }
 Remove-Existing ".qwen\commands"
 Remove-Existing ".qwen\skills"
 Remove-Existing ".qwen\rules"
-cmd /c "mklink /J .qwen\commands .agents\workflows"
-cmd /c "mklink /J .qwen\skills .agents\skills"
-cmd /c "mklink /J .qwen\rules .agents\rules"
+cmd /c 'mklink /J ".qwen\commands" ".agents\workflows"'
+cmd /c 'mklink /J ".qwen\skills" ".agents\skills"'
+cmd /c 'mklink /J ".qwen\rules" ".agents\rules"'
 
 # 3.4. Global Agent Instructions (hardlinks to AGENTS.md)
 Write-Host "Linking agent instruction files..." -ForegroundColor Cyan
 foreach ($f in $agentFiles) {
     Remove-Existing $f
-    cmd /c "mklink /H $f AGENTS.md"
+    cmd /c "mklink /H ""$f"" AGENTS.md"
 }
 
 Write-Host "`n>>> Verification:" -ForegroundColor Green
