@@ -1,0 +1,8 @@
+{
+  "default": "main",
+  "workspaces": {
+    "main": {
+      "description": "Primary project workspace"
+    }
+  }
+}
