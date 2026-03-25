@@ -1,6 +1,31 @@
+# IDEs
+.vscode/
+.idea/
+
+# Local settings
+*/settings.json
+*/settings.*.json
+
+# Claude
+.claude/
+
+# Agents
+CLAUDE.md
+GEMINI.md
+QWEN.md
+.*/workflows/
+.*/commands/
+.*/prompts/
+.*/skills/
+.*/rules/
+!.agents/workflows/
+!.agents/skills/
+!.agents/rules/
+
 # Magic Spec
 .magic/
 .agents/workflows/magic.*.md
+
 
 # Go
 # Binaries for programs and plugins
@@ -18,10 +43,6 @@
 
 # Dependency directories
 # vendor/
-
-# IDEs
-.vscode/
-.idea/
 
 # Logs
 *.log
