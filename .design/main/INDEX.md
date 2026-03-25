@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Status:** Active
 
 ## Overview
@@ -18,6 +18,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [system-scheduling.md](specifications/system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.1.0 |
 | [command-system.md](specifications/command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
 | [event-system.md](specifications/event-system.md) | Events, messages, observers, reactive triggers | Draft | concept | 0.1.0 |
+| [type-registry.md](specifications/type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.1.0 |
 
 ## P2 — Framework
 

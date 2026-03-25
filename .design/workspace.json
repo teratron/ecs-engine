@@ -2,7 +2,10 @@
   "default": "main",
   "workspaces": {
     "main": {
-      "description": "Primary project workspace"
+      "description": "Primary engine workspace"
+    },
+    "editor": {
+      "description": "GUI-based engine editor application (Godot/Unity style)"
     }
   }
 }
