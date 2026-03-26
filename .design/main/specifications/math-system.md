@@ -1,6 +1,6 @@
 # Math System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -113,6 +113,13 @@ Operations:
 
 Affine3A avoids a full 4x4 multiply for the common case of rotation + translation + scale. The 'A' suffix indicates aligned storage for SIMD friendliness.
 
+**Split inversion methods**: Two distinct inverse operations are exposed:
+
+- `Inverse() -> Affine3A` — fast path for orthonormal transforms (rotation + translation only, uniform scale). Assumes no shear or non-uniform scale.
+- `AffineInverse() -> Affine3A` — general case that handles arbitrary affine transforms including non-uniform scale and shear. Slower but always correct.
+
+User code should prefer `Inverse()` for camera and entity transforms (which are typically orthonormal) and use `AffineInverse()` only when non-uniform scale is involved.
+
 ### 4.5 Direction and Rotation Types
 
 ```plaintext
@@ -199,14 +206,49 @@ CubicCurve[P]
 
 Curves support any point type (Vec2, Vec3, f32) and are used for animation paths, camera splines, and easing functions.
 
+### 4.10 Transform Interpolation
+
+For engines with decoupled physics and render rates (e.g., physics at 60 Hz, rendering at 144 Hz), transforms must be interpolated between physics steps to produce smooth visuals.
+
+The `TransformInterpolator` provides a two-phase design:
+
+```plaintext
+Phase 1 — Determine method (once per physics tick):
+  TransformInterpolator.Prepare(from: Affine3A, to: Affine3A) -> InterpolationParams
+    // Analyzes the two keyframes and selects the optimal method:
+    //   LERP         — translation-only difference
+    //   SLERP        — rotation difference, uniform scale
+    //   SCALED_SLERP — rotation + non-uniform scale difference
+
+Phase 2 — Apply (every render frame):
+  InterpolationParams.Interpolate(t: f32) -> Affine3A
+    // Applies the pre-determined method at fraction t in [0, 1]
+```
+
+This separation avoids re-analyzing the transform pair every render frame. The method selection (Phase 1) runs at physics frequency; the actual interpolation (Phase 2) runs at render frequency with minimal cost.
+
+### 4.11 Named Vector Constants
+
+Vector types provide named directional constants for both world-space and model-space conventions:
+
+```plaintext
+Vec3 constants:
+  ZERO, ONE                              // origin, unit
+  UP, DOWN, LEFT, RIGHT, FORWARD, BACK   // world-space directions
+```
+
+This avoids magic numbers like `Vec3{0, 1, 0}` scattered through gameplay code and makes directional intent explicit.
+
 ## 5. Open Questions
 
 1. Should the library provide float64 variants of all types for editor-precision use cases?
 2. Should SIMD be an explicit design layer or an internal optimization detail?
 3. Are there additional color spaces needed (OKLCH, CIE-Lab)?
+4. Should the math library support a build-time precision switch (compile tag) that changes the base float type for all math types between float32 and float64, or should float64 variants be separate types with explicit suffixes?
 
 ## Document History
 
-| Version | Date       | Description                              |
-| :------ | :--------- | :--------------------------------------- |
-| 0.1.0   | 2026-03-25 | Initial draft from architecture analysis |
+| Version | Date | Description |
+| :--- | :--- | :--- |
+| 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0 | 2026-03-26 | Added split inversion, TransformInterpolator, named constants, precision open question |

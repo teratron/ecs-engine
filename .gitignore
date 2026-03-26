@@ -47,4 +47,6 @@ QWEN.md
 .DS_Store
 Thumbs.db
 
+# Game engines
 godot/
+bevy/

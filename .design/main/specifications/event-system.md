@@ -1,6 +1,6 @@
 # Event System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -144,6 +144,37 @@ system.RunIf(on_event[CollisionEvent]())    // run only if events exist
 system.RunIf(on_message[MoveCommand]())     // run only if messages exist
 ```
 
+### 4.7 Deferred Call Deduplication
+
+When multiple systems trigger the same deferred event or callback within a single frame, the engine deduplicates by hashing `(target, event_type)`:
+
+```plaintext
+DeferredCallKey = hash(target_entity, event_type_id)
+
+deferred_calls: HashMap[DeferredCallKey, DeferredCall]
+```
+
+If a call with the same key is already queued, the new call replaces it (last-writer-wins) rather than duplicating. This prevents redundant processing — for example, if three systems all mark the same entity as "needs layout recalculation", only one recalculation runs.
+
+Deduplication is opt-in per event type. Events registered with `AddEvent[T]()` use standard (non-deduplicated) delivery. Events registered with `AddDedupEvent[T]()` use deduplication.
+
+### 4.8 Event Testing Utilities
+
+The event system provides a testing utility for asserting event emissions without mock frameworks:
+
+```plaintext
+// Test code
+watcher := EventWatcher.Watch(bus, "CollisionEvent")
+
+// ... perform actions that should trigger events ...
+
+watcher.Check("CollisionEvent", []any{entity_a, entity_b})   // assert event with args
+watcher.CheckNone("DeathEvent")                               // assert no event
+watcher.Clear()                                                // reset between test cases
+```
+
+`EventWatcher` connects to the event bus and records all emissions with their arguments into an internal map. Between test cases, `Clear()` resets state. This is composable and requires no mock infrastructure — it uses the real event bus.
+
 ## 5. Open Questions
 
 - Should event buses support priority ordering?
@@ -155,3 +186,4 @@ system.RunIf(on_message[MoveCommand]())     // run only if messages exist
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added deferred call deduplication, event testing utilities (EventWatcher) |

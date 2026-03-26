@@ -1,5 +1,5 @@
 # Audio System
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -79,12 +79,75 @@ A default backend is provided. Alternative backends (e.g., web audio, console-sp
 3. **spatial_audio_update** — recalculates attenuation and panning for every `SpatialAudioSink`.
 4. **audio_cleanup** — detects removed `AudioPlayer` components or finished playback, drops sinks, and despawns entities in `DESPAWN` mode.
 
+### 4.9 Audio Bus Graph
+
+Instead of per-sound volume and effect settings, the audio system uses a named bus graph for scalable mixing:
+
+```plaintext
+AudioBus
+  name:     StringName        // e.g., "Master", "Music", "SFX", "Dialogue", "Ambient"
+  volume:   f32               // bus volume (0.0..1.0)
+  mute:     bool
+  solo:     bool
+  effects:  []AudioEffectSlot // ordered effect chain
+  output:   StringName        // target bus name ("Master" by default, "" for hardware out)
+
+AudioBusLayout (Resource)
+  buses: []AudioBus           // the full bus graph
+```
+
+Each `AudioPlayer` routes to a bus by name. The bus graph is a DAG rooted at the "Master" bus. Audio flows through effect chains on each bus before being routed to the parent bus. This enables:
+
+- Adjusting all SFX volume with one knob without touching individual sources.
+- Applying reverb to all ambient sounds via an effect on the "Ambient" bus.
+- Audio ducking: lower the "Music" bus volume when the "Dialogue" bus has active sources.
+
+### 4.10 Audio Effect Factory/Instance Split
+
+Audio effects follow a factory pattern separating configuration from state:
+
+```plaintext
+AudioEffect (Resource — stateless configuration)
+  // e.g., ReverbEffect { room_size: 0.8, damping: 0.5 }
+  fn CreateInstance() -> AudioEffectInstance
+
+AudioEffectInstance (stateful, per-bus)
+  // holds internal buffers, delay lines, filter state
+  fn Process(buffer: []f32, sample_rate: uint32)
+```
+
+The same `AudioEffect` resource (e.g., a reverb preset) can be used on multiple buses simultaneously, each with independent processing state. This avoids duplicating configuration while keeping per-bus state isolated. Effects are processed on the audio thread; the ECS side only manages effect assignment.
+
+### 4.11 AudioDriver Abstraction
+
+The audio system separates the logical audio server from the hardware interface:
+
+```plaintext
+AudioDriver (interface)
+  Init(mix_rate: uint32, channels: uint32) -> error
+  Start()
+  GetMixRate() -> uint32
+  Lock()          // acquire audio thread mutex
+  Unlock()
+  Close()
+
+AudioServer (internal)
+  driver:    AudioDriver
+  bus_graph: AudioBusLayout
+  // Manages the bus graph, spatial audio, and mixing
+  // Calls driver.Lock()/Unlock() around buffer fills
+```
+
+`AudioDriver` is the platform-specific layer (ALSA, CoreAudio, WASAPI, WebAudio). `AudioServer` is the platform-independent layer that manages the bus graph, spatial computations, and effect processing. This separation allows porting to new platforms by implementing only the driver interface.
+
 ## 5. Open Questions
+
 - Should streaming playback (decode-on-the-fly) be a separate asset type or a flag on `AudioSource`?
 - What distance attenuation model should be default — inverse distance, linear, or configurable per-source?
-- How should audio ducking (lowering music when dialogue plays) be expressed?
+- How should audio ducking be automated — explicit ducking rules on buses, or a sidechain-compressor effect?
 
 ## Document History
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0 | 2026-03-26 | Added audio bus graph, effect factory/instance split, AudioDriver abstraction |

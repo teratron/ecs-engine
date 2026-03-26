@@ -1,6 +1,6 @@
 # UI System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -118,7 +118,7 @@ commands.Spawn(Node{}, Style{...}).WithChildren(func(b ChildBuilder) {
 
 The Interaction component is automatically updated each frame for nodes that have it:
 
-```
+```plaintext
 Interaction:
     None     // No interaction
     Hovered  // Pointer is over this node
@@ -134,11 +134,16 @@ stateDiagram-v2
     Pressed --> None : pointer_up (outside)
 ```
 
+**Mouse Filter**: Each control has a `MouseFilter` that determines how it participates in pointer event dispatch:
+
+```plaintext
+MouseFilter:
+    Stop     // This node consumes mouse events (default for interactive nodes)
+    Pass     // Events are handled AND pass through to nodes behind
+    Ignore   // This node is invisible to mouse events entirely
 ```
-FocusPolicy:
-    Block    // This node absorbs pointer events (default)
-    Pass     // Events pass through to nodes behind
-```
+
+`Stop` is the default for interactive elements (buttons, panels). `Pass` is useful for transparent overlay nodes that need to react to events but not block them from reaching siblings underneath. `Ignore` is for purely decorative nodes that should never interfere with interaction.
 
 - Interaction state is computed in `PreUpdate` using pointer position and the layout tree (INV-3).
 - Hit testing walks the layout tree in reverse render order (top-most first).
@@ -240,10 +245,23 @@ A `GhostNode` component marks a node as layout-invisible. Its children are laid 
 ### 4.12 Focus Management
 
 Interactive nodes can receive keyboard/gamepad focus:
-- `TabIndex` controls navigation order.
+
+- `TabIndex` controls automatic tab-order navigation.
 - The `Focused` component marks the currently focused entity.
 - Arrow keys and tab cycle focus; pressing enter/space activates the focused element.
 - Focus order follows the hierarchy unless explicitly overridden by a `TabIndex` component.
+
+**Focus neighbor overrides**: For game controller navigation, automatic tab order is often insufficient (e.g., a grid of inventory slots). Each node can declare explicit directional neighbors:
+
+```plaintext
+FocusNeighbor
+  Left:  Option[EntityRef]   // entity to focus when pressing left
+  Right: Option[EntityRef]
+  Up:    Option[EntityRef]
+  Down:  Option[EntityRef]
+```
+
+When a focus neighbor is set, directional input jumps to the specified node instead of following the automatic traversal order. This is essential for game-style UI navigation with gamepads and keyboards.
 
 ### 4.13 Accessibility
 
@@ -254,6 +272,30 @@ Basic accessibility support:
 - Interaction nodes expose their role (button, input, etc.).
 - Focus order follows hierarchy traversal order by default, overridable with TabIndex.
 - This is a foundational layer — full accessibility compliance is a future goal.
+
+### 4.14 Offset Transform (Visual-Only)
+
+A secondary transform layered on top of the layout position, used for animation and visual effects without affecting layout computation:
+
+```plaintext
+OffsetTransform
+  Translation: Vec2     // pixel offset from layout position
+  Rotation:    f32      // rotation in radians around pivot
+  Scale:       Vec2     // scale factor
+  Pivot:       Vec2     // transform origin (0.5, 0.5 = center)
+```
+
+`OffsetTransform` is applied after layout, during the render phase only. A button can slide in from the left, scale on hover, or wobble on error — all without triggering layout recalculation of sibling or parent nodes. The layout engine sees the node at its original computed position; only the visual output is transformed.
+
+### 4.15 Deferred Layout Sort
+
+Containers do not re-sort children synchronously on every child change. Instead, they use a deferred sort mechanism:
+
+1. When a child is added, removed, or has its style changed, the parent container sets a `pending_sort` flag.
+2. At the end of the frame (during the layout phase), all containers with `pending_sort = true` execute their sort pass.
+3. The flag is cleared after sorting.
+
+This prevents O(n²) relayout during scene construction when many children are added in rapid succession. Similarly, **minimum size** is cached per-node and only recomputed when flagged dirty by `notify_minimum_size_changed()`. The dirty flag propagates upward through the tree so ancestor containers know to reflow.
 
 ## 5. Open Questions
 
@@ -268,3 +310,4 @@ Basic accessibility support:
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added MouseFilter, FocusNeighbor overrides, OffsetTransform, deferred layout sort |

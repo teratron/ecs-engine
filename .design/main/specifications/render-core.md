@@ -1,5 +1,5 @@
 # Render Core
-**Version:** 0.1.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -85,21 +85,47 @@ RenderBackend
 
 Concrete backends (OpenGL, Vulkan, WebGPU, software rasteriser) implement this interface. The active backend is selected at app initialisation and cannot change at runtime.
 
-### 4.5 GPU Resource Management
+### 4.5 Server Pattern and Handle-Based API
+
+The render SubApp exposes its functionality through an opaque handle-based API. Callers never hold pointers to internal GPU objects — they hold `RID` (Resource ID) values, 64-bit opaque handles. The server owns all actual objects; callers interact exclusively through handles and a command queue.
+
+**Command queue**: All calls from the main app to the render server are serialized through a thread-safe command queue. If the caller is on the server's dedicated goroutine, calls execute directly. Otherwise, the command is pushed onto the queue and (optionally) blocks for a return value.
+
+**Two-phase resource creation**: Resource creation is split into two steps to avoid caller stalls:
+
+```plaintext
+1. Allocate() -> RID          // synchronous, returns handle immediately
+2. Initialize(rid, data)      // queued to server goroutine, runs asynchronously
+```
+
+The caller can immediately use the RID to queue further setup commands (e.g., assign a material to a mesh) without waiting for initialization to complete. This eliminates pipeline bubbles during asset loading.
+
+**Scenario**: A `Scenario` RID represents a self-contained 3D render world — all instances, lights, and environment settings for one logical scene. Multiple viewports can render the same Scenario or different ones independently. This enables:
+
+- Editor viewports showing different angles of the same scene.
+- Sub-worlds (portals, picture-in-picture) without duplicating entity data.
+- Clean isolation between gameplay rendering and editor preview.
+
+The same handle + command queue pattern applies to other server subsystems (physics, audio) for consistent thread-safe separation of frontend logic from backend computation.
+
+### 4.6 GPU Resource Management
 Buffers, textures, pipelines, and bind groups are stored as resources in the render World. A resource tracker performs reference counting; resources with zero references at the end of a frame are queued for deferred deletion (next frame) to avoid destroying in-flight GPU objects.
 
-### 4.6 Pipeline Specialization
+### 4.7 Pipeline Specialization
 A pipeline key is derived from (shader_id, material_properties, vertex_layout, render_phase). The engine maintains a pipeline cache keyed on this tuple. Cache misses trigger asynchronous compilation; a fallback pipeline is used until the specialised variant is ready.
 
-### 4.7 Draw Functions
+### 4.8 Draw Functions
 A draw function is a registered callable per render phase. During the render schedule, the engine collects visible entities for each phase, sorts them, batches by pipeline + bind group, and invokes the corresponding draw function with the batched data.
 
 ## 5. Open Questions
 1. Should transient texture allocation use a pool or per-frame linear allocator?
 2. How should async pipeline compilation failures be surfaced to the developer?
 3. What is the maximum number of render passes before performance degrades on target hardware?
+4. Should physics and audio servers follow the same RID + command queue pattern as the render server, or is a simpler interface sufficient?
+5. Should the physics server use callback inversion (pushing a state context into body callbacks during integration) rather than exposing query-from-game-thread APIs?
 
 ## Document History
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.3.0 | 2026-03-26 | Added server pattern (RID + command queue), two-phase resource creation, Scenario concept, physics callback open questions |

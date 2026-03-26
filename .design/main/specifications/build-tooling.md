@@ -1,6 +1,6 @@
 # Build Tooling
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -241,6 +241,91 @@ pull_requests: [789]
 - Practical usage example showing the feature in action.
 - Separate file per notable feature (not one monolithic changelog).
 
+### 4.8 Co-Located Tests
+
+Test files live next to the code they test, inside the same package — not in a centralized `tests/` directory:
+
+```plaintext
+internal/ecs/
+  archetype.go
+  archetype_test.go        // tests for archetype.go
+  query.go
+  query_test.go            // tests for query.go
+  testdata/
+    query_filter.golden    // golden files for query tests
+```
+
+Each package owns its test files and test data. This scales better than a monolithic test directory, makes ownership clear, and keeps tests close to the code under change. Integration tests that span multiple packages live in a top-level `tests/` directory with `_test` package suffixes.
+
+### 4.9 Named Test Commands
+
+Beyond standard `go test` unit tests, the CI tool supports named entry points for specialized test modes:
+
+```plaintext
+ci test-command <name>
+
+Registered commands:
+  scene-roundtrip     // serialize → deserialize → compare for all scene formats
+  definition-validate // validate all .json definition files against schema
+  stress-spawn        // spawn/despawn 100k entities in a tight loop
+  stress-query        // iterate 1M-entity queries, measure throughput
+```
+
+Test commands are registered programmatically:
+
+```plaintext
+RegisterTestCommand("scene-roundtrip", func(ctx context.Context) error {
+    // load all .json scene files, roundtrip, compare
+})
+```
+
+This supports parser tests, serialization roundtrip tests, and performance stress tests that don't fit the standard `func Test*` model.
+
+### 4.10 Error Suppression in Negative-Path Tests
+
+When testing that invalid input produces the correct error (negative-path tests), expected engine error logs should not pollute test output:
+
+```plaintext
+// Test that duplicate component registration produces an error
+SuppressErrors()
+err := registry.Register[Position]()  // expected to fail
+RestoreErrors()
+
+assert(err != nil)
+assert(err.Code == ErrDuplicateComponent)
+```
+
+`SuppressErrors()` / `RestoreErrors()` temporarily redirect error output to a capture buffer. The test can then assert on captured error messages if needed. This keeps test output clean while still validating error behavior. CI never shows suppressed errors in the summary — only assertion failures.
+
+### 4.11 Event Testing Utilities
+
+A `EventWatcher` utility for asserting event emissions in test code:
+
+```plaintext
+watcher := NewEventWatcher(bus)
+watcher.Watch("CollisionEvent")
+
+// ... perform actions ...
+
+watcher.Check("CollisionEvent", expected_args)    // assert event emitted with args
+watcher.CheckNone("DeathEvent")                    // assert no emission
+watcher.Clear()                                    // reset between test cases
+```
+
+This records all watched event emissions with their arguments into an internal map. No mock framework needed — it connects to the real event bus. See [event-system.md §4.8](event-system.md) for the design.
+
+### 4.12 Serialization Roundtrip Tests
+
+Every format version bump requires an explicit roundtrip test:
+
+1. Load a reference file in the old format.
+2. Deserialize into runtime structures.
+3. Re-serialize to the new format.
+4. Deserialize again and compare with step 2.
+5. Store the re-serialized output as a golden file.
+
+This ensures format compatibility across versions and catches silent data loss during format evolution. The `BLESS=1` workflow applies: mismatches fail in CI, `BLESS=1` regenerates the golden file locally.
+
 ## 5. Open Questions
 
 - Should benchmark baselines be committed to the repo or stored externally?
@@ -252,3 +337,4 @@ pull_requests: [789]
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft from reference engine tooling analysis |
+| 0.2.0 | 2026-03-26 | Added co-located tests, named test commands, error suppression, event testing, serialization roundtrip tests |

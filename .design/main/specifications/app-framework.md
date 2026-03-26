@@ -1,6 +1,6 @@
 # App Framework
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -286,7 +286,44 @@ Exit sequence:
 4. Return exit code
 ```
 
-### 4.10 Deployment Architecture
+### 4.10 Leveled Plugin Initialization
+
+Plugins register at specific initialization levels, executed in strict order. Each plugin responds only to the levels it cares about:
+
+```plaintext
+InitializationLevel:
+  LEVEL_CORE       // archetype tables, type registry, allocators, math
+  LEVEL_SERVERS    // system schedulers, render/physics/audio servers
+  LEVEL_SCENE      // scene tree, resource loaders, component registration
+  LEVEL_EDITOR     // inspector plugins, editor UI, debug tooling
+```
+
+The engine calls `Initialize(level)` on all plugins at each level in sequence, then proceeds to the next level. Shutdown runs `Uninitialize(level)` in reverse (EDITOR → SCENE → SERVERS → CORE), ensuring clean teardown order.
+
+**Symmetric init/uninit**: Each plugin implements both directions. The signature forces handling cleanup — plugins cannot "forget" to release resources:
+
+```plaintext
+Plugin interface:
+  Initialize(level InitializationLevel)
+  Uninitialize(level InitializationLevel)
+```
+
+A plugin that only cares about CORE and EDITOR simply ignores calls at other levels.
+
+**Editor init callbacks**: Plugins that need editor features but should not compile-time depend on editor types use deferred callbacks:
+
+```plaintext
+// During LEVEL_SERVERS initialization:
+app.AddEditorInitCallback(func(editor *EditorInterface) {
+    editor.RegisterInspectorPlugin(myPlugin)
+})
+```
+
+The callback fires once the editor is ready (during LEVEL_EDITOR). This avoids circular dependencies between gameplay plugins and editor infrastructure. In headless/server builds where the editor is absent, these callbacks are simply never called.
+
+**Build tag isolation**: Editor-only code is behind a build tag (`//go:build editor`). Plugins that register at LEVEL_EDITOR are entirely excluded from production builds, reducing binary size and eliminating dead code.
+
+### 4.11 Deployment Architecture
 
 The engine follows a **modular monolith** pattern. All ECS systems, rendering, audio, input, and UI execute within a single process and address space. This is a deliberate architectural constraint driven by performance:
 
@@ -323,3 +360,4 @@ These services are separate Go binaries. They may share type definitions with th
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added deployment architecture: modular monolith, backend service boundary, no-network-in-loop rule |
+| 0.3.0 | 2026-03-26 | Added leveled plugin initialization (CORE/SERVERS/SCENE/EDITOR), editor init callbacks, build tag isolation |

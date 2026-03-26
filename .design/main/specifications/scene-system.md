@@ -1,6 +1,6 @@
 # Scene System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -152,14 +152,90 @@ SceneInstanceReady
 
 Systems can listen for this event to perform post-spawn setup (e.g., wiring up runtime state).
 
+### 4.10 Interned Array Serialization
+
+DynamicScene serialization uses interned arrays to minimize file size and memory:
+
+```plaintext
+SerializedScene
+  names:      []string        // deduplicated pool of type names and property names
+  variants:   []Value         // deduplicated pool of property values
+  node_paths: []NodePath      // deduplicated pool of hierarchy paths
+  entities:   []SerializedEntity
+
+SerializedEntity
+  name:       index -> names[]
+  components: []SerializedComponent
+
+SerializedComponent
+  type_name:  index -> names[]
+  properties: [](name_index, value_index)   // pairs of indices into names[] and variants[]
+```
+
+Each entity stores indices into the shared pools rather than inline strings or values. When a scene has 100 entities all with a `Transform` component, the string `"Transform"` appears once in the `names` array, not 100 times. This applies to the binary serialization format; the human-readable JSON format may use inline values for readability.
+
+### 4.11 Scene Load Context
+
+Scene instantiation accepts a context parameter that controls how entities are created:
+
+```plaintext
+SceneLoadContext:
+  Runtime         // normal gameplay — no editor metadata, no undo tracking
+  EditorPreview   // editor viewport preview — lightweight metadata, no undo
+  EditorMain      // main edited scene — full metadata, undo/redo tracking
+```
+
+Instead of a global "am I in editor mode" flag, context is passed per-instantiation. This allows the same scene to be simultaneously loaded for gameplay (Runtime) and editor inspection (EditorMain) with different behavior. The context determines:
+
+- Whether entities receive editor-only marker components.
+- Whether property changes are recorded in the undo/redo history.
+- Whether debug visualization components are attached.
+
+### 4.12 Format Versioning
+
+Scene files carry explicit version metadata for forward compatibility:
+
+```plaintext
+SceneHeader
+  format_version:        uint32   // current format version
+  format_version_compat: uint32   // minimum version that can read this file
+```
+
+When saving, the serializer checks whether any new-format features are actually used. If not, it writes at the older `format_version_compat` level, avoiding unnecessary breakage of older tools. When loading, the deserializer checks `format_version` against its known range and rejects files from the future with a clear error message.
+
+Each format version bump requires a corresponding roundtrip test (serialize → deserialize → compare) in the test suite.
+
+### 4.13 Symmetric Pack/Unpack API
+
+The `SerializedScene` exposes both a build API (for packing) and a query API (for unpacking) over the same interned data:
+
+```plaintext
+// Build API (packing a scene)
+builder.AddName(name) -> nameIndex
+builder.AddValue(value) -> valueIndex
+builder.AddEntity(nameIndex) -> entityIndex
+builder.AddComponent(entityIndex, typeIndex, properties)
+
+// Query API (reading without instantiation)
+scene.EntityCount() -> int
+scene.EntityName(idx) -> string
+scene.ComponentCount(entityIdx) -> int
+scene.ComponentType(entityIdx, compIdx) -> string
+scene.PropertyValue(entityIdx, compIdx, propIdx) -> Value
+```
+
+This enables tools that inspect, diff, or merge scene files without instantiating runtime objects — critical for version control integration and batch processing.
+
 ## 5. Open Questions
 
 1. Should DynamicScene support partial updates (merge into existing entities) or only full spawns?
 2. How should scene inheritance work — can a scene reference a parent scene and override specific components?
 3. What happens when a scene references component types not registered in the current engine build?
+4. Should the interned array format support shared string pools across multiple scene files (e.g., a project-wide dictionary)?
 
 ## Document History
 
-| Version | Date       | Description                              |
-| :------ | :--------- | :--------------------------------------- |
-| 0.1.0   | 2026-03-25 | Initial draft from architecture analysis |
+| Version | Date | Description |
+| :--- | :--- | :--- |
+| 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0 | 2026-03-26 | Added interned arrays, load context, format versioning, symmetric pack/unpack API |

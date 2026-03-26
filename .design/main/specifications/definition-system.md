@@ -1,6 +1,6 @@
 # Definition System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -372,7 +372,54 @@ The Definition System is designed as the data format a GUI editor reads and writ
 
 The editor itself is a future specification. The Definition System provides the data contract the editor will consume.
 
-### 4.10 Network Boundary
+### 4.10 Editor Plugin Integration
+
+The definition system provides a stable interface for editor plugins to interact with definitions without coupling to internal interpreter complexity.
+
+**Stable editor API**: A `DefinitionEditorInterface` exposes only the operations editor plugins need:
+
+```plaintext
+DefinitionEditorInterface
+  GetDefinitionType(asset: Handle) -> DefinitionType
+  GetPropertyList(node: DefinitionNode) -> []PropertyInfo
+  GetPropertyValue(node: DefinitionNode, name: string) -> any
+  SetPropertyValue(node: DefinitionNode, name: string, value: any)
+  ValidateDefinition(asset: Handle) -> []ValidationError
+```
+
+Internal interpreter complexity is hidden behind this interface. Even as the interpreter evolves, editor plugins only depend on the stable surface.
+
+**handles() dispatch**: Editor plugins declare which definition types they can edit:
+
+```plaintext
+DefinitionEditorPlugin interface:
+  Handles(defType DefinitionType) -> bool
+  Edit(definition: DefinitionNode)
+  GetInspectorProperties(node: DefinitionNode) -> []EditorProperty
+```
+
+The editor iterates registered plugins and asks each `Handles()` — first responder wins. This allows custom editors per definition type (UI editor, flow graph editor, scene editor) without central knowledge of all types.
+
+**Property revert/default system**: Any property in a definition can report its default value for the editor's "reset to default" button:
+
+```plaintext
+DefinitionNode
+  CanRevert(property: string) -> bool
+  GetRevertValue(property: string) -> any
+```
+
+When `CanRevert` returns true, the editor displays a reset indicator next to the property. Clicking it restores the value from `GetRevertValue`. Defaults are derived from the TypeRegistry's default initialization hooks.
+
+**Dynamic property list notification**: A definition node can signal that its available properties have changed:
+
+```plaintext
+DefinitionNode
+  NotifyPropertyListChanged()
+```
+
+This fires when a property value change causes other properties to appear or disappear. For example, changing a node's `type` from `"Button"` to `"ScrollView"` reveals scroll-related properties and hides button-specific ones. The editor refreshes its inspector panel in response.
+
+### 4.11 Network Boundary
 
 Definitions operate strictly within a single engine process. They are **never transmitted over the network** as part of the game loop. A definition file is loaded from local storage (or an asset CDN during development), interpreted into ECS commands, and the resulting entities live in the local World.
 
@@ -394,3 +441,4 @@ This constraint preserves the engine's monolithic performance model (see [app-fr
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft — captures data-driven design vision for JSON declarative layer |
 | 0.2.0 | 2026-03-26 | Added network boundary section — definitions are local-only, no cross-process transmission |
+| 0.3.0 | 2026-03-26 | Added editor plugin integration: stable API, handles() dispatch, property revert/default, dynamic property list |

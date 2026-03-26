@@ -1,6 +1,6 @@
 # Input System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -190,15 +190,78 @@ graph TB
 
 At each level, observers registered on that entity can handle the event and optionally stop propagation. This matches the DOM event model: capture phase (top-down) is not supported; only bubble phase (bottom-up).
 
+### 4.7 Action Mapping
+
+While the core input system provides raw device state, an action mapping layer maps abstract actions to physical inputs:
+
+```plaintext
+ActionMap (Resource)
+  actions: map[StringName]ActionBinding
+
+ActionBinding
+  inputs:   []InputBinding          // list of physical inputs that trigger this action
+  deadzone: f32                     // per-action deadzone (not per-axis)
+
+InputBinding
+  device_filter: DeviceFilter       // ALL_DEVICES | Specific(DeviceID)
+  source:        InputEventMatcher  // KeyCode, MouseButton, GamepadAxis, etc.
+```
+
+**Per-action deadzone**: The deadzone is configured per action mapping, not per raw axis. This makes action abstractions portable across controller types with different stick characteristics. A "move" action can have a 0.2 deadzone regardless of whether it is bound to a gamepad stick or a mouse delta.
+
+### 4.8 Per-Device Action State
+
+Each action tracks independent state per device, enabling local multiplayer:
+
+```plaintext
+ActionState
+  pressed_physics_frame:  uint64    // frame number when pressed (physics tick)
+  pressed_process_frame:  uint64    // frame number when pressed (render tick)
+  released_physics_frame: uint64
+  released_process_frame: uint64
+  strength:               f32       // 0.0..1.0 (analog)
+  devices:                map[DeviceID]DeviceActionState
+
+DeviceActionState
+  pressed:  bool
+  strength: f32
+```
+
+**Physics-frame vs process-frame timestamps**: Systems can distinguish "was this pressed this physics step" from "was this pressed this render frame". This is critical for a split-rate engine where physics runs at a fixed rate (e.g., 60 Hz) and rendering at a variable rate (e.g., 144 Hz). A physics system checks `pressed_physics_frame`; a UI system checks `pressed_process_frame`.
+
+**Per-device sub-states**: The same action (e.g., "jump") can be independently tracked per gamepad device. Player 1's "jump" on gamepad 0 is distinct from Player 2's "jump" on gamepad 1.
+
+### 4.9 Input Accumulation
+
+An option to merge consecutive compatible input events before processing:
+
+```plaintext
+InputSettings (Resource)
+  accumulated_input: bool   // default: true
+```
+
+When enabled, consecutive mouse-motion events within the same frame are merged into a single event with summed deltas. This reduces event processing overhead without losing net movement data. Accumulation applies only to motion events — discrete events (key press/release) are never merged.
+
+### 4.10 Input Event Transform
+
+Positional input events (mouse, touch) can be transformed through a 2D transform:
+
+```plaintext
+InputEvent
+  fn TransformedBy(transform: Affine2D) -> InputEvent
+```
+
+This transforms event positions through canvas/viewport transforms so UI nodes receive events in their local coordinate space. The UI system applies this automatically — user code rarely calls it directly.
+
 ## 5. Open Questions
 
-- Should there be a built-in action mapping layer (e.g., "Jump" maps to Space + GamepadSouth), or is that a separate specification?
 - How should input be handled during state transitions (e.g., should input be consumed when transitioning from Menu to Playing)?
 - Should gamepads support per-player assignment natively, or is that a game-level concern?
-- Dead zone configuration for gamepad axes — global resource or per-gamepad?
+- Should one-shot action connections be supported (action fires once then auto-unbinds), useful for UI flows like "wait for any key"?
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added action mapping with per-action deadzone, per-device action state, physics/process frame timestamps, input accumulation, event transform |
