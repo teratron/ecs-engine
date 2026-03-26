@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.4.0
+**Version:** 2.5.0
 **Status:** Active
 
 ## Overview
@@ -77,6 +77,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
+| [definition-system.md](specifications/definition-system.md) | JSON declarative layer: UI, scenes, flows, templates — data-driven bridge | Draft | concept | 0.1.0 |
 | [window-system.md](specifications/window-system.md) | Window management, multi-window, platform abstraction | Draft | concept | 0.1.0 |
 | [diagnostic-system.md](specifications/diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
 | [ui-system.md](specifications/ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.1.0 |
