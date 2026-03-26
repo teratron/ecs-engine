@@ -10,6 +10,7 @@ The render core defines how frames are produced. A dedicated render SubApp owns 
 - [App Framework](app-framework.md)
 - [Mesh & Image](mesh-and-image.md)
 - [Materials & Lighting](materials-and-lighting.md)
+- [Platform System](platform-system.md) — RenderBackend selection per platform
 
 ## 1. Motivation
 Rendering must be decoupled from gameplay so the main World never touches GPU state directly. A graph-based approach lets the engine reorder, merge, or cull passes automatically. A backend interface future-proofs the engine against API churn.

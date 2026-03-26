@@ -9,6 +9,7 @@ The audio system provides component-driven sound playback integrated with the EC
 ## Related Specifications
 - [Asset System](asset-system.md)
 - [App Framework](app-framework.md)
+- [Platform System](platform-system.md) — AudioDriver selection per platform
 
 ## 1. Motivation
 Games require both global (music, UI sounds) and positional (footsteps, explosions) audio. Representing playback as ECS components means audio lifetime is tied to entity lifetime, enabling patterns like "despawn the bullet entity and its sound stops automatically." A backend interface avoids hard-coupling to any single audio library.

@@ -13,6 +13,7 @@ Defines the engine's build automation, CI pipeline, testing infrastructure, and 
 - [examples-framework.md](examples-framework.md) — Examples validated by CI pipeline
 - [diagnostic-system.md](diagnostic-system.md) — Profiling integration used by benchmark tooling
 - [app-framework.md](app-framework.md) — Plugin architecture tested by compile-check tools
+- [platform-system.md](platform-system.md) — CI matrix targets, cross-compilation pipeline
 
 ## 1. Motivation
 
