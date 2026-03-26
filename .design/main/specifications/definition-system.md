@@ -1,6 +1,6 @@
 # Definition System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -372,6 +372,14 @@ The Definition System is designed as the data format a GUI editor reads and writ
 
 The editor itself is a future specification. The Definition System provides the data contract the editor will consume.
 
+### 4.10 Network Boundary
+
+Definitions operate strictly within a single engine process. They are **never transmitted over the network** as part of the game loop. A definition file is loaded from local storage (or an asset CDN during development), interpreted into ECS commands, and the resulting entities live in the local World.
+
+Backend services (matchmaking, persistence, analytics) communicate with the game via typed network messages — not via definition files. If a server needs to describe a scene to a client, it sends a compact binary protocol; the client may then load a locally cached definition file referenced by that protocol. The definition system does not serialize or deserialize across network boundaries at runtime.
+
+This constraint preserves the engine's monolithic performance model (see [app-framework.md, Section 4.10](app-framework.md)).
+
 ## 5. Open Questions
 
 - Should definitions support expressions/formulas (e.g., `"width": "parent.width * 0.5"`) or stay purely static?
@@ -385,3 +393,4 @@ The editor itself is a future specification. The Definition System provides the 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft — captures data-driven design vision for JSON declarative layer |
+| 0.2.0 | 2026-03-26 | Added network boundary section — definitions are local-only, no cross-process transmission |

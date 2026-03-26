@@ -1,6 +1,6 @@
 # App Framework
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -286,14 +286,40 @@ Exit sequence:
 4. Return exit code
 ```
 
+### 4.10 Deployment Architecture
+
+The engine follows a **modular monolith** pattern. All ECS systems, rendering, audio, input, and UI execute within a single process and address space. This is a deliberate architectural constraint driven by performance:
+
+- The game loop budget is under 16.6 ms per frame (60 FPS). Network calls (even localhost) add 1-2 ms latency per round-trip, consuming a significant portion of this budget.
+- ECS relies on data locality — components packed in contiguous memory for cache efficiency. Serialization across process boundaries destroys this advantage.
+- State synchronization between distributed systems in real-time is orders of magnitude more complex than in-process communication.
+
+**Boundary rule**: No system that runs within the main game loop (`First` through `Last` schedules) may perform network I/O or cross-process communication. All inter-system communication uses in-process mechanisms: queries, events, messages, commands, and resources.
+
+**Extensibility is achieved through Plugins**, not services. A plugin adds systems, resources, and components to the same World — zero-overhead integration at the cost of compile-time coupling.
+
+**Backend services** (out of scope for the engine core, but anticipated as separate projects):
+
+| Service | Purpose | Communication |
+| :--- | :--- | :--- |
+| Matchmaking / Lobby | Player session management | REST / WebSocket from game client |
+| Player Profiles / Persistence | Accounts, inventory, save data | REST API + database |
+| Asset CDN | Dynamic asset delivery, hot-reload in development | HTTP from AssetReader backend |
+| Analytics / Telemetry | Player behavior data collection | Async fire-and-forget UDP/HTTP |
+| Dedicated Game Server | Authoritative multiplayer instance | UDP (engine runs monolithically inside each instance) |
+
+These services are separate Go binaries. They may share type definitions with the engine (via shared packages) but do not import engine internals. Communication crosses a network boundary and is always asynchronous from the game loop's perspective.
+
 ## 5. Open Questions
 
 - Should plugins support explicit dependency declaration (plugin A requires plugin B) with automatic ordering, or is registration order sufficient?
 - Should SubApps support bidirectional data transfer, or is extract (main to sub) sufficient?
 - How should plugin configuration errors (e.g., conflicting settings) be reported — panic at startup or structured error return?
+- Should the engine provide a `NetworkPlugin` abstraction for game-server communication, or leave networking entirely to user code?
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added deployment architecture: modular monolith, backend service boundary, no-network-in-loop rule |
