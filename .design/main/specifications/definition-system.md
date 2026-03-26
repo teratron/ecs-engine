@@ -20,6 +20,7 @@ This is the foundation for data-driven game development: **code defines capabili
 - [asset-system.md](asset-system.md) — Definition files loaded as assets with hot-reload
 - [component-system.md](component-system.md) — Component values deserialized from JSON via registry
 - [hierarchy-system.md](hierarchy-system.md) — Parent-child trees expressed in nested JSON structure
+- [ai-assistant-system.md](ai-assistant-system.md) — AI agents read and write definition files
 
 ## 1. Motivation
 

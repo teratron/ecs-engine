@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.7.0
+**Version:** 2.8.0
 **Status:** Active
 
 ## Overview
@@ -83,10 +83,11 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [ui-system.md](specifications/ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.2.0 |
 | [build-tooling.md](specifications/build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.2.0 |
 | [platform-system.md](specifications/platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
+| [ai-assistant-system.md](specifications/ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
 | [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
 
 ## Meta Information
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-26
-- **Total Specifications**: 48 (34 L1 concept + 14 L2 Go implementation)
+- **Total Specifications**: 49 (35 L1 concept + 14 L2 Go implementation)
