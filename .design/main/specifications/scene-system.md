@@ -14,6 +14,7 @@ The scene system captures and restores collections of entities with their compon
 - [world-system.md](world-system.md) — Scenes are extracted from and instantiated into a World
 - [entity-system.md](entity-system.md) — Entity remapping during scene instantiation
 - [component-system.md](component-system.md) — Component reflection for DynamicScene
+- [definition-system.md](definition-system.md) — Scene definitions as JSON, extending DynamicScene with richer semantics
 
 ## 1. Motivation
 

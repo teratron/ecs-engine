@@ -13,6 +13,7 @@ The asset system manages loading, tracking, and lifetime of external resources (
 - [task-system.md](task-system.md) — Async loading runs on the IO pool
 - [scene-system.md](scene-system.md) — Scenes are assets loaded through this system
 - [event-system.md](event-system.md) — Asset lifecycle events
+- [definition-system.md](definition-system.md) — JSON definitions loaded as assets with hot-reload
 
 ## 1. Motivation
 

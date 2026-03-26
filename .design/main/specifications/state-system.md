@@ -13,6 +13,7 @@ The state system provides hierarchical finite state machines for controlling app
 - [system-scheduling.md](system-scheduling.md) — State transitions run in the StateTransition schedule
 - [app-framework.md](app-framework.md) — States registered as App resources; StateTransition is a main schedule
 - [entity-system.md](entity-system.md) — DespawnOnExit marker component targets entities for cleanup
+- [definition-system.md](definition-system.md) — Flow definitions describe state graphs declaratively in JSON
 
 ## 1. Motivation
 

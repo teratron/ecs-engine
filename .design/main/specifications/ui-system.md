@@ -14,6 +14,7 @@ The UI system provides a declarative, component-driven interface layer rendered 
 - [render-core.md](render-core.md) — UI render pass and font atlas management
 - [input-system.md](input-system.md) — Pointer and keyboard events for interaction
 - [math-system.md](math-system.md) — Rect, Vec2, and color types
+- [definition-system.md](definition-system.md) — UI trees and styles expressible as JSON definitions
 
 ## 1. Motivation
 
