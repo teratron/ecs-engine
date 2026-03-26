@@ -10,9 +10,10 @@ Defines the structure, conventions, and categories for the engine's `examples/` 
 
 ## Related Specifications
 
-- [ecs-core-architecture.md](ecs-core-architecture.md) - Core ECS architecture that examples validate
-- [render-pipeline.md](render-pipeline.md) - Render backend abstraction used by 2D/3D examples
-- [app-framework.md](app-framework.md) - App builder pattern used as entry point for all examples
+- [entity-system.md](entity-system.md) — Core ECS entities that examples validate
+- [component-system.md](component-system.md) — Component patterns demonstrated in examples
+- [render-core.md](render-core.md) — Render backend abstraction used by 2D/3D examples
+- [app-framework.md](app-framework.md) — App builder pattern used as entry point for all examples
 
 ## 1. Motivation
 

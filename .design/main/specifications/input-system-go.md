@@ -1,0 +1,487 @@
+# Input System — Go Implementation
+
+**Version:** 0.1.0
+**Status:** Draft
+**Layer:** go
+**L1 Reference:** [input-system.md](input-system.md)
+
+## Overview
+
+This specification defines the Go implementation of the input system described in the L1 concept spec. The input system provides a device-agnostic abstraction for keyboard, mouse, gamepad, and touch input. The core type is the generic `ButtonInput[T]` resource that tracks pressed/just-pressed/just-released state using map-based sets. Device types use `iota` enums. All types live in the `internal/input` package with a dependency on `internal/ecs` for resource registration and `internal/math` for Vec2.
+
+## Go Package
+
+```
+internal/input/
+```
+
+All types in this spec belong to package `input`. The package imports `internal/ecs` for World and resource registration and `internal/math` for vector types.
+
+## Type Definitions
+
+### ButtonInput[T]
+
+```go
+// ButtonInput is a generic resource that tracks the pressed/released state
+// of buttons (keys, mouse buttons, gamepad buttons). T must be comparable
+// for use as a map key.
+type ButtonInput[T comparable] struct {
+    pressed      map[T]bool // currently held down
+    justPressed  map[T]bool // transitioned to pressed this frame
+    justReleased map[T]bool // transitioned to released this frame
+}
+
+// NewButtonInput creates an empty ButtonInput with pre-allocated maps.
+func NewButtonInput[T comparable]() *ButtonInput[T]
+
+// Pressed reports whether the button is currently held down.
+func (b *ButtonInput[T]) Pressed(button T) bool
+
+// JustPressed reports whether the button transitioned from released to pressed
+// this frame. True for exactly one frame per press.
+func (b *ButtonInput[T]) JustPressed(button T) bool
+
+// JustReleased reports whether the button transitioned from pressed to released
+// this frame. True for exactly one frame per release.
+func (b *ButtonInput[T]) JustReleased(button T) bool
+
+// AnyPressed reports whether any button is currently held down.
+func (b *ButtonInput[T]) AnyPressed() bool
+
+// AnyJustPressed reports whether any button was just pressed this frame.
+func (b *ButtonInput[T]) AnyJustPressed() bool
+
+// GetPressed returns a slice of all currently pressed buttons.
+func (b *ButtonInput[T]) GetPressed() []T
+
+// GetJustPressed returns a slice of all buttons just pressed this frame.
+func (b *ButtonInput[T]) GetJustPressed() []T
+
+// GetJustReleased returns a slice of all buttons just released this frame.
+func (b *ButtonInput[T]) GetJustReleased() []T
+
+// Press records a button press. Adds to pressed and justPressed sets.
+// If the button was already pressed, it is not added to justPressed.
+func (b *ButtonInput[T]) Press(button T)
+
+// Release records a button release. Removes from pressed, adds to justReleased.
+// If the button was not pressed, it is not added to justReleased.
+func (b *ButtonInput[T]) Release(button T)
+
+// Clear resets justPressed and justReleased sets for the new frame.
+// Called by the engine at the start of input processing, not by user systems.
+func (b *ButtonInput[T]) Clear()
+
+// Reset clears all state — pressed, justPressed, and justReleased.
+func (b *ButtonInput[T]) Reset()
+```
+
+### AxisInput[T]
+
+```go
+// AxisInput is a generic resource for analog inputs (gamepad axes, mouse
+// position). T identifies the axis. Values are typically normalized
+// (-1.0 to 1.0 for sticks, 0.0 to 1.0 for triggers).
+type AxisInput[T comparable] struct {
+    values map[T]float64
+}
+
+// NewAxisInput creates an empty AxisInput resource.
+func NewAxisInput[T comparable]() *AxisInput[T]
+
+// Get returns the current value of the axis. Returns 0 if not present.
+func (a *AxisInput[T]) Get(axis T) float64
+
+// Set updates the current value of the axis.
+func (a *AxisInput[T]) Set(axis T, value float64)
+
+// Reset sets all axis values to 0.
+func (a *AxisInput[T]) Reset()
+```
+
+### KeyCode
+
+```go
+// KeyCode represents physical keyboard key codes.
+type KeyCode uint16
+
+const (
+    KeyA KeyCode = iota
+    KeyB
+    KeyC
+    KeyD
+    KeyE
+    KeyF
+    KeyG
+    KeyH
+    KeyI
+    KeyJ
+    KeyK
+    KeyL
+    KeyM
+    KeyN
+    KeyO
+    KeyP
+    KeyQ
+    KeyR
+    KeyS
+    KeyT
+    KeyU
+    KeyV
+    KeyW
+    KeyX
+    KeyY
+    KeyZ
+
+    KeyDigit0
+    KeyDigit1
+    KeyDigit2
+    KeyDigit3
+    KeyDigit4
+    KeyDigit5
+    KeyDigit6
+    KeyDigit7
+    KeyDigit8
+    KeyDigit9
+
+    KeyF1
+    KeyF2
+    KeyF3
+    KeyF4
+    KeyF5
+    KeyF6
+    KeyF7
+    KeyF8
+    KeyF9
+    KeyF10
+    KeyF11
+    KeyF12
+
+    KeyEscape
+    KeyEnter
+    KeySpace
+    KeyBackspace
+    KeyTab
+    KeyDelete
+    KeyInsert
+    KeyHome
+    KeyEnd
+    KeyPageUp
+    KeyPageDown
+
+    KeyArrowUp
+    KeyArrowDown
+    KeyArrowLeft
+    KeyArrowRight
+
+    KeyShiftLeft
+    KeyShiftRight
+    KeyControlLeft
+    KeyControlRight
+    KeyAltLeft
+    KeyAltRight
+    KeySuperLeft
+    KeySuperRight
+
+    KeyMinus
+    KeyEqual
+    KeyBracketLeft
+    KeyBracketRight
+    KeyBackslash
+    KeySemicolon
+    KeyQuote
+    KeyBackquote
+    KeyComma
+    KeyPeriod
+    KeySlash
+    KeyCapsLock
+    KeyNumLock
+    KeyScrollLock
+    KeyPrintScreen
+    KeyPause
+
+    KeyCodeCount // sentinel — total number of key codes
+)
+```
+
+### MouseButton
+
+```go
+// MouseButton represents mouse button identifiers.
+type MouseButton uint8
+
+const (
+    MouseButtonLeft MouseButton = iota
+    MouseButtonRight
+    MouseButtonMiddle
+    MouseButtonBack
+    MouseButtonForward
+)
+```
+
+### MouseMotion
+
+```go
+// MouseMotion represents mouse movement delta for the current frame.
+// Stored as an event, not a resource.
+type MouseMotion struct {
+    Delta math.Vec2
+}
+```
+
+### MouseWheel
+
+```go
+// MouseWheel represents mouse wheel scroll for the current frame.
+type MouseWheel struct {
+    X float64 // horizontal scroll
+    Y float64 // vertical scroll
+}
+```
+
+### CursorPosition
+
+```go
+// CursorPosition is a resource tracking the current mouse cursor position
+// in window-relative pixel coordinates.
+type CursorPosition struct {
+    Position math.Vec2
+}
+```
+
+### GamepadButton
+
+```go
+// GamepadButton represents gamepad button identifiers.
+type GamepadButton uint8
+
+const (
+    GamepadButtonSouth GamepadButton = iota // A / Cross
+    GamepadButtonEast                       // B / Circle
+    GamepadButtonNorth                      // Y / Triangle
+    GamepadButtonWest                       // X / Square
+    GamepadButtonLeftBumper
+    GamepadButtonRightBumper
+    GamepadButtonLeftTrigger
+    GamepadButtonRightTrigger
+    GamepadButtonSelect
+    GamepadButtonStart
+    GamepadButtonLeftStick
+    GamepadButtonRightStick
+    GamepadButtonDPadUp
+    GamepadButtonDPadDown
+    GamepadButtonDPadLeft
+    GamepadButtonDPadRight
+)
+```
+
+### GamepadAxis
+
+```go
+// GamepadAxis represents analog gamepad axes.
+type GamepadAxis uint8
+
+const (
+    GamepadAxisLeftStickX GamepadAxis = iota
+    GamepadAxisLeftStickY
+    GamepadAxisRightStickX
+    GamepadAxisRightStickY
+    GamepadAxisLeftTrigger
+    GamepadAxisRightTrigger
+)
+```
+
+### GamepadID
+
+```go
+// GamepadID identifies a connected gamepad.
+type GamepadID uint8
+```
+
+### TouchPhase
+
+```go
+// TouchPhase represents the phase of a touch event.
+type TouchPhase uint8
+
+const (
+    TouchPhaseStarted   TouchPhase = iota
+    TouchPhaseMoved
+    TouchPhaseEnded
+    TouchPhaseCancelled
+)
+```
+
+### TouchInput
+
+```go
+// TouchInput represents a single touch event with multi-touch support.
+type TouchInput struct {
+    Phase    TouchPhase
+    ID       uint64    // unique identifier per finger/pointer
+    Position math.Vec2 // screen position
+    Force    float64   // pressure (0.0 to 1.0, if available)
+}
+```
+
+### Input Events
+
+```go
+// KeyboardInput is an event sent when a key is pressed or released.
+type KeyboardInput struct {
+    Key     KeyCode
+    Pressed bool
+}
+
+// MouseButtonInput is an event sent when a mouse button is pressed or released.
+type MouseButtonInput struct {
+    Button  MouseButton
+    Pressed bool
+}
+
+// CursorMoved is an event sent when the cursor moves.
+type CursorMoved struct {
+    Position math.Vec2
+}
+
+// GamepadConnectionEvent is sent when a gamepad is connected or disconnected.
+type GamepadConnectionEvent struct {
+    ID        GamepadID
+    Connected bool
+}
+
+// GamepadButtonInput is an event sent when a gamepad button is pressed or released.
+type GamepadButtonInput struct {
+    Gamepad GamepadID
+    Button  GamepadButton
+    Pressed bool
+}
+
+// GamepadAxisChanged is an event sent when a gamepad axis value changes.
+type GamepadAxisChanged struct {
+    Gamepad GamepadID
+    Axis    GamepadAxis
+    Value   float64
+}
+```
+
+## Key Methods
+
+### Input Update System (PreUpdate Schedule)
+
+```
+SYSTEM update_input(world, platformEvents):
+  // Step 1: Clear per-frame state from previous frame
+  keyboard = world.Resource(ButtonInput[KeyCode])
+  keyboard.Clear()
+
+  mouse = world.Resource(ButtonInput[MouseButton])
+  mouse.Clear()
+
+  gamepad = world.Resource(ButtonInput[GamepadButton])
+  gamepad.Clear()
+
+  // Step 2: Process platform events for this frame
+  FOR EACH event IN platformEvents:
+    MATCH event:
+      KeyDown(key):
+        keyboard.Press(key)
+        world.SendEvent(KeyboardInput{Key: key, Pressed: true})
+
+      KeyUp(key):
+        keyboard.Release(key)
+        world.SendEvent(KeyboardInput{Key: key, Pressed: false})
+
+      MouseDown(button):
+        mouse.Press(button)
+        world.SendEvent(MouseButtonInput{Button: button, Pressed: true})
+
+      MouseUp(button):
+        mouse.Release(button)
+        world.SendEvent(MouseButtonInput{Button: button, Pressed: false})
+
+      MouseMove(x, y):
+        world.Resource(CursorPosition).Position = Vec2{x, y}
+        world.SendEvent(CursorMoved{Position: Vec2{x, y}})
+
+      MouseMotionDelta(dx, dy):
+        world.SendEvent(MouseMotion{Delta: Vec2{dx, dy}})
+
+      MouseScroll(x, y):
+        world.SendEvent(MouseWheel{X: x, Y: y})
+
+      GamepadButton(id, button, pressed):
+        IF pressed: gamepad.Press(button)
+        ELSE: gamepad.Release(button)
+        world.SendEvent(GamepadButtonInput{...})
+
+      GamepadAxis(id, axis, value):
+        world.Resource(AxisInput[GamepadAxis]).Set(axis, value)
+        world.SendEvent(GamepadAxisChanged{...})
+
+      Touch(phase, id, pos, force):
+        world.SendEvent(TouchInput{...})
+```
+
+### Resource Registration
+
+The following resources are registered in the World by `InputPlugin`:
+
+```
+ButtonInput[KeyCode]       — keyboard button state
+ButtonInput[MouseButton]   — mouse button state
+ButtonInput[GamepadButton] — gamepad button state
+AxisInput[GamepadAxis]     — gamepad analog axes
+CursorPosition             — current cursor position
+```
+
+### InputPlugin
+
+```go
+// InputPlugin registers all input resources and the input update system.
+type InputPlugin struct{}
+
+// Build inserts ButtonInput, AxisInput, and CursorPosition resources into
+// the World and registers the input update system in PreUpdate.
+func (p InputPlugin) Build(app *app.App)
+```
+
+## Performance Strategy
+
+- **map[T]bool for sets**: Simple and allocation-free after initial growth. For typical input counts (< 10 simultaneously pressed keys), map overhead is negligible.
+- **Clear resets maps in place**: `justPressed` and `justReleased` maps are cleared with `clear()` builtin (Go 1.21+), reusing allocated memory.
+- **No per-key allocation**: `KeyCode`, `MouseButton`, `GamepadButton` are integer types — no heap allocation when used as map keys.
+- **Single system per frame**: All input processing runs in one system in `PreUpdate`, minimizing overhead.
+- **Event batching**: All platform events for a frame are processed in a single pass.
+
+## Error Handling
+
+- **Unknown key codes**: Platform events with unrecognized key codes are silently ignored. Log at debug level via `log/slog`.
+- **Gamepad disconnection**: On disconnect, all buttons for that gamepad are released. The `ButtonInput[GamepadButton]` resource is shared across gamepads — per-gamepad tracking requires the GamepadID in events.
+- **Double press in single frame**: If a key is pressed and released in the same frame, both `justPressed` and `justReleased` are true for that frame.
+- **No platform backend**: If no window/platform backend is registered, the input system runs with no events (all inputs stay at default state).
+
+## Testing Strategy
+
+- **Unit tests**: Create `ButtonInput[KeyCode]`, call `Press(KeyA)`, verify `Pressed`, `JustPressed`. Call `Clear`, verify `JustPressed` is false but `Pressed` is still true. Call `Release(KeyA)`, verify `JustReleased`.
+- **ButtonInput semantics**: Press + Release in same frame — verify both `JustPressed` and `JustReleased` are true.
+- **AxisInput**: Set axis value, verify `Get` returns it. Reset, verify zero.
+- **Clear vs Reset**: Verify `Clear` only clears per-frame state, `Reset` clears everything.
+- **Multi-button**: Press 5 keys, verify `GetPressed` returns all 5. Verify `AnyPressed` is true.
+- **Event generation**: Mock platform events, run input system, verify correct engine events are sent.
+- **Integration**: Register InputPlugin in an App, simulate key press via platform event, verify `ButtonInput[KeyCode].JustPressed` in a test system.
+- **Benchmarks**: `BenchmarkButtonInputPress`, `BenchmarkButtonInputClear` with 10 active keys — target zero allocations after warmup.
+
+## Open Questions
+
+- Should there be a built-in action mapping layer (e.g., "Jump" maps to Space + GamepadSouth), or is that a separate specification?
+- Should gamepads have per-gamepad `ButtonInput` resources, or is a shared resource with GamepadID in events sufficient?
+- Dead zone configuration for gamepad axes — should it be a global resource setting or per-axis?
+- Should the input system support input recording/replay for testing and demos?
+- Should `ButtonInput[T]` use a bitset instead of `map[T]bool` for fixed-size enums like `KeyCode` for better performance?
+
+## Document History
+
+| Version | Date | Description |
+| :--- | :--- | :--- |
+| 0.1.0 | 2026-03-26 | Initial L2 draft |

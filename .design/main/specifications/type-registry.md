@@ -1,11 +1,13 @@
-# Type Registry Specification
+# Type Registry
 
-| Metadata | Value |
-| :--- | :--- |
-| **Layer** | 1 (concept) |
-| **Status** | Draft |
-| **Version** | 0.1.0 |
-| **Related Specifications** | [component-system.md](component-system.md), [scene-system.md](scene-system.md) |
+**Version:** 0.1.0
+**Status:** Draft
+**Layer:** concept
+
+## Related Specifications
+
+- [component-system.md](component-system.md) — Components register in the type registry
+- [scene-system.md](scene-system.md) — Scene serialization uses registry for dynamic types
 
 ## Overview
 
