@@ -124,47 +124,48 @@ The render schedule within the render SubApp executes in four distinct phases, e
 
 ```plaintext
 Phase 1 — Collect:
-  - Initialize per-frame render state
-  - Enumerate visibility groups
-  - Build per-view render object lists
-  - Thread: main render thread
+  - Initialize per-frame render state.
+  - Enumerate visibility groups and discover active RenderViews.
+  - Thread: Main render thread.
 
 Phase 2 — Extract:
-  - Fast copy of entity data into render structures
-  - Uses ThreadLocal storage per worker
-  - Does NOT block simulation (can overlap with next main frame)
-  - Thread: parallel workers with thread-local scratch
+  - Fast, parallel copy of relevant entity data into render-specific structures.
+  - Uses ThreadLocal scratch buffers to avoid synchronization overhead.
+  - IMPORTANT: Does NOT block main simulation. Collects a "snapshot" of the world state.
+  - Thread: Parallel workers.
 
 Phase 3 — Prepare:
-  - Heavy computation: GPU resource allocation, buffer uploads, shader permutation
-  - Uses ConcurrentPool for per-thread work buffers
-  - Can run parallel to the next simulation frame
-  - Thread: parallel workers
+  - CPU-heavy computation: GPU resource allocation, buffer uploads, shader permutation.
+  - Parallelizable per-light, per-view, or per-object.
+  - Can overlap with the next frame's main simulation logic.
+  - Thread: Parallel workers.
 
 Phase 4 — Draw:
-  - Issue GPU commands per view per render stage
-  - Strictly sequential per command encoder
-  - Thread: render thread (or per-view parallel with separate encoders)
+  - Issue actual GPU commands (DrawCalls) per stage.
+  - Sequence-dependent within a single command encoder.
+  - Thread: Render thread (or parallel encoders if backend supports).
 ```
 
-**Frame counter tracking**: Each RenderView stores `LastFrameCollected` to skip redundant collection. The render system increments a global `FrameCounter`; views are only re-collected when their counter falls behind.
+**Frame counter tracking**: Each `RenderView` stores `LastFrameCollected` to skip redundant work. The render system increments a global `FrameCounter`; views are only re-processed when their state falls behind.
 
 ### 4.10 RenderFeature Extension Points
 
-Render capabilities are added via `RenderFeature` — pluggable processors that participate in all four pipeline phases:
+Render capabilities are added via `RenderFeature` — specialized processors that participate in all pipeline phases. 
+
+**Decoupling Principle**: `RenderObject` instances are NOT ECS `Entity` objects. They are light-weight Proxies created by a `RenderFeature` during the Extract phase. This allows the renderer to manage its own spatial hierarchy and resource lifecycle without being tied to the main ECS world's structural changes.
 
 ```plaintext
 RenderFeature (interface)
   Initialize()
   Collect()                          // discover renderable objects
-  Extract()                          // copy data from ECS to render structs
+  Extract()                          // copy data from ECS to internal RenderObjects
   PrepareEffectPermutations(ctx)     // compile/select shader variants
   Prepare(ctx)                       // allocate GPU resources, fill buffers
   Draw(ctx, view, stage)             // issue draw commands
   Flush(ctx)                         // release per-frame temporaries
 ```
 
-Each feature represents a complete rendering capability (mesh rendering, shadow mapping, particle rendering, post-processing). Features are NOT components on entities — they are pipeline-level processors that own their render data. This separation allows a feature to manage its own GPU resource lifecycle independently of entity lifetimes.
+Each feature represents a complete capability (MeshRendering, ShadowMapping, PostProcessing). Features own their data and do not pollute components with GPU-specific state.
 
 Features register with the RenderSystem and receive callbacks at each phase. Multiple features can contribute draw commands to the same RenderStage (e.g., both mesh and particle features contribute to the Opaque stage).
 

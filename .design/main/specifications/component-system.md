@@ -170,19 +170,29 @@ Rule 2 prevents accidental data sharing — a component struct is owned by exact
 Systems often need to cache preprocessed or runtime-specific data for each entity they process, without adding fields to the component itself:
 
 ```plaintext
-SystemWithData[TComponent, TData]
-  component_data: map[ComponentID]TData
+AssociatedDataMap[TComponent, TData]
+  data: map[ComponentID]TData      // dictionary keyed by internal component index
 
-  // Called when a matching entity is first added to this system
-  GenerateData(entity: Entity, component: TComponent) -> TData
+  // Each frame (or as needed):
+  Get(entity: Entity, component: TComponent) -> TData:
+    if existing := data.get(component.Id):
+        if IsDataValid(entity, component, existing):
+            return existing
+        else:
+            Cleanup(existing)
 
-  // Called each frame to check if cached data is still valid
-  IsDataValid(entity: Entity, component: TComponent, data: TData) -> bool
+    newData = GenerateData(entity, component)
+    data.put(component.Id, newData)
+    return newData
 ```
 
-For example, a render system caches GPU buffer handles per MeshComponent, and an audio system caches playback instances per AudioPlayer — without polluting those components with rendering or audio internals. When `IsDataValid` returns false (e.g., the entity's Transform changed), the system regenerates the cached data.
+**Key Mechanisms:**
+- **Separation of Concerns**: Components remain "blind" data (POD structs). Systems own the technical "handles" or "buffers" needed for their operation.
+- **Fast Lookup**: Using internal non-generational `ComponentID` as a key allows O(1) array or sparse-set indexing for maximal performance.
+- **Validation**: `IsDataValid` checks if environmental factors (like a change in `Transform` or `GlobalTransform` tick) require a full data rebuild.
+- **Automatic Lifecycle**: When a component is removed from an entity, its `OnRemove` hook triggers the cleanup of all associated data in registered maps.
 
-This pattern enforces separation of concerns: components remain pure data, while systems own their operational state. The map is keyed by component ID, so lookup is O(1).
+For example, a **RenderMeshSystem** caches GPU buffer handles per `MeshComponent`. If the `MeshComponent`'s source path changes, `IsDataValid` returns false, and the GPU handles are re-initialized for the new asset.
 
 ## 5. Open Questions
 

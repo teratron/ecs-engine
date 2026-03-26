@@ -15,11 +15,11 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [world-system-go.md](specifications/world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Draft | go | 0.1.0 |
 | [entity-system.md](specifications/entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling | Draft | concept | 0.1.0 |
 | [entity-system-go.md](specifications/entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Draft | go | 0.1.0 |
-| [component-system.md](specifications/component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.2.0 |
+| [component-system.md](specifications/component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.3.0 |
 | [component-system-go.md](specifications/component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
 | [query-system.md](specifications/query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
 | [query-system-go.md](specifications/query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
-| [system-scheduling.md](specifications/system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.2.0 |
+| [system-scheduling.md](specifications/system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.3.0 |
 | [system-scheduling-go.md](specifications/system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
 | [command-system.md](specifications/command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
 | [command-system-go.md](specifications/command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
@@ -49,8 +49,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [task-system.md](specifications/task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.1.0 |
-| [asset-system.md](specifications/asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.2.0 |
+| [task-system.md](specifications/task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
+| [asset-system.md](specifications/asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
 | [scene-system.md](specifications/scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.3.0 |
 | [math-system.md](specifications/math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
 
@@ -58,7 +58,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [render-core.md](specifications/render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.4.0 |
+| [render-core.md](specifications/render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.5.0 |
 | [mesh-and-image.md](specifications/mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
 | [materials-and-lighting.md](specifications/materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Draft | concept | 0.1.0 |
 | [camera-and-visibility.md](specifications/camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Draft | concept | 0.1.0 |

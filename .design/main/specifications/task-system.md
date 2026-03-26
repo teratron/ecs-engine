@@ -136,14 +136,56 @@ flowchart LR
     end
 ```
 
+### 4.8 Batched Dispatcher
+
+To minimize overhead for fine-grained parallel operations (e.g., iterating thousands of components), the system uses a batched dispatcher:
+
+```plaintext
+Dispatcher.ForBatched(items, batch_size, func(batch))
+  count = items.length / batch_size
+  current_batch_index = AtomicInt(0)
+
+  // Start workers
+  ParallelFor(worker_count, func():
+    while (idx = current_batch_index.Add(1)) < count:
+      process(items[idx * batch_size : (idx+1) * batch_size])
+  )
+```
+
+- **Atomic Stealing**: Workers use a single atomic increment to "claim" the next batch, reducing contention compared to per-item stealing.
+- **Adaptive Batching**: The system can adjust `batch_size` dynamically based on the complexity of the task (e.g., smaller for heavy computations, larger for simple memory copies).
+
+### 4.9 Work Stealing and TryCooperate
+
+When the main thread (or any thread) blocks on a task group, it does not enter a busy-wait or sleep state. Instead, it attempts to "cooperate" by stealing pending batches from the compute pool:
+
+```plaintext
+TaskHandle.BlockOn()
+  while !is_finished():
+    if batch = pool.TryStealBatch():
+      execute(batch)
+    else:
+      yield()   // only yield if the pool is truly empty but task isn't finished
+```
+
+This ensures that the thread waiting for the result actively contributes to its completion, maximizing CPU utilization and minimizing "tail latency" caused by slow worker threads.
+
+### 4.10 Task Priorities and Fairness
+
+The compute pool maintains multiple priority levels (Critical, Normal, Low):
+1. Workers always prefer batches from higher priority deques.
+2. To prevent starvation, long-running tasks must periodically "check-in" or yield.
+3. The IO pool is excluded from work-stealing to prevent blocking compute threads on high-latency IO operations.
+
 ## 5. Open Questions
 
-1. Should the compute pool support task priorities (e.g., physics before animation)?
-2. How should long-running compute tasks yield to avoid stalling the pool?
-3. Should there be a third pool type for GPU compute dispatch?
+1. How should long-running compute tasks yield to avoid stalling the pool?
+2. Should there be a third pool type for GPU compute dispatch?
+3. How to elegantly handle Go's goroutine preemption vs. fixed worker thread pinning?
 
 ## Document History
 
-| Version | Date       | Description                              |
-| :------ | :--------- | :--------------------------------------- |
-| 0.1.0   | 2026-03-25 | Initial draft from architecture analysis |
+| Version | Date | Description |
+| :--- | :--- | :--- |
+| 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0 | 2026-03-26 | Added Batched Dispatcher, Work Stealing (TryCooperate), and priority levels |

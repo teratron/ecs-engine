@@ -159,10 +159,7 @@ During apply, all pending commands execute sequentially against the World.
 
 A debug tool that pauses schedule execution and allows stepping through systems one at a time. Useful for:
 - Inspecting World state between system runs.
-- Identifying which system introduces a bug.
-- Not available in release builds.
-
-### 4.10 Automatic System Discovery
+- Identifying which system introduces a### 4.10 Automatic System Discovery
 
 Systems can be auto-discovered and instantiated when the first entity matching their requirements appears, rather than requiring explicit registration:
 
@@ -177,29 +174,27 @@ ComponentDescriptor {
 When the world encounters a component type for the first time:
 1. Check if `DefaultProcessor` is set on its descriptor.
 2. If set, instantiate the processor (if not already registered).
-3. Recursively check the processor's required types for their own default processors.
+3. **Recursive Resolution**: Examine the new processor's `RequiredTypes`. For each required type, repeat the discovery process. This ensures that adding a `MeshComponent` automatically brings in the `RenderSystem`, which in turn might pull in a `MaterialSystem`.
 
-This enables truly modular plugins: adding a component automatically brings in the system that processes it. Explicit registration (`AddSystems`) is still supported and takes precedence over auto-discovery.
+This enables truly modular plugins: adding a component automatically brings in the entire system chain that processes it. Explicit registration (`AddSystems`) is still supported and takes precedence over auto-discovery.
 
 ### 4.11 Dual-Phase System Registration
 
-Adding entities can trigger cascading processor discovery (§4.10), which can itself add more entities. To prevent ordering issues, system registration uses a two-phase approach:
+Adding entities can trigger cascading processor discovery (§4.10), which can itself add more entities (e.g., a `Spawner` system creating children). To prevent ordering issues and partial states, registration uses a two-phase approach with a reentrancy counter:
 
 ```plaintext
-addEntityLevel: int   // reentrancy counter
+addEntityLevel: int   // reentrancy counter, incremented on Entry, decremented on Exit
 
 Phase 1 — Entity Addition (addEntityLevel > 0):
-  New processors go into pendingProcessors list
-  No immediate registration or initialization
+  Any newly discovered processors go into a pendingProcessors queue.
+  No immediate registration or initialization occurs to avoid interfering with the current allocation loop.
 
 Phase 2 — Flush (addEntityLevel returns to 0):
-  RegisterPendingProcessors()
-  - Sort by priority
-  - Initialize each processor
-  - Match existing entities against new processor
+  The registry "flushes" the pending queue:
+  - Sort pending processors by their explicit Order/Priority.
+  - Initialize each processor (calling OnSystemAdd).
+  - Match ALL existing entities against the new processor — ensuring the system "catches up" with entities created before its discovery.
 ```
-
-This prevents a processor from receiving half-initialized entities or from interfering with the entity-addition process that triggered its creation. The `addEntityLevel` counter handles recursive entity additions (e.g., a processor's initialization spawns more entities).
 
 ### 4.12 System Dependency Graph
 
@@ -215,10 +210,10 @@ SystemDescriptor {
 ```
 
 The scheduler builds a mapping: `ComponentType → []System`, tracking both direct processors and dependents. When a component changes on an entity:
-1. Direct processors are notified to recheck the entity.
-2. Dependent processors are notified to revalidate their cached data.
+1. **Direct Processors**: Notified to recheck the entity's matching status.
+2. **Dependent Processors**: Notified to revalidate their **Associated Data** (§4.10 in [component-system.md](component-system.md)).
 
-This automates what would otherwise require manual `After`/`Before` constraints for component-driven systems. Type matching supports interface satisfaction — a system requiring `Renderable` matches any component implementing that interface.
+Type matching supports **Interface Satisfaction** — a system requiring `Renderable` matches any component type that implements the `Renderable` interface in the type registry.
 
 ### 4.13 Flexible System Registration
 
@@ -235,6 +230,7 @@ IProcessable[TSystem] interface {
 ```
 
 This complements the traditional model (§4.1–4.6): both can coexist in the same world. The flexible model is better for optional, self-contained features (e.g., a particle effect component that brings its own processor). The traditional model is better for core engine systems with complex inter-system ordering.
+ for core engine systems with complex inter-system ordering.
 
 ## 5. Open Questions
 
