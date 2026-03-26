@@ -48,6 +48,7 @@ QWEN.md
 Thumbs.db
 
 # Game engines
+.references/
+stride/
 godot/
 bevy/
-stride/
