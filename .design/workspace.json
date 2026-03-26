@@ -5,7 +5,7 @@
       "description": "Primary engine workspace"
     },
     "editor": {
-      "description": "GUI-based engine editor application (Godot/Unity style)"
+      "description": "GUI-based engine editor application (Godot/Unity/Unreal style)"
     }
   }
 }
