@@ -49,6 +49,3 @@ Thumbs.db
 
 # Game engines
 .references/
-stride/
-godot/
-bevy/
