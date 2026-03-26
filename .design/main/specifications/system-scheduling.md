@@ -1,6 +1,6 @@
 # System Scheduling
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -162,6 +162,80 @@ A debug tool that pauses schedule execution and allows stepping through systems 
 - Identifying which system introduces a bug.
 - Not available in release builds.
 
+### 4.10 Automatic System Discovery
+
+Systems can be auto-discovered and instantiated when the first entity matching their requirements appears, rather than requiring explicit registration:
+
+```plaintext
+// Component declares its default processor via attribute/tag
+ComponentDescriptor {
+    ...
+    DefaultProcessor: TypeID   // optional — auto-create this system when component first appears
+}
+```
+
+When the world encounters a component type for the first time:
+1. Check if `DefaultProcessor` is set on its descriptor.
+2. If set, instantiate the processor (if not already registered).
+3. Recursively check the processor's required types for their own default processors.
+
+This enables truly modular plugins: adding a component automatically brings in the system that processes it. Explicit registration (`AddSystems`) is still supported and takes precedence over auto-discovery.
+
+### 4.11 Dual-Phase System Registration
+
+Adding entities can trigger cascading processor discovery (§4.10), which can itself add more entities. To prevent ordering issues, system registration uses a two-phase approach:
+
+```plaintext
+addEntityLevel: int   // reentrancy counter
+
+Phase 1 — Entity Addition (addEntityLevel > 0):
+  New processors go into pendingProcessors list
+  No immediate registration or initialization
+
+Phase 2 — Flush (addEntityLevel returns to 0):
+  RegisterPendingProcessors()
+  - Sort by priority
+  - Initialize each processor
+  - Match existing entities against new processor
+```
+
+This prevents a processor from receiving half-initialized entities or from interfering with the entity-addition process that triggered its creation. The `addEntityLevel` counter handles recursive entity additions (e.g., a processor's initialization spawns more entities).
+
+### 4.12 System Dependency Graph
+
+Systems declare component type dependencies that the scheduler uses for automatic ordering and revalidation:
+
+```plaintext
+SystemDescriptor {
+    MainComponentType:  TypeID       // primary component this system processes
+    RequiredTypes:      []TypeID     // additional required components (entity must have ALL)
+    DependentTypes:     []TypeID     // component types whose changes trigger revalidation
+    Order:              int          // explicit priority (lower = earlier)
+}
+```
+
+The scheduler builds a mapping: `ComponentType → []System`, tracking both direct processors and dependents. When a component changes on an entity:
+1. Direct processors are notified to recheck the entity.
+2. Dependent processors are notified to revalidate their cached data.
+
+This automates what would otherwise require manual `After`/`Before` constraints for component-driven systems. Type matching supports interface satisfaction — a system requiring `Renderable` matches any component implementing that interface.
+
+### 4.13 Flexible System Registration
+
+An alternative registration model where components declare which system handles them via interface implementation:
+
+```plaintext
+// Component declares its processor type via interface
+IProcessable[TSystem] interface {
+    // Marker interface — presence triggers system auto-creation
+}
+
+// System is created on-demand when first IProcessable component appears
+// System is destroyed when last component is removed (reference-counted)
+```
+
+This complements the traditional model (§4.1–4.6): both can coexist in the same world. The flexible model is better for optional, self-contained features (e.g., a particle effect component that brings its own processor). The traditional model is better for core engine systems with complex inter-system ordering.
+
 ## 5. Open Questions
 
 - Should the engine support dynamic system addition/removal at runtime?
@@ -172,3 +246,4 @@ A debug tool that pauses schedule execution and allows stepping through systems 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added automatic system discovery, dual-phase registration, dependency graph, flexible registration |

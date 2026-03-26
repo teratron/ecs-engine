@@ -1,6 +1,6 @@
 # App Framework
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -348,6 +348,59 @@ The engine follows a **modular monolith** pattern. All ECS systems, rendering, a
 
 These services are separate Go binaries. They may share type definitions with the engine (via shared packages) but do not import engine internals. Communication crosses a network boundary and is always asynchronous from the game loop's perspective.
 
+### 4.12 Service Registry
+
+A lightweight service locator allows cross-system access without direct package imports:
+
+```plaintext
+ServiceRegistry (World resource)
+  Register[T](service: T)
+  Get[T]() -> (T, bool)              // returns (service, exists)
+  GetRequired[T]() -> T              // panics if not registered
+
+// Registration during plugin build:
+func AudioPlugin.Build(app *App) {
+    audioEngine := NewAudioEngine()
+    app.World().Services().Register[AudioSystem](audioEngine)
+}
+
+// Access from any system:
+func collision_sound(services: Res[ServiceRegistry], ...) {
+    if audio, ok := services.Get[AudioSystem](); ok {
+        audio.PlayOneShot(impactSound, position)
+    }
+}
+```
+
+Services are typed singletons — at most one instance per type. Unlike Resources (which are ECS data managed by the World), services are long-lived infrastructure objects (audio engine, render server, input manager) that exist outside the archetype/table storage.
+
+**Optional access**: `Get[T]()` returns a bool, enabling graceful degradation. A system that optionally uses audio can check availability without panicking in headless builds where AudioPlugin is absent.
+
+### 4.13 GameSystem Base Pattern
+
+Top-level engine subsystems (input, audio, scene, rendering) share a common lifecycle interface beyond the plugin model:
+
+```plaintext
+GameSystem (interface)
+  Update(time: GameTime)             // called every frame
+  Draw(time: GameTime)               // called every frame (after Update)
+  UpdateOrder() -> int               // execution priority (lower = earlier)
+  DrawOrder() -> int
+  Enabled() -> bool                  // if false, Update is skipped
+  Visible() -> bool                  // if false, Draw is skipped
+
+GameTime
+  elapsed:     Duration              // time since app start
+  delta:       Duration              // time since last frame
+  frame_count: uint64                // monotonic frame counter
+```
+
+**Update vs Draw split**: Systems that need both simulation and rendering phases (e.g., SceneSystem updates the scene graph in Update, then renders in Draw) implement both. Systems that are simulation-only (InputManager) implement Update with a no-op Draw.
+
+**Priority ordering**: `UpdateOrder` and `DrawOrder` return integers that determine execution sequence. The engine sorts all GameSystems by order before the frame loop begins. This provides a simple, explicit ordering for top-level subsystems — finer-grained ordering within a subsystem uses the ECS schedule (§4.2–4.6).
+
+**Enabled/Visible toggles**: Allow runtime enable/disable of entire subsystems (e.g., disable audio during a loading screen, hide debug overlay). These are checked each frame — no system removal/re-addition needed.
+
 ## 5. Open Questions
 
 - Should plugins support explicit dependency declaration (plugin A requires plugin B) with automatic ordering, or is registration order sufficient?
@@ -362,3 +415,4 @@ These services are separate Go binaries. They may share type definitions with th
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added deployment architecture: modular monolith, backend service boundary, no-network-in-loop rule |
 | 0.3.0 | 2026-03-26 | Added leveled plugin initialization (CORE/SERVERS/SCENE/EDITOR), editor init callbacks, build tag isolation |
+| 0.4.0 | 2026-03-26 | Added service registry, GameSystem base pattern with Update/Draw split |

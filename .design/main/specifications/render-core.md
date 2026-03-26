@@ -1,5 +1,5 @@
 # Render Core
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -118,6 +118,101 @@ A pipeline key is derived from (shader_id, material_properties, vertex_layout, r
 ### 4.8 Draw Functions
 A draw function is a registered callable per render phase. During the render schedule, the engine collects visible entities for each phase, sorts them, batches by pipeline + bind group, and invokes the corresponding draw function with the batched data.
 
+### 4.9 Multi-Phase Render Pipeline
+
+The render schedule within the render SubApp executes in four distinct phases, each with specific threading and data-access characteristics:
+
+```plaintext
+Phase 1 — Collect:
+  - Initialize per-frame render state
+  - Enumerate visibility groups
+  - Build per-view render object lists
+  - Thread: main render thread
+
+Phase 2 — Extract:
+  - Fast copy of entity data into render structures
+  - Uses ThreadLocal storage per worker
+  - Does NOT block simulation (can overlap with next main frame)
+  - Thread: parallel workers with thread-local scratch
+
+Phase 3 — Prepare:
+  - Heavy computation: GPU resource allocation, buffer uploads, shader permutation
+  - Uses ConcurrentPool for per-thread work buffers
+  - Can run parallel to the next simulation frame
+  - Thread: parallel workers
+
+Phase 4 — Draw:
+  - Issue GPU commands per view per render stage
+  - Strictly sequential per command encoder
+  - Thread: render thread (or per-view parallel with separate encoders)
+```
+
+**Frame counter tracking**: Each RenderView stores `LastFrameCollected` to skip redundant collection. The render system increments a global `FrameCounter`; views are only re-collected when their counter falls behind.
+
+### 4.10 RenderFeature Extension Points
+
+Render capabilities are added via `RenderFeature` — pluggable processors that participate in all four pipeline phases:
+
+```plaintext
+RenderFeature (interface)
+  Initialize()
+  Collect()                          // discover renderable objects
+  Extract()                          // copy data from ECS to render structs
+  PrepareEffectPermutations(ctx)     // compile/select shader variants
+  Prepare(ctx)                       // allocate GPU resources, fill buffers
+  Draw(ctx, view, stage)             // issue draw commands
+  Flush(ctx)                         // release per-frame temporaries
+```
+
+Each feature represents a complete rendering capability (mesh rendering, shadow mapping, particle rendering, post-processing). Features are NOT components on entities — they are pipeline-level processors that own their render data. This separation allows a feature to manage its own GPU resource lifecycle independently of entity lifetimes.
+
+Features register with the RenderSystem and receive callbacks at each phase. Multiple features can contribute draw commands to the same RenderStage (e.g., both mesh and particle features contribute to the Opaque stage).
+
+### 4.11 Visibility Culling
+
+A `VisibilityGroup` manages spatial partitioning and frustum culling for render objects:
+
+```plaintext
+VisibilityGroup
+  render_objects:  []RenderObject
+  render_data:     RenderDataHolder     // struct-of-arrays per-object data
+
+  TryCollect(view: RenderView):
+    if view.LastFrameCollected >= FrameCounter: return   // already collected
+    frustum = BuildFrustum(view.ViewProjection)
+    ParallelFor(render_objects, func(obj):
+      if !obj.Enabled: skip
+      if !obj.CullingMask.Matches(view.CullingMask): skip
+      if !frustum.Intersects(obj.BoundingBox): skip
+      view.VisibleObjects.Add(obj)
+    )
+```
+
+**Culling mask**: Each RenderObject has a `RenderGroup` bitmask, and each RenderView has a `CullingMask`. Only objects whose group matches the view's mask are considered. This enables camera-specific visibility (e.g., minimap camera only sees terrain and markers, not UI).
+
+**Parallel culling**: Frustum tests run in parallel over the object array using batched dispatch. Each batch appends to a thread-local collector; results are merged after all batches complete.
+
+### 4.12 Struct-of-Arrays Render Data
+
+Render objects store their per-object data in a struct-of-arrays layout for cache-efficient iteration:
+
+```plaintext
+RenderDataHolder
+  arrays:      []DataArray              // one contiguous array per data type
+  definitions: map[DataKey]arrayIndex   // key → array mapping
+
+  // Static keys (per-object, persistent):
+  RenderStageMask: StaticKey[uint32]    // which stages this object participates in
+  WorldMatrix:     StaticKey[Mat4]      // cached world transform
+
+  // Dynamic keys (per-frame, regenerated):
+  SortKey:         DynamicKey[uint64]   // computed sort value for ordering
+```
+
+Each `RenderObject` receives an index into all arrays. Iterating over all world matrices for frustum culling reads a single contiguous `[]Mat4` — no pointer chasing through heterogeneous object graphs. New data types can be registered at runtime without modifying the RenderObject struct.
+
+This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array maps directly to an instance buffer without marshalling.
+
 ## 5. Open Questions
 1. Should transient texture allocation use a pool or per-frame linear allocator?
 2. How should async pipeline compilation failures be surfaced to the developer?
@@ -130,3 +225,4 @@ A draw function is a registered callable per render phase. During the render sch
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.3.0 | 2026-03-26 | Added server pattern (RID + command queue), two-phase resource creation, Scenario concept, physics callback open questions |
+| 0.4.0 | 2026-03-26 | Added multi-phase pipeline (Collect/Extract/Prepare/Draw), RenderFeature, visibility culling, struct-of-arrays render data |

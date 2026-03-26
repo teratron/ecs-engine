@@ -1,6 +1,6 @@
 # Component System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -145,6 +145,45 @@ The type registry maps runtime type information to engine metadata:
 
 The registry is a World resource, populated during plugin initialization.
 
+### 4.9 Component Attachment Validation
+
+The component collection enforces structural rules at insertion time, preventing invalid states before they reach systems:
+
+```plaintext
+Validation Rules (checked on Add/Insert):
+  1. SingleInstancePerType  — only one component of a given type per entity
+                              (unless type declares AllowMultipleComponents)
+  2. NoDualAttach           — a component instance cannot be attached to two entities
+                              simultaneously; detach from old entity first
+  3. NoCyclicParent         — when adding a hierarchy component (e.g., ChildOf),
+                              verify no ancestor cycle exists
+  4. EntityOwnership        — the component stores a back-reference to its owning
+                              entity; the collection updates this on attach/detach
+```
+
+Rule 1 uses an opt-out attribute: most components are single-instance (Position, Health), but some (e.g., multiple AudioPlayer sources on one entity) can declare `AllowMultipleComponents`. The default is single-instance because it enables fast `Get[T]()` lookups without iteration.
+
+Rule 2 prevents accidental data sharing — a component struct is owned by exactly one entity. If user code needs the same data on two entities, it must clone explicitly (see §4.6 Clone Behavior).
+
+### 4.10 Associated Data Pattern
+
+Systems often need to cache preprocessed or runtime-specific data for each entity they process, without adding fields to the component itself:
+
+```plaintext
+SystemWithData[TComponent, TData]
+  component_data: map[ComponentID]TData
+
+  // Called when a matching entity is first added to this system
+  GenerateData(entity: Entity, component: TComponent) -> TData
+
+  // Called each frame to check if cached data is still valid
+  IsDataValid(entity: Entity, component: TComponent, data: TData) -> bool
+```
+
+For example, a render system caches GPU buffer handles per MeshComponent, and an audio system caches playback instances per AudioPlayer — without polluting those components with rendering or audio internals. When `IsDataValid` returns false (e.g., the entity's Transform changed), the system regenerates the cached data.
+
+This pattern enforces separation of concerns: components remain pure data, while systems own their operational state. The map is keyed by component ID, so lookup is O(1).
+
 ## 5. Open Questions
 
 - Should components support inheritance / composition beyond required components?
@@ -155,3 +194,4 @@ The registry is a World resource, populated during plugin initialization.
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added component attachment validation rules, associated data pattern |

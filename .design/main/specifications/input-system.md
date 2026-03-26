@@ -1,6 +1,6 @@
 # Input System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -253,6 +253,65 @@ InputEvent
 
 This transforms event positions through canvas/viewport transforms so UI nodes receive events in their local coordinate space. The UI system applies this automatically — user code rarely calls it directly.
 
+### 4.11 Multi-Source Input Aggregation
+
+The input system aggregates input from multiple platform-specific sources into a unified device model:
+
+```plaintext
+InputSource (interface)
+  Devices() -> map[DeviceID]InputDevice
+  Initialize(manager: *InputManager)
+  Scan()       // discover new devices (e.g., gamepad connected)
+  Update()     // poll device state, emit events
+  Pause()      // suspend input (app backgrounded)
+  Resume()     // resume input (app foregrounded)
+
+InputManager
+  sources:         []InputSource          // platform backends
+  keyboards:       []KeyboardDevice
+  pointers:        []PointerDevice
+  gamepads:        []GamepadDevice
+  sensors:         []SensorDevice         // accelerometer, gyroscope
+  events:          []InputEvent           // aggregated per-frame events
+  gesture_configs: map[GestureConfig]GestureRecognizer
+```
+
+Each platform (Desktop, Android, iOS, Web) provides an `InputSource` implementation that manages its own device lifecycle. The `InputManager` aggregates all sources, collecting devices and events into unified lists. This means:
+
+- Desktop: SDL or platform-native source provides keyboard + mouse + gamepads.
+- Android: Touch source + sensor source (accelerometer, gyro).
+- Web: DOM event source with keyboard + pointer + gamepad API.
+
+Multiple sources can coexist — e.g., a desktop build with both a native keyboard source and a remote-input source for mobile controller streaming.
+
+### 4.12 Device Hot-Plug Lifecycle
+
+Input devices follow a well-defined connection lifecycle:
+
+```plaintext
+Device States:
+  Disconnected → Connected → Active → Paused → Active → Disconnected
+
+InputSource.Scan():
+  - Check for newly connected devices
+  - Check for disconnected devices
+  - Emit GamepadConnected / GamepadDisconnected events
+
+InputSource.Pause():
+  - All active devices transition to Paused
+  - No events generated while paused
+  - Device state frozen (no phantom key releases)
+
+InputSource.Resume():
+  - Paused devices transition back to Active
+  - Full state resync (query current button/axis state)
+  - Prevents stale "key still held" after app regain focus
+```
+
+**Full state resync on resume**: When the app regains focus, the input source queries the actual hardware state for all buttons and axes. This prevents ghost inputs — if a key was held when the app lost focus and released while backgrounded, the resume resync correctly reports it as released.
+
+**Scan frequency**: `Scan()` is called once per frame in PreUpdate. On platforms where device enumeration is expensive (USB HID on some OSes), scanning can be throttled to every N frames via `InputSettings.ScanInterval`.
+
 ## 5. Open Questions
 
 - How should input be handled during state transitions (e.g., should input be consumed when transitioning from Menu to Playing)?
@@ -265,3 +324,4 @@ This transforms event positions through canvas/viewport transforms so UI nodes r
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added action mapping with per-action deadzone, per-device action state, physics/process frame timestamps, input accumulation, event transform |
+| 0.3.0 | 2026-03-26 | Added multi-source input aggregation, device hot-plug lifecycle with state resync |

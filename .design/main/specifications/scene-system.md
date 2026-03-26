@@ -1,6 +1,6 @@
 # Scene System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -226,6 +226,43 @@ scene.PropertyValue(entityIdx, compIdx, propIdx) -> Value
 
 This enables tools that inspect, diff, or merge scene files without instantiating runtime objects — critical for version control integration and batch processing.
 
+### 4.14 Multi-Scene Hierarchy
+
+Scenes can form a parent-child hierarchy, enabling level streaming and modular world composition:
+
+```plaintext
+Scene
+  parent:   *Scene              // nil for root scene
+  entities: []Entity
+  children: []Scene
+  offset:   Vec3                // local offset relative to parent
+  world_matrix: Mat4            // computed: parent.world_matrix * offset
+```
+
+**Scene offset**: Each child scene carries an offset applied to all its entities. This enables:
+- Level streaming: load adjacent areas as child scenes at spatial offsets.
+- Instancing: the same scene definition spawned at different world positions.
+- Editor multi-scene: multiple scenes open simultaneously, each at its own position.
+
+**World matrix propagation**: When a scene's offset changes, `world_matrix` is recomputed recursively for all children. Entity transforms within a scene are relative to the scene's world matrix, not the global origin. This avoids floating-point precision issues in large worlds (entities are always close to their scene origin).
+
+**Lifecycle**: Adding/removing child scenes triggers entity registration/deregistration with the world's processor system. The parent scene manages the lifecycle — despawning a parent despawns all children recursively.
+
+### 4.15 Entity Metadata
+
+Entities carry optional debug-friendly metadata beyond a raw numeric ID:
+
+```plaintext
+Entity
+  id:     uint64          // generational index (fast, primary key)
+  guid:   UUID            // persistent across save/load (optional, editor-only)
+  name:   string          // human-readable label (optional, debug/editor)
+```
+
+**GUID**: A 128-bit universally unique identifier assigned to entities in editor mode. Unlike the runtime `id` (which is reused via generational indexing), the GUID is stable across save/load cycles and is used for scene merging, prefab overrides, and editor cross-references. In production builds, GUIDs are stripped to save memory.
+
+**Name**: A human-readable label for debugging. Stored as an optional component (not part of the core Entity struct) to avoid memory overhead on unnamed entities. The diagnostic system and editor inspector display entity names; gameplay code should reference entities by ID, not by name.
+
 ## 5. Open Questions
 
 1. Should DynamicScene support partial updates (merge into existing entities) or only full spawns?
@@ -239,3 +276,4 @@ This enables tools that inspect, diff, or merge scene files without instantiatin
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added interned arrays, load context, format versioning, symmetric pack/unpack API |
+| 0.3.0 | 2026-03-26 | Added multi-scene hierarchy with offsets, entity metadata (GUID + name) |

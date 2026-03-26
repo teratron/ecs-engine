@@ -1,6 +1,6 @@
 # Event System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -175,6 +175,36 @@ watcher.Clear()                                                // reset between 
 
 `EventWatcher` connects to the event bus and records all emissions with their arguments into an internal map. Between test cases, `Clear()` resets state. This is composable and requires no mock infrastructure — it uses the real event bus.
 
+### 4.9 Component Change Notification Chain
+
+When a component is added, removed, or replaced on an entity, a structured notification chain propagates through the system registry:
+
+```plaintext
+Entity.OnComponentChanged(index, oldComponent, newComponent)
+  │
+  ├─ EntityManager.NotifyComponentChanged(entity, oldType, newType)
+  │   │
+  │   ├─ Phase 1 — Discover new processors:
+  │   │   CollectProcessorsByComponentType(newType)
+  │   │   → auto-instantiate processors for unknown types (see system-scheduling.md §4.10)
+  │   │
+  │   ├─ Phase 2 — Process removal (if oldComponent != nil):
+  │   │   For each processor matching oldType:
+  │   │     processor.ProcessEntityComponent(entity, oldComponent, forceRemove=true)
+  │   │
+  │   ├─ Phase 3 — Process addition (if newComponent != nil):
+  │   │   For each processor matching newType:
+  │   │     processor.ProcessEntityComponent(entity, newComponent, forceRemove=false)
+  │   │
+  │   └─ Phase 4 — Update dependents:
+  │       For each component on entity that has dependent processors:
+  │         dependentProcessor.Revalidate(entity, component)
+```
+
+**Why Phase 4 matters**: When entity E has components [A, B, C] and a processor requires both A and B, adding C doesn't directly affect that processor. But if another processor requires A and C, it now matches — and the A-processor may need to revalidate its cached data because the entity's component set changed. Phase 4 handles this cascade.
+
+**Reentrancy safety**: The notification chain is protected by a reentrancy guard. If a processor's `ProcessEntityComponent` callback modifies components on other entities, those notifications are queued and processed after the current chain completes. This prevents infinite loops while ensuring all changes are eventually propagated.
+
 ## 5. Open Questions
 
 - Should event buses support priority ordering?
@@ -187,3 +217,4 @@ watcher.Clear()                                                // reset between 
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added deferred call deduplication, event testing utilities (EventWatcher) |
+| 0.3.0 | 2026-03-26 | Added component change notification chain with reentrancy safety |

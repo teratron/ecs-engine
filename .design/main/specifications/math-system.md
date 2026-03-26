@@ -1,6 +1,6 @@
 # Math System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -239,6 +239,58 @@ Vec3 constants:
 
 This avoids magic numbers like `Vec3{0, 1, 0}` scattered through gameplay code and makes directional intent explicit.
 
+### 4.12 Batch Transform Processing
+
+Transform hierarchy updates benefit from batched parallel dispatch over root transforms:
+
+```plaintext
+TransformSystem.Update():
+  roots = CollectRootTransforms()    // entities with no parent transform
+
+  ParallelForBatched(roots, batchSize, func(transforms, from, to):
+    for i in from..to:
+      t = transforms[i]
+      t.UpdateLocalMatrix()          // recompute from Position/Rotation/Scale
+      t.UpdateWorldMatrix(parent=nil)
+      UpdateChildrenRecursive(t.Children)
+  )
+
+  UpdateChildrenRecursive(children):
+    for child in children:
+      child.UpdateLocalMatrix()
+      child.UpdateWorldMatrix(parent=child.Parent.WorldMatrix)
+      UpdateChildrenRecursive(child.Children)
+```
+
+**Why batched roots**: Root transforms are independent — they can be processed in parallel. Children within a subtree are processed serially (they depend on parent results), but different root subtrees run on different threads. The batch size is tuned to avoid false sharing on cache lines.
+
+**Work stealing**: The main goroutine participates in processing (not just dispatching). While waiting for worker goroutines, it cooperatively steals batches via atomic increment — no busy-wait or sleep.
+
+### 4.13 Post-Transform Operations
+
+After the standard TRS (Translation-Rotation-Scale) matrix computation, an optional chain of post-operations can modify the result:
+
+```plaintext
+TransformComponent
+  Position:  Vec3
+  Rotation:  Quat
+  Scale:     Vec3
+  UseTRS:    bool                     // if false, skip TRS computation (use raw LocalMatrix)
+  PostOps:   []TransformOperation     // applied after LocalMatrix is computed
+
+TransformOperation (interface)
+  Apply(local_matrix: *Mat4)
+```
+
+**UseTRS bypass**: When `UseTRS` is false, the system skips Position/Rotation/Scale decomposition and uses `LocalMatrix` directly. This is used for bone transforms driven by animation — the animation system writes matrices directly, bypassing the TRS pipeline.
+
+**Post-operations**: A chain of modifiers applied after the local matrix is computed but before world matrix multiplication. Use cases:
+- Bone attachment: sync a transform to an animation skeleton node.
+- Procedural offset: add a breathing or idle sway effect on top of the base transform.
+- Billboard: override rotation to always face the camera.
+
+Post-operations run in declaration order and modify the matrix in-place. They are lightweight — no allocation per frame.
+
 ## 5. Open Questions
 
 1. Should the library provide float64 variants of all types for editor-precision use cases?
@@ -252,3 +304,4 @@ This avoids magic numbers like `Vec3{0, 1, 0}` scattered through gameplay code a
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added split inversion, TransformInterpolator, named constants, precision open question |
+| 0.3.0 | 2026-03-26 | Added batch transform processing with work stealing, post-transform operations chain |

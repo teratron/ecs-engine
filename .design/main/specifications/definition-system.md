@@ -1,6 +1,6 @@
 # Definition System
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -428,6 +428,49 @@ Backend services (matchmaking, persistence, analytics) communicate with the game
 
 This constraint preserves the engine's monolithic performance model (see [app-framework.md, Section 4.10](app-framework.md)).
 
+### 4.12 Order-Based Field Serialization
+
+Component and definition fields are serialized in a deterministic, explicit order rather than relying on struct field declaration order:
+
+```plaintext
+SerializationField
+  name:       string
+  order:      int              // explicit serialization order (e.g., -10, 0, 100)
+  mode:       SerializationMode
+  type_hint:  string           // optional type discriminator for polymorphic fields
+
+SerializationMode:
+  Default    // serialize normally (value types by value, reference types by reference)
+  Content    // serialize the contents, not the reference (inline expansion)
+  Ignore     // skip this field entirely
+  Always     // serialize even if value equals default
+```
+
+**Why explicit order matters**: When fields are added, removed, or reordered across engine versions, order-based serialization ensures backward compatibility. A field with `order: 100` added in v2 doesn't break v1 files that lack it — the deserializer simply applies the default value for missing ordered fields.
+
+**Mode: Content vs Default**: `Content` mode inlines the full object graph (e.g., a component's sub-struct is written in-place). `Default` mode writes a reference or handle. This controls serialization depth — preventing accidental serialization of the entire world when a component holds a reference to a shared resource.
+
+### 4.13 Custom Entity Serialization Hooks
+
+Entities support custom serialization behavior through pre/post hooks:
+
+```plaintext
+EntitySerializer
+  PreSerialize(entity: *Entity, mode: SerializeMode)
+    // Called before field serialization begins
+    // Mode: Serialize → prepare entity for writing
+    // Mode: Deserialize → construct entity without default components
+    //   (e.g., skip auto-creating Transform during deserialization)
+
+  PostDeserialize(entity: *Entity)
+    // Called after all fields are deserialized
+    // Resolve cross-references, validate component set, fire hooks
+```
+
+**Construction control**: During deserialization, `PreSerialize` creates the entity with a special flag that suppresses default component auto-insertion (e.g., Transform). This prevents the deserializer from creating a Transform that will immediately be overwritten by the serialized data. After all components are deserialized, `PostDeserialize` validates the entity's component set and fires any deferred lifecycle hooks.
+
+**Component clearing on re-deserialize**: When deserializing into an existing entity (e.g., hot-reload), `PreSerialize` clears the entity's component collection before repopulating. This ensures no stale components survive a reload.
+
 ## 5. Open Questions
 
 - Should definitions support expressions/formulas (e.g., `"width": "parent.width * 0.5"`) or stay purely static?
@@ -443,3 +486,4 @@ This constraint preserves the engine's monolithic performance model (see [app-fr
 | 0.1.0 | 2026-03-26 | Initial draft — captures data-driven design vision for JSON declarative layer |
 | 0.2.0 | 2026-03-26 | Added network boundary section — definitions are local-only, no cross-process transmission |
 | 0.3.0 | 2026-03-26 | Added editor plugin integration: stable API, handles() dispatch, property revert/default, dynamic property list |
+| 0.4.0 | 2026-03-26 | Added order-based field serialization, custom entity serialization hooks |

@@ -1,6 +1,6 @@
 # Asset System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -161,6 +161,65 @@ AssetProcessor
 
 Processors run at build time or in a background tool, not at runtime. They produce processed assets plus updated meta files.
 
+### 4.10 Virtual File System
+
+The asset system accesses files through a Virtual File System (VFS) with named mount points, abstracting platform-specific storage:
+
+```plaintext
+VFS
+  providers: map[string]FileProvider    // mount point name → provider
+
+  Standard mount points:
+    /data     → ApplicationData     // read-only game assets (shipped with build)
+    /cache    → ApplicationCache    // temporary, clearable by OS
+    /local    → ApplicationLocal    // persistent user data (saves, settings)
+    /binary   → ApplicationBinary   // executable directory
+    /drive    → DriveProvider       // raw host filesystem (editor/dev only)
+
+FileProvider (interface)
+  Open(path: string) -> (Reader, error)
+  Exists(path: string) -> bool
+  List(path: string) -> []string
+  Watch(path: string, callback: func())   // optional, for hot-reload
+```
+
+**Provider implementations**:
+- `FileSystemProvider` — standard OS filesystem (desktop).
+- `ZipProvider` — reads from compressed archives (mobile APK, distribution bundles).
+- `HttpProvider` — fetches from remote URL (asset CDN, development streaming).
+- `MemoryProvider` — in-memory files (testing, procedural assets).
+- `EmbeddedProvider` — compile-time bundled files (`embed.FS` in Go).
+
+**Path resolution**: Asset paths use forward slashes and are resolved relative to mount points. `"data://textures/grass.png"` resolves through the `/data` provider. When the scheme is omitted, `/data` is the default. This unified path syntax works identically across all platforms — the provider handles OS-specific details.
+
+**Platform initialization**: On desktop, `/data` maps to a filesystem directory. On Android, `/data` maps to a `ZipProvider` reading from the APK. On Web, `/data` maps to an `HttpProvider` fetching from the deployment server. The game code is identical across all platforms.
+
+### 4.11 Asset Compilation Pipeline
+
+An offline pipeline transforms source assets into optimized, platform-specific formats:
+
+```plaintext
+AssetCompiler (interface)
+  GetInputFiles(item: AssetItem) -> []FilePath         // source dependencies
+  GetInputTypes(item: AssetItem) -> []TypeDependency    // type dependencies
+  Prepare(context: CompilerContext, item: AssetItem) -> CompilerResult
+
+CompilerResult
+  build_steps: []BuildStep     // ordered compilation tasks
+
+BuildStep (interface)
+  Execute(context: BuildContext) -> error
+  OutputUrl() -> string        // target path in compiled output
+```
+
+**Per-type compilers**: Each asset type registers its own compiler. A texture compiler converts PNG to GPU-compressed format (BC7/ASTC). A mesh compiler optimizes vertex layout and generates LODs. A scene compiler resolves all references and interns shared strings.
+
+**Dependency tracking**: Compilers declare both file dependencies (`GetInputFiles` — source textures, mesh files) and type dependencies (`GetInputTypes` — material definitions referenced by a scene). The build system uses this to:
+- Skip recompilation when inputs haven't changed (incremental builds).
+- Rebuild dependents when a shared asset changes (cascading invalidation).
+
+**BuildStep collection**: `Prepare()` returns a list of `BuildStep` objects rather than executing immediately. This allows the build system to parallelize independent steps, order dependent steps, and report progress. Each step targets a specific output URL in the compiled asset directory.
+
 ## 5. Open Questions
 
 1. Should failed assets retry automatically, or require explicit reload?
@@ -172,3 +231,4 @@ Processors run at build time or in a background tool, not at runtime. They produ
 | Version | Date       | Description                              |
 | :------ | :--------- | :--------------------------------------- |
 | 0.1.0   | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0   | 2026-03-26 | Added virtual file system (VFS) with mount points, asset compilation pipeline |

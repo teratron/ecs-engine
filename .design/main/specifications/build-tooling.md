@@ -1,6 +1,6 @@
 # Build Tooling
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -327,6 +327,25 @@ Every format version bump requires an explicit roundtrip test:
 
 This ensures format compatibility across versions and catches silent data loss during format evolution. The `BLESS=1` workflow applies: mismatches fail in CI, `BLESS=1` regenerates the golden file locally.
 
+### 4.13 Parallel Test Dispatching
+
+CPU-bound test suites (benchmarks, stress tests, golden file comparisons) use batched parallel dispatch for throughput:
+
+```plaintext
+Dispatcher.ForBatched(testCount, batchSize, func(tests, from, to):
+  for i in from..to:
+    tests[i].Run()
+)
+```
+
+**Batch sizing**: Tests are divided into batches of `batchSize` items. Each batch runs on a worker goroutine. The main goroutine participates in processing (work stealing) rather than blocking idle.
+
+**Work stealing**: When a goroutine finishes its batch early, it atomically claims the next unclaimed batch via `atomic.AddInt64(&batchIndex, 1)`. This balances load across workers without central coordination — fast tests don't leave workers idle.
+
+**Thread-local collectors**: Each worker accumulates results into a thread-local collector (no mutex contention). After all batches complete, results are merged into the final report. This pattern is reused across the engine — transform updates (see [math-system.md §4.12](math-system.md)), render culling (see [render-core.md §4.11](render-core.md)), and test dispatching all share the same `Dispatcher.ForBatched` primitive.
+
+**Cooperative main thread**: The main goroutine calls `TryCooperate()` while waiting for workers — it steals and processes batches rather than sleeping. This eliminates idle time on the main thread and avoids the overhead of `time.Sleep` polling.
+
 ## 5. Open Questions
 
 - Should benchmark baselines be committed to the repo or stored externally?
@@ -339,3 +358,4 @@ This ensures format compatibility across versions and catches silent data loss d
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft from reference engine tooling analysis |
 | 0.2.0 | 2026-03-26 | Added co-located tests, named test commands, error suppression, event testing, serialization roundtrip tests |
+| 0.3.0 | 2026-03-26 | Added parallel test dispatching with work stealing and cooperative main thread |

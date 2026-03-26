@@ -1,5 +1,5 @@
 # Audio System
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -141,6 +141,42 @@ AudioServer (internal)
 
 `AudioDriver` is the platform-specific layer (ALSA, CoreAudio, WASAPI, WebAudio). `AudioServer` is the platform-independent layer that manages the bus graph, spatial computations, and effect processing. This separation allows porting to new platforms by implementing only the driver interface.
 
+### 4.12 Associated Emitter Data
+
+The audio system uses the associated data pattern (see [component-system.md §4.10](component-system.md)) to cache runtime audio state per entity without polluting the `AudioPlayer` component:
+
+```plaintext
+AudioProcessorData
+  emitter:            AudioEmitter         // platform audio object
+  audio_component:    *AudioPlayer         // back-reference for validation
+  transform:          *TransformComponent  // cached transform reference
+  is_playing:         bool                 // runtime playback state
+  pending_instances:  []SoundInstance      // queued but not yet playing
+```
+
+The audio system generates this data when an entity gains an `AudioPlayer` component and validates it each frame via `IsDataValid()` — if the entity's Transform changed (e.g., reparented), the emitter position is updated. On removal, all associated `SoundInstance` objects are stopped and released.
+
+This keeps `AudioPlayer` a pure data component (source handle + settings) while the audio system owns all runtime state (emitters, instances, playback tracking). Multiple audio systems (e.g., spatial + UI) can each maintain independent associated data for the same component.
+
+### 4.13 Audio Service Pattern
+
+The audio engine registers as a service accessible to other subsystems without direct coupling:
+
+```plaintext
+ServiceRegistry
+  Register[T](service: T)
+  Get[T]() -> T
+
+// During initialization:
+services.Register[AudioSystem](audioSystem)
+
+// From any processor that needs audio:
+audio := services.Get[AudioSystem]()
+audio.PlayOneShot(soundHandle, position)
+```
+
+This enables cross-cutting audio access — a physics collision system can trigger impact sounds, a UI system can play click feedback, and an animation system can sync sound cues to keyframes — all without importing the audio package directly. The service registry resolves at runtime, allowing optional audio (headless builds simply don't register the service).
+
 ## 5. Open Questions
 
 - Should streaming playback (decode-on-the-fly) be a separate asset type or a flag on `AudioSource`?
@@ -152,3 +188,4 @@ AudioServer (internal)
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added audio bus graph, effect factory/instance split, AudioDriver abstraction |
+| 0.3.0 | 2026-03-26 | Added associated emitter data pattern, audio service registry |
