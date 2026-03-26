@@ -1,6 +1,6 @@
 # Examples Framework
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -516,6 +516,31 @@ go test ./examples/stress_test/... -bench -benchmem  # Benchmarks run with memor
 
 Render-dependent examples (2D/3D) run in headless mode with a mock render backend for CI.
 
+### 4.6 Showcase Runner
+
+A dedicated tool (`cmd/showcase/`) bulk-runs all examples for validation, documentation, and visual regression testing.
+
+**Modes:**
+
+- **CI mode** (headless): Run each example for N frames, verify clean exit within timeout (30s default). Collect and report failures as a batch.
+- **Showcase mode**: Run examples with rendering, capture screenshot at a specified frame for documentation and visual regression.
+- **Filtered run**: Execute a subset by category (`--category ecs`), by name pattern (`--filter "sprite*"`), or by pagination (`--page 2 --per-page 50`).
+
+**Visual regression workflow:**
+
+1. Showcase runner captures screenshot at frame N for each render-dependent example.
+2. Screenshots stored in `testdata/screenshots/{category}/{name}.png`.
+3. CI compares current screenshot against stored baseline.
+4. Mismatches flagged as warnings (not failures) — visual changes require human review.
+5. `BLESS=1` mode updates baselines with current output.
+
+**Progress reporting:**
+
+- Displays example count, current progress, pass/fail counters, and elapsed time.
+- Failed examples report: exit code, stderr output, and timeout status.
+
+See [build-tooling.md](build-tooling.md) for the full CI pipeline and golden file testing infrastructure.
+
 ## 5. Implementation Notes
 
 1. **Start with `ecs/hello_ecs/`** — the simplest possible example to validate the ECS core works.
@@ -541,3 +566,4 @@ Render-dependent examples (2D/3D) run in headless mode with a mock render backen
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial Draft |
 | 0.2.0 | 2026-03-25 | Expanded: full example catalog from reference engine (280+ examples across 28 categories). Added categories: camera, gizmos, picking, time, ui, shader, showcase. Excluded language-specific examples. |
+| 0.3.0 | 2026-03-26 | Added showcase runner section (bulk execution, visual regression, screenshot capture). Added build-tooling cross-reference. |

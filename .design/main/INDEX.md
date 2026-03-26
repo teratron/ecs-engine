@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Status:** Active
 
 ## Overview
@@ -80,7 +80,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [window-system.md](specifications/window-system.md) | Window management, multi-window, platform abstraction | Draft | concept | 0.1.0 |
 | [diagnostic-system.md](specifications/diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
 | [ui-system.md](specifications/ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.1.0 |
-| [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.2.0 |
+| [build-tooling.md](specifications/build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.1.0 |
+| [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
 
 ## Meta Information
 
