@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.10.0
+**Version:** 2.11.0
 **Status:** Active
 
 ## Overview
@@ -86,8 +86,22 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [ai-assistant-system.md](specifications/ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
 | [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
 
+## P7 — Advanced Core
+
+| File | Description | Status | Layer | Version |
+| :--- | :--- | :--- | :--- | :--- |
+| [profiling-protocol.md](specifications/profiling-protocol.md) | Tracy integration, custom spans, pprof mapping, export formats | Draft | concept | 0.1.0 |
+| [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.1.0 |
+
+## P8 — Extended Systems
+
+| File | Description | Status | Layer | Version |
+| :--- | :--- | :--- | :--- | :--- |
+| [physics-system.md](specifications/physics-system.md) | Physics server, deterministic solver, SubApp integration, interpolation | Draft | concept | 0.1.0 |
+| [scripting-system.md](specifications/scripting-system.md) | Lua bridge, TypeRegistry access, CommandBuffer integration | Draft | concept | 0.1.0 |
+
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-03-26
-- **Total Specifications**: 49 (35 L1 concept + 14 L2 Go implementation)
+- **Last Updated**: 2026-03-27
+- **Total Specifications**: 53 (39 L1 concept + 14 L2 Go implementation)

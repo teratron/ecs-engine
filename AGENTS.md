@@ -37,6 +37,7 @@ Before finishing any task, the agent MUST verify the following:
   - [ ] No implementation code in `.design/` specifications (pseudo-code only).
   - [ ] `INDEX.md` and `PLAN.md` are updated following any spec changes.
   - [ ] Status transitions and versioning follow `RULES.md` protocol.
+  - [ ] C26 Correlation: L1 specs link to corresponding `examples/` dir.
 - [ ] **Cognitive Discipline**: No steps skipped, no assumptions made without asking.
 - [ ] **Rule Synchronization**: New agent-facing conventions from `.design/RULES.md` are added to this checklist.
 - [ ] **ECS Architecture Reference**: Skill loaded before any spec work; no external engine branding in project files.

@@ -16,9 +16,10 @@ The World is the central data store of the ECS engine. It owns all entities, com
 - [command-system.md](command-system.md) — Commands are deferred mutations applied to the World
 - [change-detection.md](change-detection.md) — World maintains the global change tick
 
-## 1. Motivation
+### 1. Motivation
 
 Every ECS needs a single owner for all game data. Without a centralized World:
+
 - Entity and component lifetimes become ambiguous.
 - Parallel system execution cannot be safely coordinated.
 - Change detection has no global reference point.
@@ -57,7 +58,7 @@ The World is composed of:
 
 ### 4.2 Entity Operations
 
-```
+```plaintext
 World.Spawn(components...) -> Entity
 World.SpawnEmpty() -> Entity
 World.Despawn(entity)
@@ -68,7 +69,7 @@ World.Contains(entity) -> bool
 
 ### 4.3 Resource Operations
 
-```
+```plaintext
 World.InsertResource(resource)
 World.InitResource[T]()                  // insert default
 World.GetResource[T]() -> *T
@@ -78,7 +79,7 @@ World.ContainsResource[T]() -> bool
 
 ### 4.4 Schedule Execution
 
-```
+```plaintext
 World.AddSchedule(label, schedule)
 World.RunSchedule(label)                 // runs all systems in the named schedule
 World.RunSystemOnce(system)              // run a single system immediately
@@ -152,7 +153,7 @@ This centralized registry enables the automatic system discovery pattern (see [s
 
 ## Document History
 
-| Version | Date | Description |
-| :--- | :--- | :--- |
-| 0.1.0 | 2026-03-25 | Initial draft |
-| 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch |
+| Version | Date | Description | Examples |
+| :--- | :--- | :--- | :--- |
+| 0.1.0 | 2026-03-25 | Initial draft | [examples/world](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/world) |
+| 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch | [examples/world](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/world) |

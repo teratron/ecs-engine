@@ -208,6 +208,12 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 2. **Cross-Reference**: Verify that new specs are consistent with the module map, dependency graph, and Go conventions defined in the skill.
 3. **No External Branding**: The engine is a standalone project. Never reference external engines or frameworks in specifications, rules, or public documentation.
 
+### C26 — Specification-Example Correlation
+
+1. **Mandatory Link**: Every Layer 1 (Concept) specification MUST include a direct link to its corresponding directory in `examples/` (if implemented or planned) within the `Document History` section.
+2. **Reciprocal Updates**: When a new example is added to the codebase, the relevant specification's `Document History` must be updated to reflect this addition.
+3. **Draft Context**: For specifications in `Draft` status where examples do not yet exist, a placeholder link to the intended `examples/` path should be provided.
+
 ## Document History
 
 | Version | Date | Description |
@@ -215,3 +221,4 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 | 1.0.0 | 2026-03-25 | Initial constitution |
 | 1.1.0 | 2026-03-25 | Added C24 — Go Standard Library First |
 | 1.2.0 | 2026-03-25 | Added C25 — ECS Architecture Reference Skill |
+| 1.3.0 | 2026-03-27 | Added C26 — Specification-Example Correlation |
