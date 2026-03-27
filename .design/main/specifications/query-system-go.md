@@ -7,7 +7,7 @@
 
 ## Overview
 
-This specification defines the Go implementation of the query system. Queries are the primary way systems access entity data. Due to Go's lack of variadic generics, multi-component queries require explicit arity types (`Query1`, `Query2`, `Query3`, etc.). Each query tracks its read/write access for schedule-time conflict detection and caches matched archetypes for efficient iteration.
+This specification defines the Go implementation of the query system. Queries are the primary way systems access entity data. Due to Go's lack of variadic generics, multi-component queries require explicit arity types (`Query1`, `Query2`, `Query3`, etc.). Each query tracks its read/write access for schedule-time conflict detection and caches matched archetypes for efficient iteration. It leverages Go 1.23+ features such as modern `iter` patterns for inspection.
 
 ## Go Package
 
@@ -167,29 +167,34 @@ When `Mut[T]` is used as a type parameter, the query registers T in the WriteSet
 
 ## Key Methods
 
-### Iteration (Callback-Based)
+### Iteration (Go 1.23+ Range-over-func)
+
+Instead of callbacks, queries utilize Go 1.23 iterators for use with `range`.
 
 ```go
-// Iter iterates all matching entities sequentially.
-// Updates archetype cache if new archetypes have been created.
+// All returns an iterator over all matching entities and their component.
 //
-// Pseudo-code:
-//   updateCache(world)
-//   for each matched archetype:
-//     table = world.tables.Get(archetype.tableID)
-//     column = table.columns[componentID]
-//     for row in 0..table.len:
-//       if tick filters present and !matchesEntity(row): skip
-//       entity = table.entities[row]
-//       ptr = (*T)(unsafe.Pointer(&column.data[row * elemSize]))
-//       fn(entity, ptr)
-func (q *QueryState1[T]) Iter(world *World, fn func(Entity, *T))
+// Usage:
+//   for entity, pos := range query.All(world) { ... }
+func (q *QueryState1[T]) All(world *World) iter.Seq2[Entity, *T]
 
-// Iter for two-component query.
-func (q *QueryState2[A, B]) Iter(world *World, fn func(Entity, *A, *B))
+// All for two-component query. Note: Go 1.23 standard iterators support
+// up to 2 values. For 3+ components, a struct-tuple is yielded.
+func (q *QueryState2[A, B]) All(world *World) iter.Seq2[Entity, Tuple2[*A, *B]]
 
-// Iter for three-component query.
-func (q *QueryState3[A, B, C]) Iter(world *World, fn func(Entity, *A, *B, *C))
+type Tuple2[A, B any] struct {
+    A A
+    B B
+}
+
+// All for three-component query.
+func (q *QueryState3[A, B, C]) All(world *World) iter.Seq2[Entity, Tuple3[*A, *B, *C]]
+
+type Tuple3[A, B, C any] struct {
+    A A
+    B B
+    C C
+}
 ```
 
 ### Single Entity Lookup
@@ -284,7 +289,7 @@ func (q *QueryState1[T]) Single(world *World) (Entity, *T, error)
 - **Column pointer arithmetic**: Component access via `unsafe.Pointer` on contiguous `[]byte`. No interface boxing during iteration.
 - **Tick filter short-circuit**: Archetype-level `Matches()` filters entire archetypes before row-level tick checks. Empty archetypes skipped.
 - **ParIter chunk sizing**: Minimum 256 entities per goroutine prevents overhead from dominating small workloads.
-- **Zero allocations in Iter**: Callback pattern avoids slice/iterator allocation. The `fn` closure captures state without heap escape (compiler-dependent; benchmarks will verify).
+- **Go 1.23 iterators**: Yield-based iteration (`iter.Seq2`) is highly optimized by the compiler and avoids closure capture overhead where possible.
 - **Access sets as sorted slices**: Conflict detection uses merge-join on sorted `[]ComponentID`, O(n+m) instead of O(n*m).
 
 ## Error Handling

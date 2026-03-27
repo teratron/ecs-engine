@@ -90,6 +90,7 @@ Registered automatically by the DiagnosticsPlugin:
 | System CPU time | `engine/system/{name}` | Scheduler tracing spans |
 | System Allocations | `engine/system/{name}/allocs` | `runtime.MemStats` before/after system |
 | Thread Idle Time | `engine/worker/idle_time` | TaskPool worker telemetry |
+| Goroutine Leaks | `engine/worker/goroutine_leaks` | `runtime/pprof` goroutineleak profile (Go 1.26+) |
 | CPU Throttling | `engine/hw/throttling` | Platform-specific cooling/freq metrics |
 
 ### 4.4 Custom Diagnostics

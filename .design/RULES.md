@@ -195,10 +195,15 @@ To minimize redundant resource usage and improve performance, the agent may opti
 
 ### C24 — Go Standard Library First
 
-1. **Language Version**: The project targets the latest stable Go release. All code must compile and run on the latest stable Go version without deprecated features.
-2. **Stdlib Priority**: Always prefer Go standard library packages over third-party dependencies, even if third-party alternatives offer more features. External dependencies are permitted only when the standard library has no viable solution for the required functionality.
-3. **Dependency Justification**: Every third-party dependency must be explicitly justified in the relevant specification with a rationale for why the standard library is insufficient.
-4. **Zero-Dependency Goal**: Strive for a minimal dependency footprint. The engine core (ECS, scheduling, events) must have zero external Go dependencies.
+1. **Language Version**: The project targets **Go 1.26.1** or later. Code MUST utilize the latest language features, specifically:
+    - **Generics & Self-referential Types**: for complex ECS relationships.
+    - **Range-over-func Iterators**: (`iter.Seq`, `iter.Seq2`) for all system queries.
+    - **Enhanced `new`**: `new(Struct{...})` for direct pointer initialization.
+    - **SIMD**: Use `simd/archsimd` (where applicable) for performance-critical vector/math operations.
+2. **Runtime & GC**: The project is optimized for the **Green Tea Garbage Collector** (enabled by default in Go 1.26). Memory layouts should prioritize small-object locality and stack allocation to minimize GC pressure.
+3. **Stdlib Priority**: Always prefer Go standard library packages. Use modern additions like `unique`, `slices`, `maps`, and `crypto/hpke` where needed.
+4. **Dependency Justification**: Every third-party dependency must be explicitly justified in the relevant specification with a rationale for why the standard library is insufficient.
+5. **Zero-Dependency Goal**: Strive for a minimal dependency footprint. The engine core (ECS, scheduling, events) must have zero external Go dependencies.
 
 ### C25 — ECS Architecture Reference Skill
 

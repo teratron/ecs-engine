@@ -7,11 +7,11 @@
 
 ## Overview
 
-This specification defines the Go implementation of the World — the central data store that owns all entities, components, resources, archetypes, and schedules. The World is the single entry point for all ECS operations. It is not thread-safe by default; concurrent access is mediated by the schedule executor.
+This specification defines the Go implementation of the World — the central data store that owns all entities, components, resources, archetypes, and schedules. The World is the single entry point for all ECS operations. It leverages Go 1.23+ features such as the `unique` package for identity management and modern `iter` patterns for inspection.
 
 ## Go Package
 
-```
+```plaintext
 internal/ecs/
 ```
 
@@ -279,6 +279,9 @@ func (w *World) AddSchedule(name string, schedule *Schedule)
 //     system.Run(world)
 //     apply deferred commands
 func (w *World) RunSchedule(name string) error
+
+// All returns an iterator over all entities in the World.
+func (w *World) All() iter.Seq[Entity]
 
 // RunSystemOnce runs a single system function immediately with World access.
 func (w *World) RunSystemOnce(system SystemFunc) error
