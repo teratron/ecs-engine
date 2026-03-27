@@ -1,0 +1,563 @@
+# Instincts generated from https://github.com/teratron/ecs-engine
+# Generated: 2026-03-27T12:31:40.695Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: ecs-engine-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: feat, docs, chore
+
+## Evidence
+
+- 38 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat: Add foundational project design rules, planning documents, and research notes., docs: Add initial design specifications and drafts for physics materials and a character controller.
+
+---
+id: ecs-engine-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Commit Length
+
+## Action
+
+Write moderate-length commit messages (~80 characters)
+
+## Evidence
+
+- Average commit message length: 80 chars
+- Based on 38 commits
+
+---
+id: ecs-engine-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Naming Files
+
+## Action
+
+Use kebab-case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: kebab-case
+
+---
+id: ecs-engine-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: ecs-engine-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: ecs-engine-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: ecs-engine-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~24x per month
+- Files: .design/main/specifications/*, **/*.test.*
+
+---
+id: ecs-engine-workflow-add-or-update-design-specification
+trigger: "when doing add or update design specification"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Add Or Update Design Specification
+
+## Action
+
+Follow the add-or-update-design-specification workflow:
+1. Create or update one or more files in .design/main/specifications/
+2. Update .design/main/INDEX.md to register the new or changed specification(s)
+3. Optionally update related cross-references in other spec files
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~8x per month
+- Files: .design/main/specifications/*.md, .design/main/INDEX.md
+
+---
+id: ecs-engine-workflow-add-draft-and-design-specs-in-parallel
+trigger: "when doing add draft and design specs in parallel"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Add Draft And Design Specs In Parallel
+
+## Action
+
+Follow the add-draft-and-design-specs-in-parallel workflow:
+1. Create or update one or more files in .design/main/specifications/
+2. Create or update corresponding draft documents in .draft/ (e.g., .draft/physics/...)
+3. Update .design/main/INDEX.md and/or .design/main/PLAN.md to reference the new work
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: .design/main/specifications/*.md, .draft/**/*.md, .design/main/INDEX.md
+
+---
+id: ecs-engine-workflow-enrich-multiple-specs-with-patterns-or-cross-references
+trigger: "when doing enrich multiple specs with patterns or cross references"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Enrich Multiple Specs With Patterns Or Cross References
+
+## Action
+
+Follow the enrich-multiple-specs-with-patterns-or-cross-references workflow:
+1. Update several files in .design/main/specifications/ to add new sections or patterns
+2. Update .design/main/INDEX.md to reflect new version or changes
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: .design/main/specifications/*.md, .design/main/INDEX.md
+
+---
+id: ecs-engine-workflow-add-new-go-implementation-specs
+trigger: "when doing add new go implementation specs"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Add New Go Implementation Specs
+
+## Action
+
+Follow the add-new-go-implementation-specs workflow:
+1. Create or update files in .design/main/specifications/*-go.md
+2. Update .design/main/INDEX.md to register the new Go specs
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: .design/main/specifications/*-go.md, .design/main/INDEX.md
+
+---
+id: ecs-engine-workflow-add-or-update-agent-skills-or-rules
+trigger: "when doing add or update agent skills or rules"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/teratron/ecs-engine
+---
+
+# Ecs Engine Workflow Add Or Update Agent Skills Or Rules
+
+## Action
+
+Follow the add-or-update-agent-skills-or-rules workflow:
+1. Create or update files in .agents/skills/ or .agents/rules/
+2. Optionally add or update workflow files in .agents/workflows/
+3. Optionally update AGENTS.md
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: .agents/skills/**/*.md, .agents/rules/**/*.md, .agents/workflows/**/*.md
+
+---
+id: ecs-engine-file-naming-kebab-case
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine File Naming Kebab Case
+
+## Action
+
+Use kebab-case for file names (e.g., my-file.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+- No counterexamples in commit history
+
+---
+id: ecs-engine-function-naming-camel-case
+trigger: "When defining a function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Function Naming Camel Case
+
+## Action
+
+Use camelCase for function names (e.g., doSomething)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: ecs-engine-class-naming-pascal-case
+trigger: "When defining a class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Class Naming Pascal Case
+
+## Action
+
+Use PascalCase for class names (e.g., MyClass)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: ecs-engine-constant-naming-screaming-snake-case
+trigger: "When defining a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Constant Naming Screaming Snake Case
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for constant names (e.g., MAX_COUNT)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: ecs-engine-import-style-relative
+trigger: "When importing modules in TypeScript files"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Import Style Relative
+
+## Action
+
+Use relative import paths (e.g., import x from './x')
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: ecs-engine-export-style-named
+trigger: "When exporting from a module"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Export Style Named
+
+## Action
+
+Use named exports (e.g., export { MyFunction })
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: ecs-engine-test-location-separate
+trigger: "When adding or updating tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Test Location Separate
+
+## Action
+
+Place test files in a separate location from source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+- Workflow feature-development includes **/*.test.*
+
+---
+id: ecs-engine-test-after-feature
+trigger: "When implementing a new feature"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Test After Feature
+
+## Action
+
+Add or update corresponding test files after feature implementation
+
+## Evidence
+
+- Workflow feature-development commitSequence: Add feature implementation → Add tests for feature
+
+---
+id: ecs-engine-commit-conventional-format
+trigger: "When making a git commit"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Commit Conventional Format
+
+## Action
+
+Use conventional commit format with prefixes (feat, docs, chore), a colon, and a concise message
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Examples: 'feat: Add foundational project design rules...'
+- Average commit length 80
+
+---
+id: ecs-engine-commit-merge-allowed
+trigger: "When merging branches"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Commit Merge Allowed
+
+## Action
+
+Allow merge commits (e.g., 'Merge branch ...')
+
+## Evidence
+
+- Seen in commit: 'Merge branch 'master' of github.com:teratron/ecs-engine'
+
+---
+id: ecs-engine-add-or-update-design-specification
+trigger: "When introducing or updating a system, feature, or architectural pattern"
+confidence: 0.98
+domain: workflow
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Add Or Update Design Specification
+
+## Action
+
+Create or update files in .design/main/specifications/ and update .design/main/INDEX.md accordingly
+
+## Evidence
+
+- Workflow: add-or-update-design-specification
+- Seen in commits updating .design/main/specifications/*.md and .design/main/INDEX.md
+
+---
+id: ecs-engine-add-draft-and-design-specs-in-parallel
+trigger: "When documenting both early-stage research and formal design for a new feature or system"
+confidence: 0.92
+domain: workflow
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Add Draft And Design Specs In Parallel
+
+## Action
+
+Create or update files in .design/main/specifications/ and corresponding drafts in .draft/, then update .design/main/INDEX.md and/or .design/main/PLAN.md
+
+## Evidence
+
+- Workflow: add-draft-and-design-specs-in-parallel
+- Seen in commits updating both .design/main/specifications/*.md and .draft/**/*.md
+
+---
+id: ecs-engine-enrich-multiple-specs-with-patterns-or-cross-references
+trigger: "When propagating new architectural patterns or cross-references across multiple specs"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Enrich Multiple Specs With Patterns Or Cross References
+
+## Action
+
+Batch update several files in .design/main/specifications/ and update .design/main/INDEX.md to reflect changes
+
+## Evidence
+
+- Workflow: enrich-multiple-specs-with-patterns-or-cross-references
+- Seen in commits like 'docs: Enrich 4 specs with reference engine architectural patterns (v2.10.0)'
+
+---
+id: ecs-engine-add-new-go-implementation-specs
+trigger: "When defining Go implementation details for multiple ECS systems"
+confidence: 0.88
+domain: workflow
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Add New Go Implementation Specs
+
+## Action
+
+Create or update files in .design/main/specifications/*-go.md and update .design/main/INDEX.md
+
+## Evidence
+
+- Workflow: add-new-go-implementation-specs
+- Seen in commits updating .design/main/specifications/*-go.md and .design/main/INDEX.md
+
+---
+id: ecs-engine-add-or-update-agent-skills-or-rules
+trigger: "When expanding or updating development agent capabilities"
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: teratron/ecs-engine
+---
+
+# Ecs Engine Add Or Update Agent Skills Or Rules
+
+## Action
+
+Create or update files in .agents/skills/ or .agents/rules/, optionally update .agents/workflows/ and AGENTS.md
+
+## Evidence
+
+- Workflow: add-or-update-agent-skills-or-rules
+- Seen in commits updating .agents/skills/**/*.md or .agents/rules/**/*.md
+
