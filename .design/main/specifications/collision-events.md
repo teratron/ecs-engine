@@ -72,6 +72,14 @@ The Physics Server diffs current and previous contact pairs:
 
 Despawning an entity in a collision event is safe. The entity remains alive for the rest of the frame. The physics backend emits `CollisionEnded` for this pair in the next step, as the entity is only removed from the physics world during the next Sync phase.
 
+### 4.8 Collision Resolution Data (MTV)
+
+To provide actionable data for systems that resolve collisions (like the `CharacterController`), the engine includes **Minimum Translation Vector (MTV)** data in every `ContactManifold`:
+
+- **MTV Direction**: A normalized `Vec3` indicating the shortest path to separate the two shapes.
+- **MTV Magnitude**: A `float32` representing the overlap depth.
+- **Usage**: By moving an entity by `-MTV_Direction * MTV_Magnitude`, a system can resolve a static collision instantly, preventing interpenetration.
+
 ## 5. Open Questions
 
 - Should `CollisionPersisting` be opt-in per collider or opt-out globally?

@@ -89,6 +89,15 @@ A `View` is a cached collection of entities that match a specific `Tag` requirem
 - **Removal**: If the old tag matched but the new one doesn't, the entity is removed.
 - **Performance**: Provides O(1) or O(N_matches) access for systems, bypassing the need to iterate all entities.
 
+### 5.4 Spatial Registry Update Lifecycle
+
+For entities with spatial presence (e.g. `Transform`, `Collider`), the engine maintains their state in a **Spatial Acceleration Structure** (Grid/Quadtree/BVH). The lifecycle of this registry is as follows:
+
+- **Entity Movement**: When an entity's `Transform` changes, it is marked for spatial update.
+- **Batch Processing**: Instead of updating the spatial registry per-entity, the `PhysicsSystem` performs a batch update at the beginning of each physics step.
+- **Dormancy**: Entities that reach a "sleeping" state in the physics engine are skipped in subsequent spatial registry updates until awakened, reducing broad-phase overhead.
+- **Clean Registration**: On entity disposal, its entry must be purged from the spatial registry immediately to prevent "ghost" query results.
+
 ## 6. Implementation Notes
 
 1. Bitmask Extension: For projects requiring >64 components, the system should transition to bit-arrays or hierarchical tagging.

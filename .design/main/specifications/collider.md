@@ -349,8 +349,25 @@ The bundle is pure ergonomics — it does not introduce a new storage model. The
 - `contact_force_threshold`: per-collider (as specified) or per-body? Per-collider is more flexible; per-body is simpler.
 - How should collider scaling work when a parent entity's `Transform.scale` is non-uniform? Propagate scale into shape dimensions at Sync time, or forbid non-uniform scale on `RigidBody` ancestors?
 
+### 5.11 Collision Interaction Matrix (Architecture)
+
+To decouple systems from specific tags, the engine uses a **Collision Interaction Matrix**. Instead of simply tagging objects as "Player" or "Wall", the architecture defines how these groups interact:
+
+- **Interaction Layers**: A central resource (typically a `uint32` bitfield) where each bit represents a conceptual layer.
+- **Masking Logic**: A collider only interacts with another if `(A.membership & B.filter) != 0 AND (B.membership & A.filter) != 0`.
+- **Systemic Filtering**: Broad-phase algorithms (like Grids or Quadtrees) use these masks to skip narrow-phase checks entirely for non-interacting layers, significantly reducing CPU load.
+
+### 5.12 Composite Collider Composition
+
+Entities may require complex physical representation that a single primitive cannot provide. The engine supports **Composite Colliders** through the ECS hierarchy:
+
+- **Atomic Primitives**: Each child entity holds a single `Collider` component with a primitive shape (Box, Sphere, Capsule).
+- **Local Transformation**: The `Transform` component on each child entity defines the offset and rotation of that primitive relative to the root `RigidBody`.
+- **Unified Inertia**: The Physics Server treats the collection of child colliders as a single compound shape for mass and inertia tensor calculations (if `MassProperties::Auto` is enabled).
+
 ## Document History
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft — architectural model B (child entity), shape set, collision groups, lifecycle hooks | [examples/physics](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/physics) |
+| 0.1.1 | 2026-03-27 | Added Collision Interaction Matrix and Composite Collider patterns | [examples/physics](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/physics) |

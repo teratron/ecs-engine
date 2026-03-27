@@ -153,6 +153,22 @@ Integrated with `PhysicsDebugSettings`:
 
 - `draw_queries: bool` visualises rays (hit red, miss grey) and swept shapes.
 
+### 4.10 Spatial Selection API
+
+Instead of iterating all entities or even all colliders, the engine provides a **Spatial Selection API** to retrieve entities based on their world-space location:
+
+- **Query Types**: `SelectedInRadius(pos, radius)`, `SelectedInFrustum(frustum)`, `SelectedInVolume(aabb)`.
+- **Filtering**: These selections natively support `QueryFilter` (layers and masks).
+- **Use Cases**: AI perception, area-of-effect damage, sound attenuation, and editor selection.
+
+### 4.11 Predictive Look-ahead (Swept Queries)
+
+To support robust movement, systems can perform **Predictive Look-ahead** queries to determine if a future movement will cause a collision:
+
+- **Movement Sweep**: A shape is cast along the intended velocity vector.
+- **Result Interpretation**: If a hit occurs, the distance to the hit point is used to truncate movement, preventing interpenetration.
+- **Architecture**: This is a non-reactive pull query used primarily by the `CharacterControllerSystem`.
+
 ## 5. Open Questions
 
 - Should `RayCastAll` accept a result capacity limit?
