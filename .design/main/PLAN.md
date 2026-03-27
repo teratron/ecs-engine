@@ -9,80 +9,39 @@
 - [ ] Reach "Stable" status for the POC specification set
 - [ ] Transition to POC implementation (tracked in .design/main/tasks/)
 
-## Phase 1: High-Performance Foundations (Backlog)
+## Phase 1: POC (Entity/Component/System) — GO 1.26.1
 
-- [ ] Implement `TaskPool` with `TryCooperate` main-thread assistance
+- [ ] Implement Generational Entity ID & Allocator
+- [ ] Implement World-Registry & Basic Spawning
+- [ ] Implement Archetype & Table Layout (Chunk-based)
+- [ ] Implement Sparse-Set fallback storage
+- [ ] Implement Basic Query System with bitmask matching
+- [ ] Implement DAG-based system scheduler
+- [ ] Implement Performance benchmarks & CI setup
+
+## Phase 2: High-Performance Extensions
+
+- [ ] Implement `TaskPool` with multi-threaded work-stealing
 - [ ] Implement `ParallelFor` with adaptive batching
-
-### 1.2 Component System & Data Layout
-
-- [ ] Implement Sparse-Set storage for core components
 - [ ] Implement `AssociatedDataMap` for system-owned technical caches
-- [ ] Implement `ComponentPool` for short-lived components (command-like)
-- [ ] **Task 3: Archetype & Table Layout** (Assignee: Antigravity, Deadline: 2026-03-30, Deps: Task 2)
-  - Implement `Column` (byte slice) and `Table` (map of columns).
-  - Implement `Archetype` as a set of component IDs.
-- [ ] **Task 4: Sparse-Set Fallback** (Assignee: Antigravity, Deadline: 2026-03-31, Deps: Task 3)
-  - Implement `SparseSet` for components marked with `StorageSparseSet`.
+- [ ] Implement `ComponentPool` for short-lived data
 
-### 1.3 System Scheduling & Discovery
-
-- [ ] Implement DAG-based scheduler with parallel execution tracks
-
-## Phase 2: Render SubApp & Pipeline
-
-### 2.1 Multi-Phase Pipeline
+## Phase 3: Render SubApp & Pipeline
 
 - [ ] Implement Render SubApp with async extraction
 - [ ] Implement `RenderFeature` extension points
+- [ ] Implement FileSystem/Asset Management (VFS, Zip)
 
-### 2.2 Asset/Content Management
+## Phase 4: Physics, Scenes & Logic
 
-- [ ] Implement `FileSystemProvider` and `ZipProvider` for VFS
+- [ ] Implement Scene tree & Entity cloning
+- [ ] Implement Physics Server (Collision, RigidBody, Constraints)
+- [ ] Implement Character Controller (Kinematic Sweep)
+- [ ] Implement Collision Events & Physics Material assets
 
-## Phase 3: Entity lifecycle & Scene tree
+## Phase 5: Diagnostics & Tools
 
-- [ ] Implement `SceneSpawner` with GUID-based prefab overrides
-- [ ] Implement Entity cloning (Deep Copy)
-
-## Phase 4: Advanced Engine Extensions (Backlog)
-
-### 4.1 Physics Server
-
-- [ ] Implement `PhysicsSubApp` with extraction/writeback cycle
-- [ ] `RigidBody` component with axis-lock solver constraints
-- [ ] `Collider` (Model B) & parent body syncing
-- [ ] `PhysicsServer` query APIs (Ray/Shape/Point/Overlap)
-- [ ] Implement `Joint` entity-based constraints & motors
-- [ ] Implement `CollisionEvent` diffing & manifold snapshots
-- [ ] Implement `PhysicsMaterial` assets & combine logic
-- [ ] Implement `CharacterController` kinematic sweep & step-up
-- [ ] `CollisionGroups` bitfield filtering
-- [ ] Trajectory prediction logic (ShapeCast)
-- [ ] Debug visualisation for physics (Gizmos)
-- [ ] Implement `ImpulseBackend` (pure Go deterministic solver)
-
-### 4.2 Scripting & Automation
-
-- [ ] Implement Lua bridge with `TypeRegistry` binding generator
-- [ ] Implement `Go Hot-Reload` via `-overlay` or plugin package
-- [ ] **Task 1: Generational Entity ID** (Assignee: Antigravity, Deadline: 2026-03-28, Deps: None)
-  - Implement `EntityID` as a `uint64` (32-bit index, 32-bit generation).
-  - Implement `EntityAllocator` with a free-list and generation increment on reuse.
-- [ ] **Task 2: World-Registry Basic** (Assignee: Antigravity, Deadline: 2026-03-29, Deps: Task 1)
-  - Implement `World` struct with basic entity spawning and life-checks.
-
-### 4.3 Diagnostics & Networking
-
-- [ ] Implement `ProfilingProtocol` with Tracy span exporter
-- [ ] Implement `NetworkPrimitives` for state snapshotting
-
-### 4.4 Quality & Documentation
-
-- [ ] Establish `ADR` (Architecture Decision Records) process
-- [ ] Implement `Property-based testing` for core ECS invariants
-- [ ] Implement `DevTools` state export (JSON) and graph visualization
-
-### 4.5 Testing & Validation Scenarios
-- [ ] Implement `Dino-Sapiens` test case (complex 50+ entity hierarchy with nested transforms)
-- [ ] Implement `Stress-Physics` (10,000 colliding primitives)
+- [ ] Implement Tracy Profiling exporter
+- [ ] Implement ADR process for architecture tracking
+- [ ] Implement DevTools JSON export & Visualization
+- [ ] Implement Dino-Sapiens & Stress-Physics test scenarios

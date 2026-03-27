@@ -175,7 +175,11 @@ Instead of callbacks, queries utilize Go 1.23 iterators for use with `range`.
 // All returns an iterator over all matching entities and their component.
 //
 // Usage:
-//   for entity, pos := range query.All(world) { ... }
+//   ```go
+// for entity, transform := range world.Query2[Entity, *Transform]() {
+//     // ...
+// }
+// ```
 func (q *QueryState1[T]) All(world *World) iter.Seq2[Entity, *T]
 
 // All for two-component query. Note: Go 1.23 standard iterators support
@@ -262,13 +266,14 @@ func (a Access) Conflicts(other Access) bool
 
 Schedule-time validation (pseudo-code):
 
-```
-func validateSchedule(systems []System) error:
+```go
+func validateSchedule(systems []System) error {
     for each pair (sysA, sysB) in systems:
         if sysA.Access().Conflicts(sysB.Access()):
             if no explicit ordering between sysA and sysB:
                 return error("ambiguous system order: {sysA} and {sysB} conflict on {component}")
     return nil
+}
 ```
 
 ### Count and Single
@@ -316,6 +321,13 @@ var (
 - **Get/Single**: Verify correct return for existing, missing, and dead entities.
 - **Access conflict detection**: Build test schedules with overlapping/disjoint access sets, verify conflict detection.
 - **ParIter correctness**: Run parallel iteration on 10K+ entities, verify every entity visited exactly once (use atomic counter).
+
+### 5.1 Flush Point
+
+Commands are strictly buffered and only applied at explicit synchronization points (Flush).
+
+### 5.2 Thread-Safe Buffering
+
 - **Multi-arity queries**: Test QueryState2, QueryState3, QueryState4 with various component combinations.
 - **Mut marker**: Verify mutable access updates change ticks, verify access set reflects write.
 - **Benchmarks**: `BenchmarkIter1Component`, `BenchmarkIter3Components`, `BenchmarkParIter`, `BenchmarkQueryGet`, `BenchmarkCacheUpdate`. Compare callback iteration vs. hypothetical iterator alternatives.

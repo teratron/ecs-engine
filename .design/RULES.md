@@ -22,6 +22,8 @@ Read by the agent before every operation. Updated only via explicit triggers.
 - **Stable → RFC**: substantive amendment (minor/major bump) requires re-review.
 - **Any → Deprecated**: explicitly superseded; replacement must be named.
 
+## Sprint 3: Execution & API (P1.3)
+
 ## 3. Versioning Rules
 
 - `patch` (0.0.X): typo fixes, clarifications — no structural change.
@@ -188,7 +190,7 @@ The command `/magic.analyze` (or `Analyze project`) triggers "Project Ventilatio
 
 - **Registry Drift**: Specs in INDEX but missing on disk.
 - **Coverage Gaps**: Code folders without corresponding specs.
-- **Rule Violations**: Code patterns that contradict `RULES.md §7` (both global and workspace tiers).
+- **Rule Violations**: Code patterns that contradict `RULES.md` (both global and workspace tiers).
 - **Integrity Issues**: Mismatched checksums in `.magic/`.
 
 ### C22 — Workspace Rule Inheritance
@@ -214,13 +216,15 @@ To minimize redundant resource usage and improve performance, the agent may opti
 
 1. **Language Version**: The project targets **Go 1.26.1** or later. Code MUST utilize the latest language features, specifically:
     - **Generics & Self-referential Types**: for complex ECS relationships.
-    - **Range-over-func Iterators**: (`iter.Seq`, `iter.Seq2`) for all system queries.
+    - **Bitmask Matching**: Queries utilizes 128-bit bitmask-based archetype matching (O(1)).
+    - **Range-over-func Iteration**: Using `iter.Seq2` for all entity and component traversals.
+    - **Pure Data Components**: All ECS Components MUST be simple data structs (POD-like) without internal methods that maintain state or perform complex logic.
     - **Enhanced `new`**: `new(Struct{...})` for direct pointer initialization.
     - **SIMD**: Use `simd/archsimd` (where applicable) for performance-critical vector/math operations.
 2. **Runtime & GC**: The project is optimized for the **Green Tea Garbage Collector**. Memory layouts MUST prioritize small-object locality and stack allocation.
 3. **Storage Strategy**: The engine core MUST prioritize **Sparse-Set storage** for general-purpose component access to ensure O(1) removal and high cache-locality for fragmented entity sets. `Table` storage is reserved for high-density, uniform component sets.
-4. **Stdlib Priority**: Always prefer Go standard library packages. Use modern additions like `unique`, `slices`, `maps`, and `crypto/hpke` where needed.
-5. **Dependency Justification**: Every third-party dependency must be explicitly justified in the relevant specification with a rationale for why the standard library is insufficient.
+4. **Stdlib Priority**: Always prefer Go standard library packages. Use modern additions like `unique`, `slices`, `maps`.
+5. **Concurrency Safety**: All systems MUST be analyzed for data races. Use `go test -race` as the primary gate. Shared state between systems MUST be protected by the scheduler (via resource/component locks) or explicit synchronization.
 6. **Zero-Dependency Goal**: Strive for a minimal dependency footprint. The engine core (ECS, scheduling, events) must have zero external Go dependencies.
 
 ### C25 — ECS Architecture Reference Skill
@@ -245,3 +249,4 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 | 1.1.0 | 2026-03-25 | Added C24 — Go Standard Library First |
 | 1.2.0 | 2026-03-25 | Added C25 — ECS Architecture Reference Skill |
 | 1.3.0 | 2026-03-27 | Added C26 — Specification-Example Correlation |
+| 1.4.0 | 2026-03-27 | Integrated Research Insights: Green Tea GC, Bitmasks, SIMD. |
