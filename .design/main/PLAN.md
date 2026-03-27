@@ -1,8 +1,13 @@
 # Implementation Plan — ECS Engine core
 
-## Phase 1: High-Performance Foundations (Active)
+## Phase 0: Architecture & Specifications (Active)
 
-### 1.1 Task System & Concurrency
+- [x] Create core ECS concept specifications (World, Query, Entity)
+- [ ] Finalize Go-specific implementation specs (World-Go, Query-Go)
+- [ ] Reach "Stable" status for the POC specification set
+- [ ] Transition to POC implementation (tracked in .design/main/tasks/)
+
+## Phase 1: High-Performance Foundations (Backlog)
 
 - [ ] Implement `TaskPool` with `TryCooperate` main-thread assistance
 - [ ] Implement `ParallelFor` with adaptive batching
@@ -65,3 +70,7 @@
 - [ ] Establish `ADR` (Architecture Decision Records) process
 - [ ] Implement `Property-based testing` for core ECS invariants
 - [ ] Implement `DevTools` state export (JSON) and graph visualization
+
+### 4.5 Testing & Validation Scenarios
+- [ ] Implement `Dino-Sapiens` test case (complex 50+ entity hierarchy with nested transforms)
+- [ ] Implement `Stress-Physics` (10,000 colliding primitives)

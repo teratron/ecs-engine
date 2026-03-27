@@ -88,6 +88,9 @@ Registered automatically by the DiagnosticsPlugin:
 | Frames per second | `engine/fps` | Computed as 1/delta |
 | Entity count | `engine/entity_count` | World entity metadata |
 | System CPU time | `engine/system/{name}` | Scheduler tracing spans |
+| System Allocations | `engine/system/{name}/allocs` | `runtime.MemStats` before/after system |
+| Thread Idle Time | `engine/worker/idle_time` | TaskPool worker telemetry |
+| CPU Throttling | `engine/hw/throttling` | Platform-specific cooling/freq metrics |
 
 ### 4.4 Custom Diagnostics
 
