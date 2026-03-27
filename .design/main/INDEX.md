@@ -19,6 +19,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [component-system-go.md](specifications/component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
 | [query-system.md](specifications/query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
 | [query-system-go.md](specifications/query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
+| [ecs-lifecycle-patterns.md](specifications/ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, component destructors, cached views | Draft | concept | 0.1.0 |
 | [system-scheduling.md](specifications/system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.3.0 |
 | [system-scheduling-go.md](specifications/system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
 | [command-system.md](specifications/command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
