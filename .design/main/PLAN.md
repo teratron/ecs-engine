@@ -42,6 +42,8 @@
 - [ ] `PhysicsServer` query APIs (Ray/Shape/Point/Overlap)
 - [ ] Implement `Joint` entity-based constraints & motors
 - [ ] Implement `CollisionEvent` diffing & manifold snapshots
+- [ ] Implement `PhysicsMaterial` assets & combine logic
+- [ ] Implement `CharacterController` kinematic sweep & step-up
 - [ ] `CollisionGroups` bitfield filtering
 - [ ] Trajectory prediction logic (ShapeCast)
 - [ ] Debug visualisation for physics (Gizmos)

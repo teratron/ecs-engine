@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.14.0
+**Version:** 2.16.0
 **Status:** Active
 
 ## Overview
@@ -103,10 +103,12 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [physics-query.md](specifications/physics-query.md) | Ray/Shape/Point/Overlap queries, batching, filters, predicates | Draft | concept | 0.1.0 |
 | [joints.md](specifications/joints.md) | Joint constraints: Hinge, Piston, Ball, Distance, Fixed, Motorized | Draft | concept | 0.1.0 |
 | [collision-events.md](specifications/collision-events.md) | Contact/Trigger events, manifolds, filtering patterns, deferred despawn | Draft | concept | 0.1.0 |
+| [physics-materials.md](specifications/physics-materials.md) | Friction/Restitution assets, combine rules, surface tags, hot-reload | Draft | concept | 0.1.0 |
+| [character-controller.md](specifications/character-controller.md) | Kinematic capsule movement, iterative sweep, step-up, slope snapping | Draft | concept | 0.1.0 |
 | [scripting-system.md](specifications/scripting-system.md) | Lua bridge, TypeRegistry access, CommandBuffer integration | Draft | concept | 0.1.0 |
 
 ## Meta Information
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-27
-- **Total Specifications**: 58 (44 L1 concept + 14 L2 Go implementation)
+- **Total Specifications**: 60 (46 L1 concept + 14 L2 Go implementation)
