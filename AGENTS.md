@@ -26,7 +26,43 @@ Consistency in communication and code is paramount.
 - **Language**: Go (latest stable version).
 - **Dependencies**: Prefer standard library. Third-party packages require explicit justification.
 
-## 4. Completion Protocol (Mandatory Checklist)
+## 4. Go Development Rules
+
+### 4.1 Fundamentals & Best Practices
+
+- **Idiomatic Go**: Follow *Effective Go* and community standards.
+- **Simplicity**: Prioritize readability over cleverness.
+- **Explicit Errors**: Handle all errors immediately; return them as the last value. Use `fmt.Errorf("%w", err)` for wrapping.
+- **Composition**: Prefer composition over inheritance. Use interfaces for flexibility.
+- **Project Layout**: Follow standard Go project structure (`/cmd`, `/pkg`, `/internal`).
+
+### 4.2 Concurrency (Goroutines & Channels)
+
+- **Communication**: Share memory by communicating (via channels); do not communicate by sharing memory.
+- **Lifecycle**: Always manage goroutine lifecycles to avoid leaks. Use `sync.WaitGroup` or `context.Context` for synchronization/cancellation.
+- **Safety**: Protect shared state with `sync.Mutex`/`sync.RWMutex` or atomic operations. Always run tests with `-race`.
+
+### 4.3 Testing & Quality
+
+- **Table-Driven Tests**: Use for covering multiple scenarios efficiently.
+- **Coverage**: Aim for high test coverage but focus on critical business logic.
+- **Benchmarks**: Write benchmarks for performance-critical paths using `testing.B`.
+- **Fuzzing**: Use Go native fuzzing for input validation testing.
+
+### 4.4 Performance Optimization
+
+- **Profiling**: Use `pprof` to identify bottlenecks (CPU, Memory, Block).
+- **Memory**: Minimize heap allocations; use `sync.Pool` for object reuse where applicable.
+- **Preallocation**: Preallocate slices and maps if the size is known.
+
+### 4.5 Integration & Architecture
+
+- **gRPC/Protobuf**: Use for high-performance internal RPC.
+- **Database**: Use connection pooling. Prevent SQL injection by using prepared statements or proper ORM/sqlx patterns.
+- **Microservices**: Decouple by domain. Use lightweight communication and implement observability (tracing, metrics, logs).
+- **Web**: Use `net/http` for simple services; use frameworks like Gin or Echo for complex routing/middleware while maintaining clean architecture.
+
+## 5. Completion Protocol (Mandatory Checklist)
 
 Before finishing any task, the agent MUST verify the following:
 

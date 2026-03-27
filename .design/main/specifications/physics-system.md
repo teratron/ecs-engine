@@ -234,9 +234,12 @@ Determinism constraints:
 
 ```plaintext
 PhysicsSettings (Resource)
-  gravity:           Vec3     // default (0, -9.81, 0)
-  solver_iterations: int      // default 10
-  max_ccd_substeps:  int      // default 4
+  gravity:                 Vec3      // default (0, -9.81, 0)
+  solver_iterations:       int       // default 10
+  max_ccd_substeps:        int       // default 4
+  sleep_linear_threshold:  float32   // default 0.01 m/s
+  sleep_angular_threshold: float32   // default 0.01 rad/s
+  sleep_frames_required:   int       // idle frames before sleep, default 10
 ```
 
 `PhysicsSettings` is a main World resource. Changes are picked up at the next Sync phase.
