@@ -40,6 +40,8 @@
 - [ ] `RigidBody` component with axis-lock solver constraints
 - [ ] `Collider` (Model B) & parent body syncing
 - [ ] `PhysicsServer` query APIs (Ray/Shape/Point/Overlap)
+- [ ] Implement `Joint` entity-based constraints & motors
+- [ ] Implement `CollisionEvent` diffing & manifold snapshots
 - [ ] `CollisionGroups` bitfield filtering
 - [ ] Trajectory prediction logic (ShapeCast)
 - [ ] Debug visualisation for physics (Gizmos)
