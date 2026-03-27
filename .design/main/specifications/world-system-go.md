@@ -7,7 +7,11 @@
 
 ## Overview
 
-This specification defines the Go implementation of the World — the central data store that owns all entities, components, resources, archetypes, and schedules. The World is the single entry point for all ECS operations. It leverages Go 1.23+ features such as the `unique` package for identity management and modern `iter` patterns for inspection.
+This specification defines the Go implementation of the World — the central data store that owns all entities, components, resources, archetypes, and schedules.
+- **Chunk-based Allocation**: Sparse Sets and Tables MUST allocate memory in fixed blocks (e.g., 16KB) to ensure data locality and minimize pointer chasing.
+- **Reactive Hooks**: The World provides `OnAdd` and `OnRemove` signals for each component type, enabling observer-pattern behaviors for subsystems.
+- **Entity Lifecycle**: Uses a 64-bit ID with a 32/32 index-to-generation split for safe ID recycling.
+It leverages Go 1.23+ features such as the `unique` package for identity management and modern `iter` patterns for inspection.
 
 ## Go Package
 
@@ -149,6 +153,20 @@ type ResourceMap struct {
 
 func NewResourceMap() *ResourceMap
 ```
+
+### Reactive Hooks (Observers)
+
+To avoid frame-by-frame polling, the `World` maintains a registry of reactive hooks:
+
+```go
+type LifecycleHook func(Entity, any)
+
+func (w *World) OnAdd[T any](handler LifecycleHook)
+func (w *World) OnRemove[T any](handler LifecycleHook)
+```
+
+- **Triggering**: `OnAdd` fires immediately after component insertion; `OnRemove` fires immediately before removal.
+- **Usage**: Typically used by the Render system to register new meshes or the Physics system to create rigid bodies.
 
 ### DeferredWorld
 

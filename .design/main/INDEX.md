@@ -89,6 +89,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [ai-assistant-system.md](specifications/ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
 | [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
 | [compatibility-policy.md](specifications/compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.1.0 |
+| [error-core.md](specifications/error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.1.0 |
 
 ## P7 — Advanced Core
 

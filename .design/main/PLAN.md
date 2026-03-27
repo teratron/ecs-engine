@@ -1,8 +1,10 @@
-# Implementation Plan — ECS Engine core
+# Implementation Plan — ECS Engine
 
-## Phase 0: Architecture & Specifications (Active)
+**Status:** Phase 0: Architecture & Specifications (Active)
+**STOP FACTOR:** No architectural expansion (L1/L2 specs) beyond P0 is permitted until Phase 1 (POC) is validated via code in `examples/`.
 
-- [x] Create core ECS concept specifications (World, Query, Entity)
+## Phase 0: Foundation & Specifications (CURRENT)
+
 - [ ] Finalize Go-specific implementation specs (World-Go, Query-Go)
 - [ ] Reach "Stable" status for the POC specification set
 - [ ] Transition to POC implementation (tracked in .design/main/tasks/)
@@ -17,6 +19,11 @@
 - [ ] Implement Sparse-Set storage for core components
 - [ ] Implement `AssociatedDataMap` for system-owned technical caches
 - [ ] Implement `ComponentPool` for short-lived components (command-like)
+- [ ] **Task 3: Archetype & Table Layout** (Assignee: Antigravity, Deadline: 2026-03-30, Deps: Task 2)
+  - Implement `Column` (byte slice) and `Table` (map of columns).
+  - Implement `Archetype` as a set of component IDs.
+- [ ] **Task 4: Sparse-Set Fallback** (Assignee: Antigravity, Deadline: 2026-03-31, Deps: Task 3)
+  - Implement `SparseSet` for components marked with `StorageSparseSet`.
 
 ### 1.3 System Scheduling & Discovery
 
@@ -59,6 +66,11 @@
 
 - [ ] Implement Lua bridge with `TypeRegistry` binding generator
 - [ ] Implement `Go Hot-Reload` via `-overlay` or plugin package
+- [ ] **Task 1: Generational Entity ID** (Assignee: Antigravity, Deadline: 2026-03-28, Deps: None)
+  - Implement `EntityID` as a `uint64` (32-bit index, 32-bit generation).
+  - Implement `EntityAllocator` with a free-list and generation increment on reuse.
+- [ ] **Task 2: World-Registry Basic** (Assignee: Antigravity, Deadline: 2026-03-29, Deps: Task 1)
+  - Implement `World` struct with basic entity spawning and life-checks.
 
 ### 4.3 Diagnostics & Networking
 

@@ -139,7 +139,24 @@ To ensure accurate engine state tracking and reliable updates, any modification 
 
 ### C15 — Workspace Scope Isolation
 
-When operating in a workspace with a defined scope (via `.design/workspace.json`), the agent MUST restrict all analysis and file operations to the directories specified in the scope. All other project directories are treated as out-of-scope to ensure logical isolation and prevent context leakage or accidental modification of unrelated modules.
+...
+
+### C27 — GC Compensation (sync.Pool)
+
+All hot-path allocations (commands, events, temporary views) MUST utilize `sync.Pool` for object reuse to minimize GC pauses and overhead.
+
+### C28 — Performance-First QA
+
+All core engine modules MUST include:
+
+1. **Table-driven tests**: Covering edge cases and common scenarios.
+2. **Fuzzing**: For all input-parsing and data-transformation logic.
+3. **Race Detection**: All concurrent tests MUST pass with `-race`.
+4. **Baselines**: Benchmarks with regression thresholds (CI-gates).
+
+### C29 — Code Validation Stop-Factor
+
+No new Layer 1 (Concept) or Layer 2 (Go) specifications may be moved to `Stable` status without a corresponding validating implementation in the `examples/` directory (per C26).
 
 ### C16 — Micro-spec Convention
 
@@ -200,10 +217,11 @@ To minimize redundant resource usage and improve performance, the agent may opti
     - **Range-over-func Iterators**: (`iter.Seq`, `iter.Seq2`) for all system queries.
     - **Enhanced `new`**: `new(Struct{...})` for direct pointer initialization.
     - **SIMD**: Use `simd/archsimd` (where applicable) for performance-critical vector/math operations.
-2. **Runtime & GC**: The project is optimized for the **Green Tea Garbage Collector** (enabled by default in Go 1.26). Memory layouts should prioritize small-object locality and stack allocation to minimize GC pressure.
-3. **Stdlib Priority**: Always prefer Go standard library packages. Use modern additions like `unique`, `slices`, `maps`, and `crypto/hpke` where needed.
-4. **Dependency Justification**: Every third-party dependency must be explicitly justified in the relevant specification with a rationale for why the standard library is insufficient.
-5. **Zero-Dependency Goal**: Strive for a minimal dependency footprint. The engine core (ECS, scheduling, events) must have zero external Go dependencies.
+2. **Runtime & GC**: The project is optimized for the **Green Tea Garbage Collector**. Memory layouts MUST prioritize small-object locality and stack allocation.
+3. **Storage Strategy**: The engine core MUST prioritize **Sparse-Set storage** for general-purpose component access to ensure O(1) removal and high cache-locality for fragmented entity sets. `Table` storage is reserved for high-density, uniform component sets.
+4. **Stdlib Priority**: Always prefer Go standard library packages. Use modern additions like `unique`, `slices`, `maps`, and `crypto/hpke` where needed.
+5. **Dependency Justification**: Every third-party dependency must be explicitly justified in the relevant specification with a rationale for why the standard library is insufficient.
+6. **Zero-Dependency Goal**: Strive for a minimal dependency footprint. The engine core (ECS, scheduling, events) must have zero external Go dependencies.
 
 ### C25 — ECS Architecture Reference Skill
 
