@@ -17,7 +17,6 @@ Commands are deferred mutations to the World. Systems cannot directly perform st
 
 ## 1. Motivation
 
-During parallel system execution, direct World mutation would cause data races and iterator invalidation. Commands solve this by:
 - Buffering all structural changes.
 - Applying them atomically at safe synchronization points.
 - Allowing systems to "fire and forget" mutations without worrying about ordering.
@@ -55,7 +54,7 @@ During parallel system execution, direct World mutation would cause data races a
 
 ### 4.2 Entity Commands (Builder Pattern)
 
-```
+```go
 commands.Spawn(PlayerBundle{...})
     .Insert(Health{100})
     .Insert(Name{"Player 1"})
@@ -70,7 +69,7 @@ commands.Spawn(PlayerBundle{...})
 
 Users can define custom commands implementing a `Command` interface:
 
-```
+```go
 interface Command {
     Apply(world *World)
 }
@@ -86,14 +85,24 @@ Custom commands have full `&mut World` access when applied. Use for complex oper
 4. Each command's `Apply(world)` runs sequentially.
 5. Buffers cleared after application.
 
-### 4.5 Entity Reservation
+### 4.6 Command Components (Declarative Pattern)
 
-When a system calls `commands.Spawn(...)`, the entity ID is reserved immediately from the allocator. This means:
-- The ID can be used in subsequent commands within the same system.
-- The entity does not physically exist in the World until commands are applied.
-- Other systems cannot see the entity until after ApplyDeferred.
+In addition to deferred buffers, systems can use "Command Components" to trigger logic in other systems:
 
-## 5. Open Questions
+1. **Definition**: A plain component type representing a one-time request (e.g., `SpawnExplosion { pos Vec3 }`).
+2. **Usage**: A system adds this component to an entity (often a temporary one).
+3. **Processing**: A target system queries for this component, performs the action, and then removes the component (or despawns the entity) before the end of the frame.
+4. **Benefit**: Decouples systems using the data-oriented pipeline instead of imperative buffers.
+
+## 5. Patterns
+
+### 5.1 One-Shot Actions
+Use `Command Components` for actions that should be processed by specific systems in the standard update loop.
+
+### 5.2 Structural Changes
+Use `CommandBuffer` for spawn, despawn, and component insert/remove to ensure iterator safety.
+
+## 6. Open Questions
 
 - Should commands support rollback/undo for editor integration?
 - Priority commands: should some commands apply before others regardless of system order?

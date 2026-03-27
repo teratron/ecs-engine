@@ -11,6 +11,7 @@
 
 - [ ] Implement Sparse-Set storage for core components
 - [ ] Implement `AssociatedDataMap` for system-owned technical caches
+- [ ] Implement `ComponentPool` for short-lived components (command-like)
 
 ### 1.3 System Scheduling & Discovery
 
@@ -58,3 +59,9 @@
 
 - [ ] Implement `ProfilingProtocol` with Tracy span exporter
 - [ ] Implement `NetworkPrimitives` for state snapshotting
+
+### 4.4 Quality & Documentation
+
+- [ ] Establish `ADR` (Architecture Decision Records) process
+- [ ] Implement `Property-based testing` for core ECS invariants
+- [ ] Implement `DevTools` state export (JSON) and graph visualization
