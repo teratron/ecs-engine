@@ -37,8 +37,12 @@
 ### 4.1 Physics Server
 
 - [ ] Implement `PhysicsSubApp` with extraction/writeback cycle
-- [ ] Implement `RigidBody` component with axis-lock solver constraints
-- [ ] Implement `Collider` registry and shape union (Compound)
+- [ ] `RigidBody` component with axis-lock solver constraints
+- [ ] `Collider` (Model B) & parent body syncing
+- [ ] `PhysicsServer` query APIs (Ray/Shape/Point/Overlap)
+- [ ] `CollisionGroups` bitfield filtering
+- [ ] Trajectory prediction logic (ShapeCast)
+- [ ] Debug visualisation for physics (Gizmos)
 - [ ] Implement `ImpulseBackend` (pure Go deterministic solver)
 
 ### 4.2 Scripting & Automation

@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.11.0
+**Version:** 2.12.0
 **Status:** Active
 
 ## Overview
@@ -100,10 +100,11 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [physics-system.md](specifications/physics-system.md) | Physics server, deterministic solver, SubApp integration, interpolation | Draft | concept | 0.1.0 |
 | [rigid-body.md](specifications/rigid-body.md) | RigidBody component: mass, damping, axis locks, body types, sleep | Draft | concept | 0.1.0 |
 | [collider.md](specifications/collider.md) | Collision shapes: primitives, compound shapes, mesh/convex, filters | Draft | concept | 0.1.0 |
+| [physics-query.md](specifications/physics-query.md) | Ray/Shape/Point/Overlap queries, batching, filters, predicates | Draft | concept | 0.1.0 |
 | [scripting-system.md](specifications/scripting-system.md) | Lua bridge, TypeRegistry access, CommandBuffer integration | Draft | concept | 0.1.0 |
 
 ## Meta Information
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-27
-- **Total Specifications**: 55 (41 L1 concept + 14 L2 Go implementation)
+- **Total Specifications**: 56 (42 L1 concept + 14 L2 Go implementation)
