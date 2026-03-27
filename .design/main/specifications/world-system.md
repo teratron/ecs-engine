@@ -1,6 +1,6 @@
 # World System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -102,6 +102,49 @@ Sub-applications (e.g., render pipeline) run their own World. Data transfer betw
 - `ClearTrackers()` advances the tick and resets per-frame change flags.
 - Called once per update cycle, typically at the end of the frame.
 
+### 4.8 Batch Entity Operations
+
+For mass-spawning scenarios (loading a scene, spawning a particle burst), the World provides batch APIs that amortize archetype lookup and table allocation costs:
+
+```plaintext
+World
+  SpawnBatch(count: int, template: Bundle) -> []Entity
+    // 1. Pre-allocate 'count' entity IDs in one pass
+    // 2. Ensure archetype table has capacity for 'count' new rows
+    // 3. Bulk-copy template data into contiguous table rows
+    // 4. Fire OnAdd hooks in batch (not per-entity)
+    // Return all new entity IDs
+
+  DespawnBatch(entities: []Entity)
+    // 1. Sort by archetype for table-contiguous removal
+    // 2. Bulk-remove in reverse order (no swap-remove cascades)
+    // 3. Fire OnRemove hooks in batch
+    // 4. Return IDs to allocator free list
+```
+
+**Why batch matters**: Spawning 10,000 entities one-by-one causes 10,000 archetype lookups, 10,000 table capacity checks, and 10,000 individual hook invocations. `SpawnBatch` does one lookup, one capacity check (with pre-allocation), and one batched hook invocation — typically 10–50x faster for large spawns.
+
+**Integration with dual-phase registration**: `SpawnBatch` increments the `add_level` counter once for the entire batch (see [entity-system.md §4.8](entity-system.md)), so any system discovery triggered by the new components is deferred until the batch completes. This prevents partially-initialized batches from being processed.
+
+### 4.9 Processor Registry
+
+The World maintains a mapping from component types to their processing systems, enabling automatic dispatch when entities change:
+
+```plaintext
+ProcessorRegistry (World internal)
+  type_to_processors:  map[TypeID][]SystemID     // direct processors
+  type_to_dependents:  map[TypeID][]SystemID     // systems that need revalidation
+  pending_processors:  []SystemDescriptor         // waiting for flush
+
+  NotifyComponentChanged(entity, oldType, newType):
+    // Phase 1: discover new processors for newType
+    // Phase 2: remove entity from oldType processors
+    // Phase 3: add entity to newType processors
+    // Phase 4: revalidate dependent processors
+```
+
+This centralized registry enables the automatic system discovery pattern (see [system-scheduling.md §4.10](system-scheduling.md)) — when a new component type appears, the registry checks its descriptor for a `DefaultProcessor` and auto-instantiates it. The registry also drives the component change notification chain (see [event-system.md §4.9](event-system.md)).
+
 ## 5. Open Questions
 
 - Should the World expose direct archetype iteration for advanced use cases, or keep it behind Query?
@@ -112,3 +155,4 @@ Sub-applications (e.g., render pipeline) run their own World. Data transfer betw
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch |

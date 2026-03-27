@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.9.0
+**Version:** 2.10.0
 **Status:** Active
 
 ## Overview
@@ -11,9 +11,9 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [world-system.md](specifications/world-system.md) | Central data store: entities, components, resources, change tracking | Draft | concept | 0.1.0 |
+| [world-system.md](specifications/world-system.md) | Central data store: entities, components, resources, change tracking | Draft | concept | 0.2.0 |
 | [world-system-go.md](specifications/world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Draft | go | 0.1.0 |
-| [entity-system.md](specifications/entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling | Draft | concept | 0.1.0 |
+| [entity-system.md](specifications/entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling | Draft | concept | 0.2.0 |
 | [entity-system-go.md](specifications/entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Draft | go | 0.1.0 |
 | [component-system.md](specifications/component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.3.0 |
 | [component-system-go.md](specifications/component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
@@ -25,7 +25,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [command-system-go.md](specifications/command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
 | [event-system.md](specifications/event-system.md) | Events, messages, observers, reactive triggers | Draft | concept | 0.3.0 |
 | [event-system-go.md](specifications/event-system-go.md) | Go impl: EventBus, MessageChannel, Observers, entity event bubbling | Draft | go | 0.1.0 |
-| [type-registry.md](specifications/type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.1.0 |
+| [type-registry.md](specifications/type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.2.0 |
 | [type-registry-go.md](specifications/type-registry-go.md) | Go impl: TypeRegistry, FieldInfo, DynamicObject, serialization hooks | Draft | go | 0.1.0 |
 
 ## P2 — Framework
@@ -70,7 +70,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | :--- | :--- | :--- | :--- | :--- |
 | [audio-system.md](specifications/audio-system.md) | Audio playback, spatial audio, backend abstraction | Draft | concept | 0.3.0 |
 | [asset-formats.md](specifications/asset-formats.md) | Asset loaders: glTF, images, audio codecs, scene files | Draft | concept | 0.1.0 |
-| [2d-rendering.md](specifications/2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.1.0 |
+| [2d-rendering.md](specifications/2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.2.0 |
 | [animation-system.md](specifications/animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Draft | concept | 0.1.0 |
 
 ## P6 — UI & Tools

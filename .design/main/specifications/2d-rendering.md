@@ -1,5 +1,5 @@
 # 2D Rendering
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -86,6 +86,49 @@ A 2D camera is an entity with `Camera` + `OrthographicProjection`. The projectio
 ### 4.9 Sprite Picking
 The 2D picking backend performs ray-rectangle intersection against each sprite's axis-aligned bounding rect in world space. It respects the same sort order so the topmost sprite wins. Custom `SpriteMesh` entities use their mesh AABB instead.
 
+### 4.10 2D RenderFeature
+
+The 2D pipeline registers as a `RenderFeature` (see [render-core.md §4.10](render-core.md)), participating in the same Collect → Extract → Prepare → Draw phases as the 3D pipeline:
+
+```plaintext
+Sprite2DFeature implements RenderFeature
+  Collect():
+    // Enumerate visibility groups for 2D cameras
+    // Build per-camera sprite lists
+
+  Extract():
+    // Copy Sprite + Transform data into ExtractedSprite structs
+    // ThreadLocal scratch buffers for parallel extraction
+    // Does NOT block simulation
+
+  Prepare():
+    // Sort extracted sprites (Z → Y → entity order)
+    // Batch consecutive sprites sharing texture + material + blend
+    // Upload batched vertex data to GPU buffers
+
+  Draw(ctx, view, stage):
+    // Issue one draw call per batch
+    // Bind atlas texture, set blend mode, draw instanced quads
+```
+
+**Shared infrastructure**: The 2D feature reuses the same `RenderDataHolder` (struct-of-arrays) and `VisibilityGroup` infrastructure as 3D. A 2D camera creates its own `RenderView` with an orthographic frustum, and culling uses the same batched parallel dispatch. This eliminates duplicate code while allowing 2D-specific optimizations (quad generation, atlas batching).
+
+**Mixed 2D/3D**: Because both pipelines are RenderFeatures contributing to the same render graph, mixing 2D sprites and 3D meshes in a single scene works naturally — they share the render stage and are interleaved by Z-order during sorting.
+
+### 4.11 Sprite Associated Data
+
+The sprite extraction system uses the associated data pattern (see [component-system.md §4.10](component-system.md)) to cache GPU-side resources per sprite entity:
+
+```plaintext
+SpriteProcessorData
+  vertex_buffer_offset:  uint32       // offset into shared vertex buffer
+  atlas_region:          UVRect       // cached texture coordinates
+  last_image_version:    uint64       // change tick of source image
+  batch_key:             uint64       // precomputed sort/batch key
+```
+
+When a sprite's image handle or color changes, `IsDataValid()` detects the version mismatch and regenerates the vertex data and atlas coordinates. Unchanged sprites skip this entirely — only their transform matrix is updated (a single `Mat4` write per frame).
+
 ## 5. Open Questions
 - Should sprite sheets / texture atlases be a first-class asset type or remain user-managed sub-rects?
 - How should animated sprites (flipbook sequences) be expressed — as an animation clip or a dedicated component?
@@ -95,3 +138,4 @@ The 2D picking backend performs ray-rectangle intersection against each sprite's
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.2.0 | 2026-03-26 | Added 2D RenderFeature integration, sprite associated data caching |

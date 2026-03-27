@@ -1,6 +1,6 @@
 # Entity System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -100,6 +100,44 @@ Typed collections for efficient entity storage:
 - `Entity.PLACEHOLDER` — A sentinel value (index=MAX, generation=0) used as a default. Never valid in a World.
 - No global "null entity" — use `Option[Entity]` / pointer-to-nil patterns instead.
 
+### 4.8 Dual-Phase Entity Registration
+
+When entities are added to the world in bulk (e.g., spawning a scene), cascading effects can occur: adding a component triggers system discovery (see [system-scheduling.md §4.10](system-scheduling.md)), which may spawn more entities. To prevent ordering issues and partial states, entity registration uses a reentrancy-safe two-phase approach:
+
+```plaintext
+EntityRegistrationState
+  add_level: int   // reentrancy counter
+
+Phase 1 — Accumulation (add_level > 0):
+  Entity is fully inserted into the allocator and tables.
+  But: any newly discovered systems go into a pending queue.
+  No system matching or initialization occurs during this phase.
+
+Phase 2 — Flush (add_level returns to 0):
+  FlushPendingSystems():
+    - Sort pending systems by priority.
+    - Initialize each system (OnSystemAdd).
+    - Match ALL existing entities against new systems
+      (systems "catch up" with entities created before discovery).
+```
+
+**Why this matters**: Without dual-phase, adding entity A could trigger system S, which processes A and spawns entity B, which triggers system T, which tries to process the still-initializing entity A — a reentrancy bug. The `add_level` counter serializes these cascades: inner spawns increment the counter, ensuring all pending systems are flushed only when the outermost spawn completes.
+
+### 4.9 Entity Reference Counting
+
+For long-lived references to entities (e.g., a UI widget referencing its data entity, an audio emitter tracking its spatial source), the entity system supports optional reference counting:
+
+```plaintext
+Entity
+  AddReference()     // increment internal ref count
+  Release()          // decrement; when zero, entity is eligible for deferred cleanup
+
+EntityManager
+  cleanup_queue: []Entity   // entities with ref_count == 0, pending despawn
+```
+
+This prevents premature despawn when multiple systems hold references to the same entity. The entity is only freed when all holders release it. Reference counting is opt-in — entities without references follow the standard immediate-despawn path.
+
 ## 5. Open Questions
 
 - Should the engine support remote entity allocation (reserving IDs from multiple threads)?
@@ -110,3 +148,4 @@ Typed collections for efficient entity storage:
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-03-26 | Added dual-phase entity registration, entity reference counting |
