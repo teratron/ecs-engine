@@ -1,6 +1,6 @@
 # Entity System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -138,6 +138,33 @@ EntityManager
 
 This prevents premature despawn when multiple systems hold references to the same entity. The entity is only freed when all holders release it. Reference counting is opt-in — entities without references follow the standard immediate-despawn path.
 
+### 4.10 Abstract Concept Entities
+
+Not all entities represent visible game objects. Entities are equally suited for modeling **abstract concepts** — relationships, groups, sessions, and other logical constructs that need to carry data and participate in ECS queries.
+
+**Examples:**
+
+- **SquadEntity**: Represents a formation of units. Components: `SquadComponent { memberIDs []EntityID }`, `FormationComponent { shape, spacing }`. Member entities reference it via `SquadRef { squadEntity EntityID }`.
+- **GameSessionEntity**: Tracks match state. Components: `SessionTimer`, `ScoreBoard`, `RoundState`.
+- **SpawnWaveEntity**: Defines an enemy wave. Components: `WaveDefinition { enemies []EnemyDef }`, `WaveProgress { spawned, remaining int }`.
+- **QuestEntity**: Tracks quest progress. Components: `QuestObjectives`, `QuestRewards`, `ActiveQuestTag`.
+
+**Why entities instead of global resources?**
+
+| Aspect | Global Resource (`Res[T]`) | Abstract Entity |
+| :--- | :--- | :--- |
+| Multiple instances | No (singleton) | Yes (many squads, quests) |
+| Queryable | No | Yes (`Query[SquadComponent]`) |
+| Debug components | No | Yes (attach `DebugOverlay`) |
+| Lifecycle hooks | No | Yes (OnAdd, OnRemove) |
+| Relationships | Manual | Via hierarchy/references |
+
+**Guidelines:**
+
+- If only one instance ever exists and no lifecycle hooks are needed, prefer `Res[T]`.
+- If multiple instances exist, or the concept benefits from component composition, use an entity.
+- Always use entity references (`EntityID`) rather than sharing pointers to the same data across entities (see [component-system.md §4.12](component-system.md) anti-pattern #1).
+
 ## 5. Open Questions
 
 - Should the engine support remote entity allocation (reserving IDs from multiple threads)?
@@ -149,4 +176,5 @@ This prevents premature despawn when multiple systems hold references to the sam
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added dual-phase entity registration, entity reference counting |
+| 0.3.0 | 2026-03-28 | Added abstract concept entities pattern (squads, sessions, quests as entities) |
 | — | — | Planned examples: `examples/ecs/` |

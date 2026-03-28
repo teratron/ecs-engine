@@ -1,6 +1,6 @@
 # Component System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -218,6 +218,30 @@ To maintain a scalable and performant ECS architecture, follow these guidelines:
 
 6. **Graduation Workflow**: When unsure where logic belongs, start by implementing it as a specific "Script" (associated with a specific entity/prefab). As the logic stabilizes or requires reuse, "graduate" it: move data to new components and logic to a generic system.
 
+### 4.12 Anti-Patterns
+
+The following patterns are known to cause subtle bugs and architectural decay. Avoid them.
+
+1. **Shared Mutable References Between Entities**: Never share a pointer/reference to the same mutable object across multiple entities' components.
+   - *Bad*: `entity1.Squad = entity2.Squad` (same pointer — mutation from one entity silently affects the other).
+   - *Good*: Create a dedicated `SquadEntity` with a `SquadComponent`, and have member entities reference it via `SquadRef { entityID EntityID }`.
+   - *Why*: Shared mutable state breaks ECS determinism, makes debugging nearly impossible, and prevents safe parallel iteration. Dedicated entities also allow attaching debug/diagnostic components to abstract concepts.
+
+2. **Boolean Flags Instead of Tag Components**: Avoid adding `bool` fields to components for filtering purposes.
+   - *Bad*: `MovementComponent { speed float64; isDisabled bool }` — every system iterating `MovementComponent` must check `isDisabled`.
+   - *Good*: Use a `DisabledTag` component and filter with `Without[DisabledTag]` in queries.
+   - *Why*: Tag-based filtering is resolved at the archetype level (O(1) per query), while boolean checks require per-entity branching inside hot loops.
+
+3. **God Components**: A component whose fields have obvious prefixes grouping unrelated concerns.
+   - *Smell*: Fields like `jumpSpeed`, `jumpCooldown`, `walkSpeed`, `walkAccel` in one `CharacterComponent`.
+   - *Fix*: Extract into `JumpComponent { speed, cooldown }` and `WalkComponent { speed, accel }`.
+   - *Why*: God components force systems to depend on data they don't need, bloating cache lines and preventing partial entity composition.
+
+4. **Systems That Process Unrelated Data**: A single system touching component combinations that serve different purposes.
+   - *Smell*: `GameplaySystem` that handles both health regeneration and input processing.
+   - *Fix*: Split into `HealthRegenSystem` and `InputSystem`, each depending on the minimum set of components.
+   - *Why*: Smaller systems enable partial entity matching, better parallelism, and easier reordering.
+
 ## 5. Open Questions
 
 - Should components support inheritance / composition beyond required components?
@@ -229,4 +253,5 @@ To maintain a scalable and performant ECS architecture, follow these guidelines:
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added component attachment validation rules, associated data pattern |
+| 0.3.0 | 2026-03-28 | Added anti-patterns section (shared mutable refs, bool flags, god components, monolithic systems) |
 | — | — | Planned examples: `examples/ecs/` |

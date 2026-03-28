@@ -81,6 +81,8 @@ These modules form the heart of the engine. Every game built on the engine depen
 - **Executor**: Single-threaded or multi-threaded. Uses access tracking for safe parallelism.
 - **Stepping**: Debug tool — step through systems one at a time
 - **Auto Apply Deferred**: Deferred commands applied at synchronization points
+- **Frame Delay Mitigation**: Reorder systems to avoid one-frame lag; use lifecycle hooks for immediate init; place visual finalization in `PostUpdate`.
+- **Ordering Tests**: Expose `GetExecutionOrder()` and `DetectAmbiguities()` for CI-level verification of system ordering constraints.
 - **Go Mapping**: `type Schedule struct { systems []SystemNode; executor Executor }`
 
 #### World
@@ -90,6 +92,9 @@ These modules form the heart of the engine. Every game built on the engine depen
 - **Resources**: Global singletons (not entity-attached). `Res[T]` (read), `ResMut[T]` (write)
 - **Change Detection**: Tick-based. Every mutation increments a tick counter. Queries detect changes.
 - **Deferred World**: Limited world access for use inside hooks/observers (prevents re-entrancy)
+- **Abstract Concept Entities**: Use entities for non-visible concepts (squads, sessions, quests) when multiple instances exist or lifecycle hooks are needed. Prefer `Res[T]` only for true singletons.
+- **Entity Object Pooling**: Pre-spawn and disable entities for frequently created/destroyed archetypes (projectiles, particles). Use `DisabledTag` to hide from queries; reset on acquire.
+- **Anti-Patterns**: No shared mutable refs between entities (use EntityID references). No bool flags for filtering (use tag components). No god components (split by concern).
 - **Go Mapping**: `type World struct { entities EntityManager; archetypes []Archetype; resources ResourceMap }`
 
 ### Layer 2: ECS Extended

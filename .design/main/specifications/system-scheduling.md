@@ -1,6 +1,6 @@
 # System Scheduling
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -232,6 +232,45 @@ IProcessable[TSystem] interface {
 This complements the traditional model (§4.1–4.6): both can coexist in the same world. The flexible model is better for optional, self-contained features (e.g., a particle effect component that brings its own processor). The traditional model is better for core engine systems with complex inter-system ordering.
  for core engine systems with complex inter-system ordering.
 
+### 4.14 System Ordering Verification (Testing)
+
+System ordering bugs are among the hardest to diagnose in ECS — they manifest as one-frame visual glitches, delayed reactions, or non-deterministic behavior that only appears under specific entity compositions. The scheduler should provide tooling for explicit ordering verification.
+
+**Test Categories:**
+
+**Ordering Constraint Tests** — Verify that declared `Before`/`After`/`Chain` constraints produce the expected execution sequence.
+
+```plaintext
+Test "PhysicsBeforeRendering":
+    schedule = BuildSchedule(Update)
+    order = schedule.GetExecutionOrder()
+    Assert order.IndexOf(ApplyGravitySystem) < order.IndexOf(RenderSystem)
+    Assert order.IndexOf(CollisionSystem) < order.IndexOf(RenderSystem)
+```
+
+**Data Dependency Tests** — Verify that a system's writes are visible to downstream readers in the same frame (no unintended frame delays).
+
+```plaintext
+Test "DamageVisibleSameFrame":
+    world = NewTestWorld()
+    entity = world.Spawn(Health { current: 100 }, DamageEvent { amount: 25 })
+    RunScheduleOnce(world, Update)
+    Assert world.Get[Health](entity).current == 75  // not 100 (would indicate frame delay)
+```
+
+**Ambiguity Detection Tests** — Assert that the schedule has zero unresolved ambiguities (two systems with conflicting access and no ordering).
+
+```plaintext
+Test "NoAmbiguities":
+    schedule = BuildSchedule(Update)
+    ambiguities = schedule.DetectAmbiguities()
+    Assert len(ambiguities) == 0, "Unresolved: %v", ambiguities
+```
+
+**Regression Guards** — When a frame-delay bug is fixed by reordering systems, add a test that locks the ordering to prevent future regressions.
+
+**Integration with CI**: These tests should run as part of the standard `go test` suite. They are fast (no rendering, no I/O) and catch ordering regressions early. The scheduler's `GetExecutionOrder()` and `DetectAmbiguities()` methods must be part of the public API specifically to enable this testing pattern.
+
 ## 5. Open Questions
 
 - Should the engine support dynamic system addition/removal at runtime?
@@ -243,4 +282,5 @@ This complements the traditional model (§4.1–4.6): both can coexist in the sa
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added automatic system discovery, dual-phase registration, dependency graph, flexible registration |
+| 0.3.0 | 2026-03-28 | Added system ordering verification and testing patterns |
 | — | — | Planned examples: `examples/ecs/` |
