@@ -17,6 +17,8 @@ The Transport layer provides reliable and unreliable message delivery between pe
 - [platform-system.md](platform-system.md) — Socket backend varies per platform (POSIX, WASM, console)
 - [task-system.md](task-system.md) — IO pool provides the goroutine for transport operations
 - [replication.md](replication.md) — State replication system; primary consumer of transport channels 0, 1, 3
+- [rpc.md](rpc.md) — Network RPC uses ChannelID 1 for typed message delivery
+- [network-diagnostics.md](network-diagnostics.md) — Reads ConnectionStats for RTT, packet loss, bandwidth metrics
 
 ## 1. Motivation
 

@@ -19,6 +19,9 @@ The Replication system synchronizes entity and component state between a server 
 - [type-registry.md](type-registry.md) — Runtime type metadata, serialization hooks, ReflectComponent
 - [event-system.md](event-system.md) — Replication events delivered through the standard event bus
 - [world-system.md](world-system.md) — World as the canonical state store, resources
+- [snapshot-interpolation.md](snapshot-interpolation.md) — Remote entities rendered via interpolation of replicated snapshots
+- [client-prediction.md](client-prediction.md) — Predicted entities use replication for server reconciliation
+- [network-diagnostics.md](network-diagnostics.md) — Reads ReplicationStats for entity count, bandwidth metrics
 
 ## 1. Motivation
 

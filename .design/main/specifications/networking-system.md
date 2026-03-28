@@ -20,6 +20,11 @@ The Networking System defines the engine's boundary with multiplayer infrastruct
 - [task-system.md](task-system.md) — IO pool for network transport threads
 - [transport.md](transport.md) — Detailed UDP transport layer: channels, reliability, packet structure, connection lifecycle
 - [replication.md](replication.md) — State replication: markers, entity mapping, visibility, delta compression, priority
+- [snapshot-interpolation.md](snapshot-interpolation.md) — Sync model: snapshot buffer, interpolation timing, extrapolation
+- [client-prediction.md](client-prediction.md) — Sync model: input prediction, server reconciliation, rollback
+- [lockstep.md](lockstep.md) — Sync model: deterministic lockstep, input delay, speculative execution
+- [rpc.md](rpc.md) — Typed network RPC via event system
+- [network-diagnostics.md](network-diagnostics.md) — Network metrics, alerts, debug overlay, desync reports
 
 ## 1. Motivation
 

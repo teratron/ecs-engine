@@ -99,6 +99,11 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.2.0 |
 | [transport.md](specifications/transport.md) | UDP transport: channels, reliability, connection lifecycle, MTU discovery | Draft | concept | 0.1.0 |
 | [replication.md](specifications/replication.md) | State replication: markers, entity mapping, visibility, delta compression, priority | Draft | concept | 0.1.0 |
+| [snapshot-interpolation.md](specifications/snapshot-interpolation.md) | Sync model: server snapshots, client interpolation buffer, adaptive delay | Draft | concept | 0.1.0 |
+| [client-prediction.md](specifications/client-prediction.md) | Sync model: local input prediction, server reconciliation, rollback smoothing | Draft | concept | 0.1.0 |
+| [lockstep.md](specifications/lockstep.md) | Sync model: deterministic lockstep, input delay, speculative execution, desync detect | Draft | concept | 0.1.0 |
+| [rpc.md](specifications/rpc.md) | Typed network RPC: send/receive, event integration, rate limiting | Draft | concept | 0.1.0 |
+| [network-diagnostics.md](specifications/network-diagnostics.md) | Network metrics, alerts, debug overlay, profiling spans, desync reports | Draft | concept | 0.1.0 |
 | [hot-reload.md](specifications/hot-reload.md) | Go code hot-restart with state snapshot, shader hot-swap, reload orchestrator | Draft | concept | 0.1.0 |
 
 ## P8 — Extended Systems
@@ -119,4 +124,4 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-28
-- **Total Specifications**: 68 (52 L1 concept + 14 L2 Go + 1 test + 1 tool)
+- **Total Specifications**: 73 (57 L1 concept + 14 L2 Go + 1 test + 1 tool)
