@@ -111,7 +111,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [collision-events.md](specifications/collision-events.md) | Contact/Trigger events, manifolds, filtering patterns, deferred despawn | Draft | concept | 0.1.0 |
 | [physics-materials.md](specifications/physics-materials.md) | Friction/Restitution assets, combine rules, surface tags, hot-reload | Draft | concept | 0.1.0 |
 | [character-controller.md](specifications/character-controller.md) | Kinematic capsule movement, iterative sweep, step-up, slope snapping | Draft | concept | 0.1.0 |
-| [scripting-system.md](specifications/scripting-system.md) | Lua bridge, TypeRegistry access, CommandBuffer integration | Draft | concept | 0.1.0 |
+| [scripting-system.md](specifications/scripting-system.md) | Scripting bridge (deferred): Lua/Tengo candidates, ECS API reference design | Draft | concept | 0.2.0 |
 
 ## Meta Information
 

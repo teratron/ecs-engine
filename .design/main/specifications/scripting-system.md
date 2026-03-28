@@ -1,276 +1,184 @@
 # Scripting System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
+**Priority:** Deferred (post-v1)
 
 ## Overview
 
-The Scripting System provides a Lua bridge that allows gameplay logic to be written in Lua scripts and hot-reloaded without recompiling the engine. Scripts access the ECS through a sandboxed API that reads components via the TypeRegistry, mutates the World through CommandBuffers, and responds to events. The bridge is designed for gameplay iteration speed, not raw performance — performance-critical systems remain in Go.
+The Scripting System is **deferred** until the core engine is validated. The current architecture relies on two existing mechanisms for rapid iteration:
+
+1. **[definition-system.md](definition-system.md)** — JSON-based data-driven content (UI, scenes, flows, templates) with in-process hot-reload (~100ms).
+2. **[hot-reload.md](hot-reload.md)** — Go code hot-restart with World state snapshot (~1.2s).
+
+Together, these cover the primary iteration workflows without introducing a scripting runtime. A scripting layer becomes valuable when:
+
+- **Mod support** is needed (sandboxed user-generated content).
+- **Non-programmer authoring** of gameplay logic (designers writing AI, triggers, cutscenes).
+- **Sub-second code iteration** is required beyond what Go hot-restart provides.
+
+This specification preserves the architectural design and API shape for future implementation, and identifies two candidate runtimes for evaluation.
 
 ## Related Specifications
 
-- [type-registry.md](type-registry.md) — Scripts discover and access component types at runtime
+- [type-registry.md](type-registry.md) — Scripts would discover and access component types at runtime
 - [command-system.md](command-system.md) — All World mutations from scripts go through CommandBuffers
 - [event-system.md](event-system.md) — Scripts subscribe to and emit events
-- [component-system.md](component-system.md) — Component data exposed to scripts as Lua tables
 - [query-system.md](query-system.md) — Scripts iterate entities through a query API
-- [asset-system.md](asset-system.md) — Lua scripts are loaded as assets with hot-reload
-- [hot-reload.md](hot-reload.md) — Script hot-reload is in-process (no restart needed)
+- [asset-system.md](asset-system.md) — Scripts loaded as assets with hot-reload
+- [hot-reload.md](hot-reload.md) — Go code hot-restart (the primary iteration mechanism for now)
+- [definition-system.md](definition-system.md) — JSON data-driven layer (covers most non-code iteration needs)
 - [app-framework.md](app-framework.md) — ScriptingPlugin registration, ServiceRegistry access
-- [definition-system.md](definition-system.md) — Flow definitions can reference scripts for custom actions
 
 ## 1. Motivation
 
-Go is excellent for engine internals — type safety, performance, and concurrency. But for gameplay iteration, the compile-run cycle (even with hot-reload) creates friction:
+Go is excellent for engine internals — type safety, performance, and concurrency. The definition-system and hot-reload cover most iteration workflows. However, a scripting layer would address gaps that neither mechanism fills:
 
-- A designer wants to tweak enemy AI behavior and see the result instantly.
-- A prototype system needs rapid experimentation before committing to a Go implementation.
-- Mod support requires a sandboxed runtime that cannot crash the engine.
-- Level scripts (cutscenes, triggers, dialogues) change frequently and are authored by non-programmers.
+- **In-process reload (~10ms)** vs hot-restart (~1.2s) — critical for AI behavior tuning.
+- **Sandboxed execution** — mods cannot crash the engine or access the filesystem.
+- **Coroutines** — sequential multi-frame logic (patrol → wait → attack → flee) expressed naturally.
+- **Lower barrier** — designers write scripts without understanding Go build tooling.
 
-Lua is the standard choice for game scripting: lightweight (< 200KB), embeddable, fast (LuaJIT-class with gopher-lua), and familiar to game developers. The bridge provides a safe, ergonomic API that maps ECS concepts to Lua idioms.
+**Decision**: Deferred to post-v1. Revisit when the engine has a working editor and real users requesting scripting.
 
 ## 2. Constraints & Assumptions
 
-- Lua is the sole scripting language. Additional languages (e.g., Wren, JavaScript) are out of scope for v1.
-- The Lua runtime is embedded via `gopher-lua` (pure Go, no CGo dependency — C24 compliant).
-- Scripts cannot directly modify component memory. All mutations go through CommandBuffers.
-- Scripts execute on the main thread within the `Update` schedule. No goroutine spawning from scripts.
-- Script execution time is bounded by a configurable instruction limit (default: 1M instructions per frame). Exceeding the limit suspends the script and logs a warning.
-- Hot-reload of scripts is in-process — the Lua VM reloads the changed file without engine restart.
-- Scripts are sandboxed: no file I/O, no network access, no `os.execute`. Only engine API functions are exposed.
+- The scripting runtime MUST be pure Go (no CGo) to comply with C24.
+- Scripts MUST NOT directly modify component memory. All mutations go through CommandBuffers.
+- Scripts execute on the main thread within the `Update` schedule.
+- Script execution time MUST be bounded by a configurable instruction limit.
+- The scripting VM is a plugin — the engine core has zero dependency on any scripting runtime.
 
 ## 3. Core Invariants
 
-- **INV-1**: Scripts cannot crash the engine. Lua runtime errors are caught, logged, and the offending script is disabled.
+- **INV-1**: Scripts cannot crash the engine. Runtime errors are caught, logged, and the offending script is disabled.
 - **INV-2**: All World mutations from scripts are deferred through CommandBuffers, never immediate.
 - **INV-3**: Script execution is bounded. A runaway script is suspended, not allowed to freeze the frame.
 - **INV-4**: Scripts access only the engine's public API surface. Internal engine state is never exposed.
-- **INV-5**: Script hot-reload does not interrupt the current frame. Reload applies at the next frame boundary.
+- **INV-5**: The scripting system is fully optional — removing it has zero impact on engine functionality.
 
 ## 4. Detailed Design
 
-### 4.1 Lua VM Lifecycle
+### 4.1 Runtime Candidates
+
+Two runtimes are shortlisted for future evaluation. Both are pure Go (C24 compliant):
 
 ```plaintext
-ScriptingPlugin.Build(app):
-  vm = NewLuaVM()
-  vm.SetInstructionLimit(config.MaxInstructions)
-  vm.RegisterAPI(ecs_api)          // entity, component, query, event API
-  vm.RegisterAPI(math_api)         // vec2, vec3, quat helpers
-  vm.RegisterAPI(input_api)        // read-only input state
-  vm.RegisterAPI(time_api)         // delta_time, elapsed, frame_count
-  app.World().Services().Register[ScriptVM](vm)
+Candidate 1: Lua (via gopher-lua)
+  Language:     Lua 5.1
+  Runtime:      gopher-lua (pure Go, no CGo)
+  Size:         ~200KB embedded
+  Coroutines:   Native (Lua coroutines)
+  Typing:       Dynamic
+  Ecosystem:    Large — industry standard (WoW, Roblox, Defold, LÖVE)
+  Pros:         Familiar to gamedevs, proven in production, rich tooling
+  Cons:         No static typing, gopher-lua slower than LuaJIT,
+                Lua 5.1 only (no goto, no integers)
 
-Per-frame execution (Update schedule):
-  ScriptUpdateSystem(vm: Res[ScriptVM], scripts: Query[ScriptComponent]):
-    for entity, script in scripts:
-      if script.enabled:
-        vm.CallFunction(script.handle, "update", entity)
+Candidate 2: Tengo (via tengo)
+  Language:     Tengo (Go-like syntax)
+  Runtime:      tengo (pure Go, no CGo)
+  Size:         ~150KB embedded
+  Coroutines:   No native coroutines (workaround via closures)
+  Typing:       Dynamic with Go-like feel
+  Ecosystem:    Small — niche but growing
+  Pros:         Go-like syntax (zero learning curve for Go devs),
+                compiled bytecode (faster than gopher-lua),
+                immutable strings, first-class errors
+  Cons:         No coroutines, small community, limited tooling,
+                less known in gamedev
 ```
 
-### 4.2 Script Component
+**Evaluation criteria** (to be applied when the decision is made):
 
-Entities with scripted behavior carry a `ScriptComponent`:
+1. **Performance**: benchmark both runtimes with 1000 scripted entities per frame.
+2. **Coroutine support**: critical for sequential gameplay logic (patrol, dialogue, cutscenes).
+3. **Community**: documentation quality, editor support (syntax highlighting, LSP).
+4. **Marshalling overhead**: cost of Go struct → script table → Go struct round-trip.
+5. **Sandbox safety**: ability to restrict file/network/OS access.
+
+### 4.2 Script-ECS Bridge (Reference Design)
+
+The bridge API is runtime-agnostic. When a runtime is chosen, this interface is implemented:
 
 ```plaintext
+ScriptRuntime (interface)
+  LoadScript(source: []byte) -> (ScriptHandle, error)
+  UnloadScript(handle: ScriptHandle)
+  CallFunction(handle: ScriptHandle, name: string, args: ...any) -> error
+  SetInstructionLimit(limit: uint64)
+  ReloadScript(handle: ScriptHandle, newSource: []byte) -> error
+
 ScriptComponent
-  asset:         Handle[LuaScript]    // asset reference to the .lua file
-  handle:        ScriptHandle         // VM-internal reference to loaded script instance
+  asset:         Handle[Script]       // asset reference to the script file
+  handle:        ScriptHandle         // VM-internal reference
   enabled:       bool                 // runtime enable/disable
   state:         ScriptState          // Active | Suspended | Error
   error_message: string               // populated if state == Error
 ```
 
-### 4.3 ECS API for Lua
+### 4.3 ECS API Surface (Reference Design)
 
-The bridge exposes ECS operations as Lua functions:
-
-```plaintext
--- Entity operations
-local entity = ecs.spawn()                     -- returns entity ID
-ecs.despawn(entity)                            -- deferred via Commands
-local exists = ecs.is_alive(entity)
-
--- Component operations (read)
-local transform = ecs.get(entity, "Transform")  -- returns Lua table
-local has = ecs.has(entity, "Health")
-local hp = ecs.get(entity, "Health").current
-
--- Component operations (write — all deferred)
-ecs.set(entity, "Health", { current = 50 })     -- via CommandBuffer
-ecs.insert(entity, "Poisoned", { duration = 5.0 })
-ecs.remove(entity, "Poisoned")
-
--- Query iteration
-for entity, transform, health in ecs.query("Transform", "Health") do
-    if health.current <= 0 then
-        ecs.despawn(entity)
-    end
-end
-
--- Event operations
-ecs.send("PlayerDied", { player = entity })
-ecs.on("CollisionEnter", function(event)
-    -- handle collision
-end)
-
--- Resource access (read-only)
-local time = ecs.resource("Time")
-local dt = time.delta
-
--- Service access (read-only)
-local input = ecs.service("Input")
-if input.pressed("space") then
-    ecs.send("Jump", { entity = self })
-end
-```
-
-### 4.4 Type Marshalling
-
-Component data crosses the Go/Lua boundary through automatic marshalling:
+Regardless of the chosen runtime, scripts interact with the ECS through this API:
 
 ```plaintext
-Go struct → Lua table (on ecs.get):
-  TypeRegistry provides field metadata.
-  Each field is converted:
-    int/float/bool/string → Lua primitive
-    Vec2/Vec3/Quat        → Lua table with x, y, z, w fields
-    []T                   → Lua table (array)
-    map[K]V               → Lua table (hash)
-    Handle[T]             → Lua userdata (opaque, passable to engine API)
-    Entity                → Lua number (entity ID)
+// Entity operations
+entity = ecs.spawn()
+ecs.despawn(entity)
+exists = ecs.is_alive(entity)
 
-Lua table → Go struct (on ecs.set):
-  Fields present in the Lua table overwrite the corresponding Go fields.
-  Missing fields retain their current values (partial update).
-  Extra fields in the Lua table are ignored with a warning.
-  Type mismatches log an error and skip the field.
+// Component operations
+data     = ecs.get(entity, "ComponentName")     // read → script table
+ecs.set(entity, "ComponentName", { ... })       // write → CommandBuffer
+ecs.insert(entity, "ComponentName", { ... })
+ecs.remove(entity, "ComponentName")
+has      = ecs.has(entity, "ComponentName")
+
+// Query iteration
+for entity, comp_a, comp_b in ecs.query("CompA", "CompB") do ... end
+
+// Events
+ecs.send("EventName", { ... })
+ecs.on("EventName", callback)
+
+// Read-only access
+time  = ecs.resource("Time")          // delta, elapsed, frame_count
+input = ecs.service("Input")          // key/button/axis state
 ```
 
-### 4.5 Script Hot-Reload
+### 4.4 Why Deferred
+
+The current stack already covers primary use cases:
 
 ```plaintext
-On AssetEvent[LuaScript]::Modified(handle):
-  1. Find all entities with ScriptComponent.asset == handle.
-  2. For each entity:
-     a. Save the script's Lua-side state table (script.state).
-     b. Unload the old script from the VM.
-     c. Load the new script source.
-     d. Call script:on_reload(saved_state) if defined.
-     e. If load fails: set ScriptState = Error, keep old behavior.
-  3. Log: "Script reloaded: {path} ({N} instances)"
+Use Case                     Current Solution              Scripting Adds
+─────────────────────────────────────────────────────────────────────────
+Tweak UI layout              definition-system (JSON)      nothing
+Adjust game flow             definition-system (flow)      nothing
+Change entity templates      definition-system (template)  nothing
+Iterate on Go system logic   hot-reload (1.2s restart)     ~10ms reload
+AI behavior prototyping      hot-reload                    coroutines, faster
+Cutscenes / triggers         definition-system (flow)      more flexibility
+Mod support                  NOT possible                  sandboxed runtime
+Designer-authored logic      NOT possible                  lower barrier
 ```
 
-**State preservation**: Scripts can store persistent state in a `self.state` table. This table survives hot-reload — the new script receives it via `on_reload()`. This enables iterating on script logic without losing runtime state.
-
-### 4.6 Sandboxing
-
-The Lua VM runs in a restricted environment:
-
-```plaintext
-Blocked standard library modules:
-  io        — no file access
-  os        — no process/env access
-  debug     — no internal VM manipulation
-  loadfile  — no arbitrary file loading
-  dofile    — no arbitrary file execution
-
-Allowed standard library modules:
-  math      — full math library
-  string    — string manipulation
-  table     — table utilities
-  coroutine — coroutines (for script-local async patterns)
-  pairs/ipairs/type/tostring/tonumber — basic Lua built-ins
-
-Instruction limit:
-  VM checks instruction count every N ops (configurable).
-  If limit exceeded: current script is suspended, error logged.
-  Script can be resumed next frame if the issue was transient.
-```
-
-### 4.7 Coroutine Support
-
-Scripts can use Lua coroutines for sequential logic that spans multiple frames:
-
-```plaintext
--- Example: patrol behavior
-function update(entity)
-    if not self.patrol_routine then
-        self.patrol_routine = coroutine.create(patrol)
-    end
-    coroutine.resume(self.patrol_routine, entity)
-end
-
-function patrol(entity)
-    while true do
-        move_to(entity, waypoint_a)
-        wait_seconds(2.0)           -- yields for 2 seconds of game time
-        move_to(entity, waypoint_b)
-        wait_seconds(2.0)
-    end
-end
-
-function wait_seconds(duration)
-    local elapsed = 0
-    while elapsed < duration do
-        elapsed = elapsed + ecs.resource("Time").delta
-        coroutine.yield()
-    end
-end
-```
-
-### 4.8 Error Handling
-
-```plaintext
-Script errors are contained per-entity:
-
-1. Lua runtime error (syntax, nil access, type error):
-   - Error caught by pcall wrapper.
-   - ScriptComponent.state = Error
-   - ScriptComponent.error_message = Lua error string
-   - Entity logged: "Script error on entity {id}: {message}"
-   - Script disabled for this entity. Other entities unaffected.
-
-2. Instruction limit exceeded:
-   - ScriptComponent.state = Suspended
-   - Warning: "Script on entity {id} exceeded instruction limit"
-   - Automatically retried next frame.
-   - If exceeded 3 frames in a row: escalate to Error state.
-
-3. Type marshalling error:
-   - Individual field skipped with warning.
-   - Remaining fields still processed.
-   - Entity continues running.
-```
-
-### 4.9 Performance Budget
-
-```plaintext
-Script execution budget per frame:
-  Default:      2ms (configurable via ScriptingConfig)
-  Measurement:  wall-clock time for all script updates combined
-  Enforcement:  if budget exceeded, remaining scripts deferred to next frame
-                (round-robin fairness — deferred scripts run first next frame)
-
-Profiling integration:
-  Each script update emits a "Script:{asset_name}" profiling span
-  (see profiling-protocol.md §4.5 for auto-instrumentation).
-```
+Scripting becomes high-priority when "NOT possible" rows become requirements.
 
 ## 5. Open Questions
 
-- Should scripts be able to define new component types at runtime, or only use pre-registered Go types?
-- Should there be a visual scripting layer (node graphs) that compiles to Lua?
-- How should script-to-script communication work — direct function calls or event-only?
-- Should coroutine state persist across hot-reload, or only `self.state` tables?
-- Is `gopher-lua` performance sufficient, or should LuaJIT (via CGo) be an optional backend?
-- Should scripts have read access to other entities' script state (for AI coordination)?
+- Lua vs Tengo: which runtime best fits the engine's Go-first philosophy?
+- Should the engine support multiple runtimes simultaneously (plugin per runtime)?
+- Is coroutine support a hard requirement, or can sequential logic use state machines?
+- Should the scripting API support creating new component types at runtime?
+- Should there be a visual scripting layer (node graphs) that compiles to the chosen runtime?
+- How should deterministic simulation (networking-system.md) interact with scripts?
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-28 | Initial draft: Lua bridge, ECS API, sandboxing, hot-reload, coroutines |
+| 0.1.0 | 2026-03-28 | Initial draft: full Lua bridge design with ECS API, sandboxing, coroutines |
+| 0.2.0 | 2026-03-28 | Deferred to post-v1. Replaced Lua-specific design with runtime-agnostic reference. Added Tengo as candidate. Minimalism strategy: rely on definition-system + hot-reload |
 | — | — | Planned examples: `examples/app/` |
