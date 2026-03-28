@@ -13,3 +13,13 @@ The core objective is to translate the sophisticated architectural patterns of t
 - **Spec Verification**: Proving the effectiveness of [Magic Spec](https://github.com/teratron/magic-spec) in complex, performance-critical domains.
 - **Modern Architecture**: Implementing a modular, data-driven ECS inspired by the state-of-the-art Bevy engine.
 - **Go Performance**: Leveraging Go's concurrency primitives to build a reactive and scalable game foundation.
+
+## References
+
+- [Bevy Engine](https://github.com/bevyengine/bevy)
+- [Godot Engine](https://github.com/godotengine/godot)
+- [Stride Engine](https://github.com/stride3d/stride)
+- [A Simple 2D Golang collision detection and resolution library for games](https://github.com/solarlune/resolv)
+- [Go implementation of the ECS paradigm](https://github.com/ByteArena/ecs)
+- [Data-Oriented Design: Implementing ECS (Entity Component System) with Go Generics](https://alamrafiul.com/posts/go-ecs-pattern/?spm=a2ty_o01.29997173.0.0.37af5171laJQiA)
+- [Design decisions when building games using ECS](https://arielcoppes.dev/2023/07/13/design-decisions-when-building-games-using-ecs.html?spm=a2ty_o01.29997173.0.0.37af5171laJQiA)
