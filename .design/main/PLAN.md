@@ -1,7 +1,7 @@
 # Implementation Plan — ECS Engine
 
 **Status:** Phase 0: Architecture & Specifications (Active)
-**STOP FACTOR:** No architectural expansion (L1/L2 specs) beyond P0 is permitted until Phase 1 (POC) is validated via code in `examples/`.
+**STOP FACTOR:** No architectural expansion (L1/L2 specs) beyond **P1-P3 (Foundation)** is permitted until Phase 1 (POC) is validated via code in `examples/`.
 
 ## Phase 0: Foundation & Specifications (CURRENT)
 
