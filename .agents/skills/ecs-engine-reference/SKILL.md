@@ -37,6 +37,9 @@ These modules form the heart of the engine. Every game built on the engine depen
 - **Required Components**: Component A can declare that adding it automatically adds Component B
 - **Clone Behavior**: Per-component cloning strategies for entity duplication
 - **Go Mapping**: `type Component interface{}` with struct tags for storage strategy
+- **Single Responsibility**: Prefer multiple small components (e.g., `Jump`, `Walk`) over one large `Character` component.
+- **Tagging**: Use zero-sized structs for filtering (e.g., `type PlayerTag struct{}`).
+- **Internal Logic**: Read-only helper methods on components are acceptable for pure state queries (`IsExpired() bool`).
 
 #### Storage
 
@@ -66,6 +69,8 @@ These modules form the heart of the engine. Every game built on the engine depen
 - **Conditions**: `RunIf(condition)` — systems skip execution based on runtime predicates
 - **Commands**: Deferred mutations (spawn, despawn, insert). Applied between system runs.
 - **Go Mapping**: `type System interface { Update(world *World, dt float64) }` + param injection
+- **Specialization**: Systems should depend on the minimum number of components. Split complex systems into smaller ones to allow partial reuse.
+- **Graduation Pattern**: Start logic as a specific "Script" (specific entity behavior) and promote to a "System" (generic world-wide logic) when it reaches stability and reusability.
 
 #### Schedule
 

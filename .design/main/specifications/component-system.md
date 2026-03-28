@@ -15,9 +15,8 @@ Components are pure data attached to entities. They carry no logic — systems p
 - [query-system.md](query-system.md) — Systems access components via queries
 - [change-detection.md](change-detection.md) — Component mutations tracked by ticks
 
-## 1. Motivation
+Key requirements:
 
-The component model defines how game data is structured. Key requirements:
 - Efficient memory layout for cache-friendly iteration.
 - Flexible storage: dense iteration vs. fast add/remove tradeoff.
 - Automatic dependency management (adding Transform auto-adds GlobalTransform).
@@ -88,6 +87,7 @@ Camera requires Transform, GlobalTransform, Frustum
 ```
 
 When component A with requirements is inserted on an entity, the engine:
+
 1. Resolves the full transitive dependency set.
 2. Inserts any missing required components with their default values.
 3. Fires hooks for all inserted components in dependency order.
@@ -110,6 +110,7 @@ Hooks receive a DeferredWorld — they can read/write other components but canno
 ### 4.5 Immutable Components
 
 Components marked as immutable cannot be mutated after insertion:
+
 - `Query<&mut ImmutableComponent>` is a compile-time or registration-time error.
 - The only way to change the value is to remove and re-insert.
 - Use case: entity identifiers, UUID components, archetype-defining tags.
@@ -165,8 +166,6 @@ Rule 1 uses an opt-out attribute: most components are single-instance (Position,
 
 Rule 2 prevents accidental data sharing — a component struct is owned by exactly one entity. If user code needs the same data on two entities, it must clone explicitly (see §4.6 Clone Behavior).
 
-### 4.10 Associated Data Pattern
-
 Systems often need to cache preprocessed or runtime-specific data for each entity they process, without adding fields to the component itself:
 
 ```plaintext
@@ -187,12 +186,37 @@ AssociatedDataMap[TComponent, TData]
 ```
 
 **Key Mechanisms:**
+
 - **Separation of Concerns**: Components remain "blind" data (POD structs). Systems own the technical "handles" or "buffers" needed for their operation.
 - **Fast Lookup**: Using internal non-generational `ComponentID` as a key allows O(1) array or sparse-set indexing for maximal performance.
 - **Validation**: `IsDataValid` checks if environmental factors (like a change in `Transform` or `GlobalTransform` tick) require a full data rebuild.
 - **Automatic Lifecycle**: When a component is removed from an entity, its `OnRemove` hook triggers the cleanup of all associated data in registered maps.
 
 For example, a **RenderMeshSystem** caches GPU buffer handles per `MeshComponent`. If the `MeshComponent`'s source path changes, `IsDataValid` returns false, and the GPU handles are re-initialized for the new asset.
+
+### 4.11 Design Best Practices
+
+To maintain a scalable and performant ECS architecture, follow these guidelines:
+
+1. **Component Granularity (Single Responsibility)**: Favor small, specialized components over monolithic "God" components.
+   - *Bad*: `CharacterComponent { pos, vel, health, jumpSpeed, isGrounded, ... }`
+   - *Good*: `Transform`, `Velocity`, `Health`, `Jump { speed }`, `GroundedTag`.
+   - *Benefit*: Better reuse and composition (e.g., a static trap with `Health` but no `Velocity`).
+
+2. **Tag Components for Filtering**: Use empty (zero-sized) structs as "Tag" components to mark entities for specific system processing or exclusion.
+   - *Example*: `DisabledTag`, `PlayerTag`, `EnemyTag`, `MainCameraTag`.
+   - *Advantage*: Queries like `With[PlayerTag]` are significantly faster and cleaner than checking a `bool IsPlayer` field inside a larger component.
+
+3. **Command Components for Reactive Logic**: Use components as one-time "signals" to trigger cross-system logic.
+   - *Example*: Adding a `PlaySoundEffect { id }` component to an entity. The `AudioSystem` processes it and then removes the component.
+
+4. **Data Aggregation vs. Multiple Components**: If an entity needs multiple instances of similar data (e.g., multiple status effects), use a single component containing a list/slice of structs rather than attempting to attach multiple components of the same type.
+   - *Example*: `AbilitiesComponent { list []Ability }` instead of multiple `AbilityComponent` instances.
+
+5. **Read-Only Helper Methods**: While components must be pure data, providing simple read-only methods for state queries is acceptable and improves readability.
+   - *Example*: `func (c *Cooldown) IsReady() bool { return c.Remaining <= 0 }`.
+
+6. **Graduation Workflow**: When unsure where logic belongs, start by implementing it as a specific "Script" (associated with a specific entity/prefab). As the logic stabilizes or requires reuse, "graduate" it: move data to new components and logic to a generic system.
 
 ## 5. Open Questions
 
