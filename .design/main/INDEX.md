@@ -96,7 +96,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
 | [profiling-protocol.md](specifications/profiling-protocol.md) | Tracy integration, custom spans, pprof mapping, export formats | Draft | concept | 0.1.0 |
-| [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.1.0 |
+| [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.2.0 |
+| [transport.md](specifications/transport.md) | UDP transport: channels, reliability, connection lifecycle, MTU discovery | Draft | concept | 0.1.0 |
 | [hot-reload.md](specifications/hot-reload.md) | Go code hot-restart with state snapshot, shader hot-swap, reload orchestrator | Draft | concept | 0.1.0 |
 
 ## P8 — Extended Systems
@@ -117,4 +118,4 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-28
-- **Total Specifications**: 66 (50 L1 concept + 14 L2 Go + 1 test + 1 tool)
+- **Total Specifications**: 67 (51 L1 concept + 14 L2 Go + 1 test + 1 tool)

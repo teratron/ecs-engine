@@ -1,6 +1,6 @@
 # Networking System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -18,6 +18,7 @@ The Networking System defines the engine's boundary with multiplayer infrastruct
 - [entity-system.md](entity-system.md) — Entity ID stability across snapshots
 - [definition-system.md](definition-system.md) — Network boundary rule (§4.11)
 - [task-system.md](task-system.md) — IO pool for network transport threads
+- [transport.md](transport.md) — Detailed UDP transport layer: channels, reliability, packet structure, connection lifecycle
 
 ## 1. Motivation
 
@@ -159,32 +160,13 @@ RollbackCoordinator
 
 ### 4.5 Transport Abstraction
 
-Network transport runs on IO pool threads, completely isolated from the game loop:
+Network transport runs on IO pool threads, completely isolated from the game loop. The full transport API — handle-based connection management, pre-configured delivery channels, packet structure, reliability layer, MTU discovery, and platform backends — is defined in [transport.md](transport.md).
 
-```plaintext
-NetworkTransport (interface)
-  Connect(addr: string) -> (Connection, error)
-  Listen(addr: string) -> (Listener, error)
-  Poll() -> []NetworkEvent
+Key design decisions (see transport.md for rationale):
 
-Connection (interface)
-  Send(data: []byte, reliability: Reliability) -> error
-  Recv() -> ([]byte, error)
-  Close()
-  RTT() -> Duration
-  PacketLoss() -> float32
-
-Reliability:
-  Unreliable           // fire-and-forget (UDP-like)
-  UnreliableOrdered    // drop out-of-order packets
-  Reliable             // guaranteed delivery (TCP-like)
-  ReliableOrdered      // guaranteed + ordered
-
-NetworkEvent:
-  Connected(peer: PeerID)
-  Disconnected(peer: PeerID, reason: DisconnectReason)
-  DataReceived(peer: PeerID, channel: ChannelID, data: []byte)
-```
+- **Handle-based connections**: `ConnectionID` (uint32) instead of stateful connection objects — consistent with the engine's ID-centric ECS model (EntityID, AssetID).
+- **Per-channel delivery**: Each `ChannelID` has a fixed `DeliveryMode` (Unreliable, ReliableUnordered, ReliableOrdered) configured at startup, not per-send. Enables per-channel buffer optimization and eliminates hot-path branching.
+- **Separated concerns**: Connection lifecycle events (`Connected`, `Disconnected`) flow through the standard event bus. Payload data is consumed via `Drain()`. The transport never leaks protocol types into gameplay code (INV-5 of this spec).
 
 **Implementations** (as separate plugins):
 
@@ -274,4 +256,5 @@ DeterministicRNG (resource)
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-28 | Initial draft: deterministic simulation, snapshot/rollback, transport abstraction |
+| 0.2.0 | 2026-03-28 | Replaced inline transport API with reference to transport.md; documented key design decisions |
 | — | — | Planned examples: `examples/movement/` |
