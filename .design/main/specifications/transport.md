@@ -16,6 +16,7 @@ The Transport layer provides reliable and unreliable message delivery between pe
 - [diagnostic-system.md](diagnostic-system.md) — Latency, jitter, packet loss surfaced as diagnostics
 - [platform-system.md](platform-system.md) — Socket backend varies per platform (POSIX, WASM, console)
 - [task-system.md](task-system.md) — IO pool provides the goroutine for transport operations
+- [replication.md](replication.md) — State replication system; primary consumer of transport channels 0, 1, 3
 
 ## 1. Motivation
 

@@ -19,6 +19,7 @@ The Networking System defines the engine's boundary with multiplayer infrastruct
 - [definition-system.md](definition-system.md) — Network boundary rule (§4.11)
 - [task-system.md](task-system.md) — IO pool for network transport threads
 - [transport.md](transport.md) — Detailed UDP transport layer: channels, reliability, packet structure, connection lifecycle
+- [replication.md](replication.md) — State replication: markers, entity mapping, visibility, delta compression, priority
 
 ## 1. Motivation
 
