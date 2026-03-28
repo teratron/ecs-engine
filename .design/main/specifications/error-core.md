@@ -64,3 +64,4 @@ Error messages are stored externally to the code to allow for localization:
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
+| — | — | Planned examples: `examples/diagnostic/` |

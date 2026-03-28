@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the hierarchy system described in the L1 concept spec. The hierarchy provides parent-child relationships between entities via a `ChildOf` relationship component, automatic `Children` maintenance, transform propagation from parent to child, cycle detection, and tree traversal utilities. All hierarchy types live in the `internal/hierarchy` package with dependencies on `internal/ecs` and `internal/math`.
 
+## Related Specifications
+
+- [hierarchy-system.md](hierarchy-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

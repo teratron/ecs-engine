@@ -227,3 +227,4 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.3.0 | 2026-03-26 | Added server pattern (RID + command queue), two-phase resource creation, Scenario concept, physics callback open questions |
 | 0.4.0 | 2026-03-26 | Added multi-phase pipeline (Collect/Extract/Prepare/Draw), RenderFeature, visibility culling, struct-of-arrays render data |
+| — | — | Planned examples: `examples/3d/` and `examples/shader/` |

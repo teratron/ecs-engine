@@ -9,6 +9,10 @@
 
 Go-level design for the three communication mechanisms: **Events** (broadcast, double-buffered), **Messages** (system-to-system, cursor-based ring buffer), and **Observers** (reactive triggers). Covers type definitions, registration, read/write system parameters, buffer management, observer dispatch, entity event bubbling, and concurrency constraints.
 
+## Related Specifications
+
+- [event-system.md](event-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the query system. Queries are the primary way systems access entity data. Due to Go's lack of variadic generics, multi-component queries require explicit arity types (`Query1`, `Query2`, `Query3`, etc.). Each query tracks its read/write access for schedule-time conflict detection and caches matched archetypes for efficient iteration. It leverages Go 1.23+ features such as modern `iter` patterns for inspection.
 
+## Related Specifications
+
+- [query-system.md](query-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

@@ -13,6 +13,10 @@ This specification defines the Go implementation of the World — the central da
 - **Entity Lifecycle**: Uses a 64-bit ID with a 32/32 index-to-generation split for safe ID recycling.
 It leverages Go 1.23+ features such as the `unique` package for identity management and modern `iter` patterns for inspection.
 
+## Related Specifications
+
+- [world-system.md](world-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```plaintext

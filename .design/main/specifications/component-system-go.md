@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the component system. Components are pure data structs attached to entities. The component system handles registration (mapping Go types to unique IDs), storage strategy selection, lifecycle hooks, required component resolution, bundles, and the component registry that serves as the single source of truth for component metadata.
 
+## Related Specifications
+
+- [component-system.md](component-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

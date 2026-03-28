@@ -108,3 +108,4 @@ Build tags control which registration calls are compiled. A convenience `Default
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| — | — | Planned examples: `examples/asset/` |

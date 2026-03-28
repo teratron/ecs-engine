@@ -243,3 +243,4 @@ This complements the traditional model (§4.1–4.6): both can coexist in the sa
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added automatic system discovery, dual-phase registration, dependency graph, flexible registration |
+| — | — | Planned examples: `examples/ecs/` |

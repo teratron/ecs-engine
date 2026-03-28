@@ -120,3 +120,4 @@ Loaders are registered through the asset system. Built-in loaders cover: PNG, JP
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| — | — | Planned examples: `examples/3d/` |

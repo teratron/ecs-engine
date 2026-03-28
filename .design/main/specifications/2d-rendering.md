@@ -139,3 +139,4 @@ When a sprite's image handle or color changes, `IsDataValid()` detects the versi
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added 2D RenderFeature integration, sprite associated data caching |
+| — | — | Planned examples: `examples/2d/` |

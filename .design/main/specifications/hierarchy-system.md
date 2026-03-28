@@ -125,3 +125,4 @@ commands.Entity(child).RemoveParent()
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| — | — | Planned examples: `examples/world/` |

@@ -218,3 +218,4 @@ Entity.OnComponentChanged(index, oldComponent, newComponent)
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added deferred call deduplication, event testing utilities (EventWatcher) |
 | 0.3.0 | 2026-03-26 | Added component change notification chain with reentrancy safety |
+| — | — | Planned examples: `examples/world/` |

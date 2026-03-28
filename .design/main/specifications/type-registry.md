@@ -109,3 +109,4 @@ This enables system dependency declarations like "I require any component implem
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added default processor discovery, interface-based type matching |
+| — | — | Planned examples: `examples/reflect/` |

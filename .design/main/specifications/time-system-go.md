@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the time system described in the L1 concept spec. The time system provides three independent time dimensions — Real, Virtual, and Fixed — each stored as a separate ECS resource. It uses Go's standard library `time.Duration` and `time.Time` types for wall-clock interop while storing deltas and elapsed values as `time.Duration` for precision. The package is named `gametime` to avoid conflict with the Go standard library `time` package.
 
+## Related Specifications
+
+- [time-system.md](time-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

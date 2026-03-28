@@ -359,3 +359,4 @@ Dispatcher.ForBatched(testCount, batchSize, func(tests, from, to):
 | 0.1.0 | 2026-03-26 | Initial draft from reference engine tooling analysis |
 | 0.2.0 | 2026-03-26 | Added co-located tests, named test commands, error suppression, event testing, serialization roundtrip tests |
 | 0.3.0 | 2026-03-26 | Added parallel test dispatching with work stealing and cooperative main thread |
+| — | — | Planned examples: `examples/stress_test/` |

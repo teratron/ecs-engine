@@ -189,3 +189,4 @@ This enables cross-cutting audio access — a physics collision system can trigg
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added audio bus graph, effect factory/instance split, AudioDriver abstraction |
 | 0.3.0 | 2026-03-26 | Added associated emitter data pattern, audio service registry |
+| — | — | Planned examples: `examples/audio/` |

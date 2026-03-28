@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the entity system described in the L1 concept spec. Entities are lightweight generational indices packed into a single `uint64`. The entity allocator uses a freelist-based arena for O(1) allocation and deallocation with generational safety against stale references.
 
+## Related Specifications
+
+- [entity-system.md](entity-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

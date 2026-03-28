@@ -305,3 +305,4 @@ Post-operations run in declaration order and modify the matrix in-place. They ar
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added split inversion, TransformInterpolator, named constants, precision open question |
 | 0.3.0 | 2026-03-26 | Added batch transform processing with work stealing, post-transform operations chain |
+| — | — | Planned examples: `examples/math/` |

@@ -205,3 +205,4 @@ For example, a **RenderMeshSystem** caches GPU buffer handles per `MeshComponent
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added component attachment validation rules, associated data pattern |
+| — | — | Planned examples: `examples/ecs/` |

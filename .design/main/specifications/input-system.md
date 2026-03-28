@@ -325,3 +325,4 @@ InputSource.Resume():
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added action mapping with per-action deadzone, per-device action state, physics/process frame timestamps, input accumulation, event transform |
 | 0.3.0 | 2026-03-26 | Added multi-source input aggregation, device hot-plug lifecycle with state resync |
+| — | — | Planned examples: `examples/input/` |

@@ -9,6 +9,10 @@
 
 Go-level design for the system scheduling subsystem. Defines the `System` interface, function-system wrappers with parameter injection, schedule construction with DAG-based ordering, single-threaded and multi-threaded executors, run conditions, and deferred command sync points.
 
+## Related Specifications
+
+- [system-scheduling.md](system-scheduling.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

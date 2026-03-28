@@ -118,3 +118,4 @@ Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) pro
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| — | — | Planned examples: `examples/3d/` |

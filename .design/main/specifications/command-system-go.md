@@ -9,6 +9,10 @@
 
 Go-level design for the command system. Commands are deferred mutations that buffer structural World changes (spawn, despawn, insert, remove) during system execution and apply them atomically at synchronization points. This spec covers the `Command` interface, `CommandBuffer`, built-in command types, the `Commands` system parameter, entity reservation, the builder pattern, and flush semantics.
 
+## Related Specifications
+
+- [command-system.md](command-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

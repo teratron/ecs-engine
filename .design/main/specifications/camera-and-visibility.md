@@ -130,3 +130,4 @@ Each camera renders independently to its `render_target`. Cameras sharing the sa
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| — | — | Planned examples: `examples/camera/` |

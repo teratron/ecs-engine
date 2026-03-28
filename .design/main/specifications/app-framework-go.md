@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the App framework described in the L1 concept spec. The `App` struct is the top-level entry point: it owns the main `World`, a schedule runner, and a plugin registry. It provides a builder-pattern API for configuring plugins, systems, and resources. Plugins are the primary extension mechanism. SubApps provide isolated execution contexts. The framework supports `context.Context` for graceful shutdown.
 
+## Related Specifications
+
+- [app-framework.md](app-framework.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

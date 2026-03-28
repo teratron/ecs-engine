@@ -9,6 +9,10 @@
 
 Go-level design for the type registry. Provides runtime introspection of registered types using Go's `reflect` package, with aggressive caching to minimize reflection overhead on hot paths. Covers type registration, field metadata extraction, struct tag parsing, dynamic object proxies, serialization hooks, and integration with the component registry.
 
+## Related Specifications
+
+- [type-registry.md](type-registry.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

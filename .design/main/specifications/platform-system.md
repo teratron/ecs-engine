@@ -271,3 +271,4 @@ The asset packager is a build-time tool (not runtime). It processes assets into 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft — cross-platform architecture for engine and games |
+| — | — | Planned examples: `examples/window/` |

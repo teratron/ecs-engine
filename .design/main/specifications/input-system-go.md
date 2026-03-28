@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the input system described in the L1 concept spec. The input system provides a device-agnostic abstraction for keyboard, mouse, gamepad, and touch input. The core type is the generic `ButtonInput[T]` resource that tracks pressed/just-pressed/just-released state using map-based sets. Device types use `iota` enums. All types live in the `internal/input` package with a dependency on `internal/ecs` for resource registration and `internal/math` for Vec2.
 
+## Related Specifications
+
+- [input-system.md](input-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

@@ -214,3 +214,4 @@ app.AddSystems(Update, animate_menu.RunIf(in_state(AppState.Menu)))
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| — | — | Planned examples: `examples/state/` |

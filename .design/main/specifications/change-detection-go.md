@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the change detection system described in the L1 concept spec. Change detection uses a tick-based mechanism — a monotonically increasing `Tick` counter — to track when components and resources were added or mutated. Smart wrappers `Ref[T]` and `Mut[T]` expose change metadata to systems. Query filters `Changed[T]` and `Added[T]` allow systems to iterate only over entities whose data changed. All types live in the `internal/ecs` package alongside the core ECS types.
 
+## Related Specifications
+
+- [change-detection.md](change-detection.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```

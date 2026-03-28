@@ -149,3 +149,4 @@ This prevents premature despawn when multiple systems hold references to the sam
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added dual-phase entity registration, entity reference counting |
+| — | — | Planned examples: `examples/ecs/` |

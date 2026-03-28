@@ -277,3 +277,4 @@ Entity
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added interned arrays, load context, format versioning, symmetric pack/unpack API |
 | 0.3.0 | 2026-03-26 | Added multi-scene hierarchy with offsets, entity metadata (GUID + name) |
+| — | — | Planned examples: `examples/scene/` |

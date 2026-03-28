@@ -189,3 +189,4 @@ The compute pool maintains multiple priority levels (Critical, Normal, Low):
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added Batched Dispatcher, Work Stealing (TryCooperate), and priority levels |
+| — | — | Planned examples: `examples/async/` |

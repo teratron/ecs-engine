@@ -311,3 +311,4 @@ This prevents O(n²) relayout during scene construction when many children are a
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added MouseFilter, FocusNeighbor overrides, OffsetTransform, deferred layout sort |
+| — | — | Planned examples: `examples/ui/` |

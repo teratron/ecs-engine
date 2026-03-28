@@ -42,6 +42,7 @@
 ## Phase 5: Diagnostics & Tools
 
 - [ ] Implement Tracy Profiling exporter
+- [ ] Implement Hot-Reload orchestrator (code hot-restart + shader hot-swap)
 - [ ] Implement ADR process for architecture tracking
 - [ ] Implement DevTools JSON export & Visualization
 - [ ] Implement Dino-Sapiens & Stress-Physics test scenarios

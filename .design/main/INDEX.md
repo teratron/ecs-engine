@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.16.0
+**Version:** 2.18.0
 **Status:** Active
 
 ## Overview
@@ -97,6 +97,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | :--- | :--- | :--- | :--- | :--- |
 | [profiling-protocol.md](specifications/profiling-protocol.md) | Tracy integration, custom spans, pprof mapping, export formats | Draft | concept | 0.1.0 |
 | [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.1.0 |
+| [hot-reload.md](specifications/hot-reload.md) | Go code hot-restart with state snapshot, shader hot-swap, reload orchestrator | Draft | concept | 0.1.0 |
 
 ## P8 — Extended Systems
 
@@ -115,5 +116,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-03-27
-- **Total Specifications**: 60 (46 L1 concept + 14 L2 Go implementation)
+- **Last Updated**: 2026-03-28
+- **Total Specifications**: 66 (50 L1 concept + 14 L2 Go + 1 test + 1 tool)

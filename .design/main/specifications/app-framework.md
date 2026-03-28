@@ -416,3 +416,4 @@ GameTime
 | 0.2.0 | 2026-03-26 | Added deployment architecture: modular monolith, backend service boundary, no-network-in-loop rule |
 | 0.3.0 | 2026-03-26 | Added leveled plugin initialization (CORE/SERVERS/SCENE/EDITOR), editor init callbacks, build tag isolation |
 | 0.4.0 | 2026-03-26 | Added service registry, GameSystem base pattern with Update/Draw split |
+| — | — | Planned examples: `examples/app/` |

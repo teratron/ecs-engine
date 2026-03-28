@@ -487,3 +487,4 @@ EntitySerializer
 | 0.2.0 | 2026-03-26 | Added network boundary section — definitions are local-only, no cross-process transmission |
 | 0.3.0 | 2026-03-26 | Added editor plugin integration: stable API, handles() dispatch, property revert/default, dynamic property list |
 | 0.4.0 | 2026-03-26 | Added order-based field serialization, custom entity serialization hooks |
+| — | — | Planned examples: `examples/config/` |

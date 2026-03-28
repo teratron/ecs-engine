@@ -168,3 +168,4 @@ Disabled effects are simply omitted; the graph reconnects adjacent nodes automat
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| — | — | Planned examples: `examples/3d/` |

@@ -238,3 +238,4 @@ ContentManager
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added VFS with mount points and asset compilation pipeline |
 | 0.3.0 | 2026-03-26 | Refined VFS with mount points, added Content Manager with reference counting |
+| — | — | Planned examples: `examples/asset/` |

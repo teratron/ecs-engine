@@ -9,6 +9,10 @@
 
 This specification defines the Go implementation of the state system described in the L1 concept spec. The state system provides hierarchical finite state machines for controlling application flow. States are `comparable` types (typically `uint8` iota enums) stored as ECS resources. The system supports state-keyed schedules (`OnEnter`, `OnExit`, `OnTransition`), SubStates dependent on parent state values, ComputedStates derived from other states, and automatic entity despawning on state exit. All types live in the `internal/state` package with a dependency on `internal/ecs`.
 
+## Related Specifications
+
+- [state-system.md](state-system.md) — L1 concept specification (parent)
+
 ## Go Package
 
 ```
