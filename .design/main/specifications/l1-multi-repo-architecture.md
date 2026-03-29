@@ -3,8 +3,8 @@
 | Metadata | Value |
 | :--- | :--- |
 | **Layer** | 1 (concept) |
-| **Status** | Stable |
-| **Version** | 1.1.0 |
+| **Status** | RFC |
+| **Version** | 1.2.0 |
 | **Related Specifications** | [app-framework.md](app-framework.md), [hot-reload.md](hot-reload.md), [ai-assistant-system.md](ai-assistant-system.md), [definition-system.md](definition-system.md), [diagnostic-system.md](diagnostic-system.md) |
 
 ## Overview
@@ -401,3 +401,4 @@ Before opening a PR in `ecs-editor`, the developer removes the `replace` directi
 | 0.1.0 | 2026-03-29 | Initial draft — repository split rationale, three-level communication model, pkg/editor/ and pkg/protocol/ contracts, versioning and CI strategy |
 | 1.0.0 | 2026-03-29 | [Auto-promote] Baseline Multi-Repo Architecture stabilized for implementation. |
 | 1.1.0 | 2026-03-29 | Fixed IPC Protocol repository decision (Variant A) — prioritized operational simplicity before v1.0.0. |
+| 1.2.0 | 2026-03-29 | Demoted Stable → RFC: open questions unresolved, no validating code (C29), architecture may evolve. |
