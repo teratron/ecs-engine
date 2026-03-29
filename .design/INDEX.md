@@ -17,7 +17,8 @@ Global registry aggregating all project specifications across workspaces.
 | Workspace | Description |
 | :--- | :--- |
 | [main](main/INDEX.md) | Primary engine workspace (ECS core, render pipeline, systems) |
-| [editor](editor/INDEX.md) | GUI Editor application (scene editor, inspector, asset browser) |
+
+> **Editor workspace** was extracted to `.design-editor/` for migration to the `ecs-editor` repository. Engine extension points for the editor are defined in `l1-multi-repo-architecture.md` (`pkg/editor/`, `pkg/protocol/`).
 
 ## Meta Information
 

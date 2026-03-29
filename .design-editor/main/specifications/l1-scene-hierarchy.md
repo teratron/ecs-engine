@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [hierarchy-system.md](../main/specifications/hierarchy-system.md), [entity-system.md](../main/specifications/entity-system.md) |
+| **Related Specifications** | [ecs-engine: l1-hierarchy-system.md], [ecs-engine: l1-entity-system.md] |
 
 ## Overview
 

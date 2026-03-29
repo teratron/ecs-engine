@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [viewport-system.md](viewport-system.md), [math-system.md](../main/specifications/math-system.md), [input-system.md](../main/specifications/input-system.md) |
+| **Related Specifications** | [l1-viewport-system.md](l1-viewport-system.md), [ecs-engine: l1-math-system.md], [ecs-engine: l1-input-system.md] |
 
 ## Overview
 

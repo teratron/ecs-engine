@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [editor-framework.md](editor-framework.md), [command-system.md](../main/specifications/command-system.md) |
+| **Related Specifications** | [l1-editor-framework.md](l1-editor-framework.md), [ecs-engine: l1-command-system.md] |
 
 ## Overview
 

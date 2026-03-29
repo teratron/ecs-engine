@@ -1,0 +1,9 @@
+{
+  "default": "main",
+  "workspaces": {
+    "main": {
+      "description": "Editor application workspace",
+      "scope": ["cmd/", "internal/", "pkg/"]
+    }
+  }
+}

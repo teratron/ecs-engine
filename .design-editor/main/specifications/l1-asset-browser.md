@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [asset-system.md](../main/specifications/asset-system.md), [asset-formats.md](../main/specifications/asset-formats.md) |
+| **Related Specifications** | [ecs-engine: l1-asset-system.md], [ecs-engine: l1-asset-formats.md] |
 
 ## Overview
 

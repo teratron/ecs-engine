@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [type-registry.md](../main/specifications/type-registry.md), [component-system.md](../main/specifications/component-system.md) |
+| **Related Specifications** | [ecs-engine: l1-type-registry.md], [ecs-engine: l1-component-system.md] |
 
 ## Overview
 

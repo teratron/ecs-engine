@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [diagnostic-system.md](../main/specifications/diagnostic-system.md), [editor-framework.md](editor-framework.md) |
+| **Related Specifications** | [ecs-engine: l1-diagnostic-system.md], [l1-editor-framework.md](l1-editor-framework.md) |
 
 ## Overview
 

@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [ui-system.md](../main/specifications/ui-system.md), [scene-system.md](../main/specifications/scene-system.md) |
+| **Related Specifications** | [ecs-engine: l1-ui-system.md], [ecs-engine: l1-scene-system.md] |
 
 ## Overview
 

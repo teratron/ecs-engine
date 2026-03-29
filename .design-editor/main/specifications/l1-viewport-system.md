@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 0.1.0 |
-| **Related Specifications** | [render-core.md](../main/specifications/render-core.md), [camera-and-visibility.md](../main/specifications/camera-and-visibility.md) |
+| **Related Specifications** | [ecs-engine: l1-render-core.md], [ecs-engine: l1-camera-and-visibility.md] |
 
 ## Overview
 

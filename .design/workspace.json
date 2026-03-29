@@ -4,10 +4,6 @@
     "main": {
       "description": "Primary engine workspace",
       "scope": ["cmd/", "pkg/", "internal/", "examples/"]
-    },
-    "editor": {
-      "description": "GUI-based engine editor application (Godot/Unity/Unreal style)",
-      "scope": ["editor/"]
     }
   }
 }
