@@ -35,6 +35,8 @@ Consistency in communication and code is paramount.
 - **Explicit Errors**: Handle all errors immediately; return them as the last value. Use `fmt.Errorf("%w", err)` for wrapping.
 - **Composition**: Prefer composition over inheritance. Use interfaces for flexibility.
 - **Project Layout**: Follow standard Go project structure (`/cmd`, `/pkg`, `/internal`).
+- **Formatting**: Always use `gofmt` and `goimports` to maintain consistent code style.
+- **Linting**: Ensure code passes `golangci-lint` with the project's configuration before submission.
 
 ### 4.2 Concurrency (Goroutines & Channels)
 
@@ -44,8 +46,8 @@ Consistency in communication and code is paramount.
 
 ### 4.3 Testing & Quality
 
+- **Coverage**: Maintain a minimum of **80% code coverage** for all new Go files and packages. Focus on critical logic and edge cases.
 - **Table-Driven Tests**: Use for covering multiple scenarios efficiently.
-- **Coverage**: Aim for high test coverage but focus on critical business logic.
 - **Benchmarks**: Write benchmarks for performance-critical paths using `testing.B`.
 - **Fuzzing**: Use Go native fuzzing for input validation testing.
 
@@ -88,4 +90,7 @@ Before finishing any task, the agent MUST verify the following:
 - [ ] **Rule Synchronization**: New agent-facing conventions from `.design/RULES.md` are added to this checklist.
 - [ ] **ECS Architecture Reference**: Skill loaded before any spec work; no external engine branding in project files.
 - [ ] **Visual Excellence**: Web/UI components (if any) follow premium design guidelines.
+- [ ] **Code Quality**:
+  - [ ] All new Go files have at least 80% test coverage.
+  - [ ] Code is formatted with `gofmt` and follows standard linting rules.
 - [ ] **Formatting**: No horizontal rules (---) used except in footers.
