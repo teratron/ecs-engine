@@ -5,8 +5,7 @@
 ```plaintext
 ecs-engine/                 # Root of the engine project
 ├── cmd/                    # CLI tools and standalone executables (Go 1.26.1)
-│   ├── cli/                # Scaffolding and project management tool
-│   └── editor/             # Entry point for the GUI-based engine editor
+│   └── cli/                # Scaffolding and project management tool
 │
 ├── examples/               # Validating implementations (required by C26/C29)
 │   ├── ecs/                # Entity/component/system core patterns
@@ -36,13 +35,14 @@ ecs-engine/                 # Root of the engine project
 │   │
 │   ├── app/                # Application framework and plugin orchestrator
 │   ├── asset/              # Asynchronous asset server and hot-reloader
+│   ├── hotreload/          # Engine hot-swap orchestrator, state snapshots, and VFS watchers
 │   ├── scene/              # DynamicScene, StaticScene, entity remapping, prefabs
 │   ├── hierarchy/          # ChildOf, Children, transform propagation
 │   ├── input/              # ButtonInput[T], AxisInput, action mapping, picking
 │   ├── state/              # State[S], NextState[S], SubState, ComputedState
 │   ├── time/               # Fixed-timestep loop and virtual timers
 │   ├── events/             # Observables and reactive event bus
-│   ├── type/               # Runtime type registry and reflection bridge
+│   ├── registry/           # Runtime type registry, reflection bridge, and metadata
 │   ├── definition/         # JSON declarative layer, interpreters, hot-reload binding
 │   │
 │   ├── render/             # Render SubApp, render graph, extract pattern
@@ -100,7 +100,10 @@ ecs-engine/                 # Root of the engine project
     │   ├── gizmo/          # Immediate-mode debug drawing, GizmoConfigStore
     │   ├── profiling/      # Span API, Tracy/pprof/chrome exporters
     │   └── error/          # EngineError, E-series codes, localization registry
-    └── codegen/            # ecs-gen: code generation for components/queries
+    ├── codegen/            # ecs-gen: code generation for components/queries
+    ├── editor/             # Plugin interfaces: InspectorPlugin, GizmoPlugin, etc.
+    └── protocol/           # IPC wire format: hot-reload and diagnostic messages
+```
 
 ## 🏗️ Game Project Structure (User Project)
 
@@ -130,3 +133,13 @@ my-game/                    # Typical project using the ecs-engine
 
 - `pkg/platform/`: Limited to interfaces and capability negotiation; physical implementations remain in `internal/window/backend/`.
 - `pkg/diagnostic/`: Atomic split into Store, Gizmo, Profiling, and Error packages to minimize cross-dependency.
+- `pkg/editor/` & `pkg/protocol/`: Stable architectural boundaries for communication with the `ecs-editor` repository.
+
+### Multi-Repo Architecture
+
+- **Repo Split**: The GUI editor resides in a separate `ecs-editor` repository to ensure the engine's public API is properly "dogfooded" and to isolate internal engine dependencies.
+- **IPC Protocol**: `pkg/protocol/` defines the shared newline-delimited JSON wire format for hot-reload and live diagnostics, maintained in the engine repository to ensure state-synchronization accuracy.
+
+### SDD Integration
+
+- `.design/`: The singular source of truth for architectural specifications (Magic SDD), integrated directly into the repository for visibility and build-time validation.

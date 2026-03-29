@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.18.0
+**Version:** 2.19.0
 **Status:** Active
 
 ## Overview
@@ -45,6 +45,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [change-detection-go.md](specifications/change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
 | [app-framework.md](specifications/app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
 | [app-framework-go.md](specifications/app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
+| [multi-repo-architecture.md](specifications/multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Stable | concept | 1.1.0 |
 
 ## P3 — Assets & Math
 
@@ -123,5 +124,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-03-28
-- **Total Specifications**: 73 (57 L1 concept + 14 L2 Go + 1 test + 1 tool)
+- **Last Updated**: 2026-03-29
+- **Total Specifications**: 75 (59 L1 concept + 14 L2 Go + 1 test + 1 tool)
