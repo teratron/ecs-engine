@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [input-system.md](input-system.md)
+**Implements:** [input-system.md](input-system.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ This specification defines the Go implementation of the input system described i
 ## Related Specifications
 
 - [input-system.md](input-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Input system provides a unified, cross-platform interface for all user input devices. It ensures:
+
+- Device-agnostic button and axis tracking via generic `ButtonInput[T]` and `AxisInput[T]`.
+- Frame-perfect state detection (Pressed, JustPressed, JustReleased).
+- High-performance, low-allocation event dispatch for immediate input reactions.
+- Integration with the ECS resource system for global input availability.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for type-safe input mapping and `comparable` constraints on maps.
+- **PreUpdate Schedule**: Input state is updated at the beginning of each frame before any user systems execute.
+- **Coordinate System**: Mouse/Touch positions are window-relative pixels (top-left is 0,0).
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [input-system.md §3](input-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: State Tracking | `ButtonInput` uses maps to track per-frame state transitions accurately. |
+| **INV-2**: Abstraction | Device-specific `KeyCode`, `MouseButton`, `GamepadButton` all use the same `ButtonInput` logic. |
+| **INV-3**: Buffering | Per-frame states (`JustPressed`, `JustReleased`) are cleared at the start of `PreUpdate`. |
+| **INV-4**: Read-Only Safety | Input resources are updated by the internal `update_input` system; user systems treat them as read-only. |
+| **INV-5**: Multi-touch | `TouchInput` events include unique `ID`s for simultaneous pointer tracking. |
 
 ## Go Package
 
@@ -476,13 +506,11 @@ func (p InputPlugin) Build(app *app.App)
 - **Integration**: Register InputPlugin in an App, simulate key press via platform event, verify `ButtonInput[KeyCode].JustPressed` in a test system.
 - **Benchmarks**: `BenchmarkButtonInputPress`, `BenchmarkButtonInputClear` with 10 active keys — target zero allocations after warmup.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should there be a built-in action mapping layer (e.g., "Jump" maps to Space + GamepadSouth), or is that a separate specification?
-- Should gamepads have per-gamepad `ButtonInput` resources, or is a shared resource with GamepadID in events sufficient?
-- Dead zone configuration for gamepad axes — should it be a global resource setting or per-axis?
-- Should the input system support input recording/replay for testing and demos?
-- Should `ButtonInput[T]` use a bitset instead of `map[T]bool` for fixed-size enums like `KeyCode` for better performance?
+- **Drawback**: Map-based state tracking can have overhead for a very large number of simultaneous inputs.
+- **Alternative**: Fixed-size bitsets for button states.
+- **Decision**: Maps are used for initial flexibility and generics support. Bitsets can be swapped in for performance-critical platforms if needed.
 
 ## Document History
 

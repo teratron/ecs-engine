@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [system-scheduling.md](system-scheduling.md)
+**Implements:** [system-scheduling.md](system-scheduling.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ Go-level design for the system scheduling subsystem. Defines the `System` interf
 ## Related Specifications
 
 - [system-scheduling.md](system-scheduling.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the System Scheduling provides the execution engine for all logic within the ECS. It ensures:
+
+- Decoupled logic execution via the `System` interface and function injection.
+- Automatic, dependency-aware ordering using Directed Acyclic Graphs (DAG).
+- High-performance parallel execution of non-conflicting systems.
+- Robust state gating through flexible run conditions.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for type-safe system parameters and reflection for injection.
+- **DAG Consistency**: Schedules must be acyclic; cycles are detected and rejected at build time.
+- **Access Safety**: Systems must declare their data access (`Read`/`Write`) to enable safe parallelism.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [system-scheduling.md §3](system-scheduling.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Deterministic Order | `DAG.TopologicalOrder` provides a stable, repeatable execution sequence. |
+| **INV-2**: Conflict Isolation | `ParallelExecutor` uses `AccessDescriptor` to prevent concurrent R/W on same data. |
+| **INV-3**: Run Conditions | `FuncSystem.conditions` are evaluated before execution; systems skip on failure. |
+| **INV-4**: Deferred Sync | `AddApplyDeferred` inserts explicit barriers to flush command buffers. |
+| **INV-5**: Parameter Injection | `IntoSystem` uses reflection to resolve and inject `SystemParam` types at runtime. |
 
 ## Go Package
 
@@ -336,12 +366,11 @@ var (
 - **Benchmarks**: `BenchmarkDAGBuild` (1000 nodes), `BenchmarkScheduleRun` (sequential vs parallel), `BenchmarkParamFetch`.
 - **Race detection**: All parallel executor tests run with `-race` flag.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `IntoSystem` use code generation instead of runtime reflection for param injection?
-- How to surface ambiguity warnings to the user in a structured way (beyond slog)?
-- Should the parallel executor support work-stealing or is a simple ready-queue sufficient?
-- Exact strategy for `errgroup` vs internal goroutine pool for zero-dependency compliance.
+- **Drawback**: Reflection-based parameter injection adds a small overhead during system registration.
+- **Alternative**: Source code generation for system wrappers.
+- **Decision**: Runtime reflection is preferred for developer ergonomics; registration overhead is negligible as it happens once.
 
 ## Document History
 

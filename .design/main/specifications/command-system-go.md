@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [command-system.md](command-system.md)
+**Implements:** [command-system.md](command-system.md)
 
 ## Overview
 
@@ -12,6 +12,35 @@ Go-level design for the command system. Commands are deferred mutations that buf
 ## Related Specifications
 
 - [command-system.md](command-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Command system provides a safe, deferred mechanism for modifying the World. It ensures:
+- Structural changes (spawn, despawn) do not invalidate pointers during system execution.
+- Systems can express mutations without direct, mutable access to the entire World.
+- Atomicity of changes at well-defined synchronization points.
+- High-performance entity reservation for immediate ID linkage.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Uses `atomic` for thread-safe entity reservation and `unique` for command tagging if needed.
+- **FIFO Ordering**: Commands are applied strictly in the order they were pushed to the buffer.
+- **Single-writer sync**: Command application (flush) is a serialized process at synchronization points.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [command-system.md §3](command-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Deferred execution | `CommandBuffer.Push` only stores the command; `Apply` is called at sync points. |
+| **INV-2**: Entity reservation | `Commands.Spawn` returns a valid `Entity` ID immediately, backed by an atomic allocator counter. |
+| **INV-3**: Builder chaining | `EntityCommands` methods return `*EntityCommands` for fluent API usage. |
+| **INV-4**: Valid targets | `Apply` checks entity generation before performing mutations to avoid stale writes. |
+| **INV-5**: System context | Each system receives its own `CommandBuffer` via the `Commands` parameter. |
 
 ## Go Package
 
@@ -286,12 +315,11 @@ func (c *Commands) Access() []AccessDescriptor
 - **Stale entity tests**: Despawn then insert on same entity, verify no-op.
 - **Benchmarks**: `BenchmarkSpawn1000Entities`, `BenchmarkCommandBufferApply`, `BenchmarkEntityReservation` (parallel).
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `CommandBuffer` have a hard capacity limit to prevent memory spikes, or always grow unbounded?
-- Should we support command priorities (some commands apply before others regardless of system order)?
-- Rollback/undo support for editor integration — how does this interact with the command buffer lifecycle?
-- Should `WithChildren` support nested children (grandchildren) in a single builder call?
+- **Drawback**: Deferred commands can hide logic errors until the end of the frame (flush time).
+- **Alternative**: Immediate World modification with widespread locking.
+- **Decision**: Deferred commands are much faster and avoid the complexity of fine-grained locking.
 
 ## Document History
 

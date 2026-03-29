@@ -1,27 +1,33 @@
 # Render Core
-**Version:** 0.4.0
+
+**Version:** 0.5.0
 **Status:** Draft
 **Layer:** concept
 
 ## Overview
+
 The render core defines how frames are produced. A dedicated render SubApp owns its own World, receives extracted data each frame, and executes a render graph — a DAG of passes that declare their resource dependencies. A pluggable backend interface allows multiple GPU APIs without changing upper layers.
 
 ## Related Specifications
+
 - [App Framework](app-framework.md)
 - [Mesh & Image](mesh-and-image.md)
 - [Materials & Lighting](materials-and-lighting.md)
 - [Platform System](platform-system.md) — RenderBackend selection per platform
 
 ## 1. Motivation
+
 Rendering must be decoupled from gameplay so the main World never touches GPU state directly. A graph-based approach lets the engine reorder, merge, or cull passes automatically. A backend interface future-proofs the engine against API churn.
 
 ## 2. Constraints & Assumptions
+
 - The render SubApp runs **after** the main app finishes its Update schedule for the current frame.
 - Extract functions are the **only** bridge between the main World and the render World — no shared mutable state.
 - All GPU resource handles are opaque to code outside the render SubApp.
 - The render graph must be rebuildable each frame (dynamic pass insertion is allowed).
 
 ## 3. Core Invariants
+
 1. Every render pass must declare its inputs and outputs before execution.
 2. The graph must be acyclic; a cycle is a hard error at graph-build time.
 3. GPU resources referenced by a pass must be alive for the duration of that pass.
@@ -31,6 +37,7 @@ Rendering must be decoupled from gameplay so the main World never touches GPU st
 ## 4. Detailed Design
 
 ### 4.1 Render SubApp & Extract Pattern
+
 The render SubApp maintains its own World, schedule, and resource table. Each frame:
 
 ```plaintext
@@ -57,6 +64,7 @@ The graph is a directed acyclic graph of `RenderPass` nodes. Each node declares:
 The graph compiler topologically sorts passes, inserts barriers, and allocates transient resources.
 
 ### 4.3 Render Phases
+
 Phases execute in a fixed order within the main scene pass:
 
 | Phase | Sort Strategy | Notes |
@@ -69,6 +77,7 @@ Phases execute in a fixed order within the main scene pass:
 Each phase owns a list of draw functions. Draw functions are batched: items sharing the same pipeline, bind group, and vertex buffer are merged into a single draw call where possible.
 
 ### 4.4 Backend Abstraction
+
 `RenderBackend` is an interface with the following surface (pseudo-code):
 
 ```plaintext
@@ -110,12 +119,15 @@ The caller can immediately use the RID to queue further setup commands (e.g., as
 The same handle + command queue pattern applies to other server subsystems (physics, audio) for consistent thread-safe separation of frontend logic from backend computation.
 
 ### 4.6 GPU Resource Management
+
 Buffers, textures, pipelines, and bind groups are stored as resources in the render World. A resource tracker performs reference counting; resources with zero references at the end of a frame are queued for deferred deletion (next frame) to avoid destroying in-flight GPU objects.
 
 ### 4.7 Pipeline Specialization
+
 A pipeline key is derived from (shader_id, material_properties, vertex_layout, render_phase). The engine maintains a pipeline cache keyed on this tuple. Cache misses trigger asynchronous compilation; a fallback pipeline is used until the specialised variant is ready.
 
 ### 4.8 Draw Functions
+
 A draw function is a registered callable per render phase. During the render schedule, the engine collects visible entities for each phase, sorts them, batches by pipeline + bind group, and invokes the corresponding draw function with the batched data.
 
 ### 4.9 Multi-Phase Render Pipeline
@@ -150,7 +162,7 @@ Phase 4 — Draw:
 
 ### 4.10 RenderFeature Extension Points
 
-Render capabilities are added via `RenderFeature` — specialized processors that participate in all pipeline phases. 
+Render capabilities are added via `RenderFeature` — specialized processors that participate in all pipeline phases.
 
 **Decoupling Principle**: `RenderObject` instances are NOT ECS `Entity` objects. They are light-weight Proxies created by a `RenderFeature` during the Extract phase. This allows the renderer to manage its own spatial hierarchy and resource lifecycle without being tied to the main ECS world's structural changes.
 
@@ -215,6 +227,7 @@ Each `RenderObject` receives an index into all arrays. Iterating over all world 
 This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array maps directly to an instance buffer without marshalling.
 
 ## 5. Open Questions
+
 1. Should transient texture allocation use a pool or per-frame linear allocator?
 2. How should async pipeline compilation failures be surfaced to the developer?
 3. What is the maximum number of render passes before performance degrades on target hardware?
@@ -222,9 +235,11 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 5. Should the physics server use callback inversion (pushing a state context into body callbacks during integration) rather than exposing query-from-game-thread APIs?
 
 ## Document History
+
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.3.0 | 2026-03-26 | Added server pattern (RID + command queue), two-phase resource creation, Scenario concept, physics callback open questions |
 | 0.4.0 | 2026-03-26 | Added multi-phase pipeline (Collect/Extract/Prepare/Draw), RenderFeature, visibility culling, struct-of-arrays render data |
+| 0.5.0 | 2026-03-29 | Synchronized version with INDEX.md and applied registry sanitization (MD032/MD022) |
 | — | — | Planned examples: `examples/3d/` and `examples/shader/` |

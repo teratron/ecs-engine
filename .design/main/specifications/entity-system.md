@@ -10,7 +10,6 @@ Entities are lightweight identifiers for game objects. An Entity carries no data
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Entities exist within a World
 - [component-system.md](component-system.md) — Components are attached to Entities
 - [command-system.md](command-system.md) — Entity spawn/despawn via deferred commands
 - [hierarchy-system.md](hierarchy-system.md) — Parent-child relationships between entities
@@ -18,6 +17,7 @@ Entities are lightweight identifiers for game objects. An Entity carries no data
 ## 1. Motivation
 
 Games constantly create and destroy objects. A robust entity system must:
+
 - Provide cheap, copyable identifiers.
 - Safely detect stale references to destroyed entities.
 - Support high-throughput allocation and deallocation.
@@ -77,6 +77,7 @@ stateDiagram-v2
 ### 4.4 Entity Disabling
 
 Entities can be temporarily disabled without despawning. Disabled entities:
+
 - Retain all their components and data.
 - Are excluded from default queries (like a built-in `Without[Disabled]` filter).
 - Can be explicitly included via `Query.IncludeDisabled()`.
@@ -85,6 +86,7 @@ Entities can be temporarily disabled without despawning. Disabled entities:
 ### 4.5 Entity Collections
 
 Typed collections for efficient entity storage:
+
 - **EntitySet** — Unordered unique set with O(1) insert/remove/contains.
 - **EntityHashMap[V]** — Entity-keyed hash map.
 - **EntityVec** — Ordered list of entities.

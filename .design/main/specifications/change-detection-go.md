@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [change-detection.md](change-detection.md)
+**Implements:** [change-detection.md](change-detection.md)
 
 ## Overview
 
@@ -12,6 +12,34 @@ This specification defines the Go implementation of the change detection system 
 ## Related Specifications
 
 - [change-detection.md](change-detection.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of change detection provides the high-performance tracking needed for reactive systems. It ensures:
+- Tick-based change metadata is stored inline with component data for cache locality.
+- Entity-level and archetype-level (column) change detection for efficient query evaluation.
+- Type-safe wrappers (`Ref[T]`, `Mut[T]`) for automatic mutation marking.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on modern Go features like `iter` for removals and `unique` for component identification.
+- **Tick wrapping**: A `uint32` is assumed to never wrap within a single game session (~828 days at 60Hz).
+- **Single-writer rule**: Only one system may have mutable access to a component type at a time (enforced by the scheduler).
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [change-detection.md §3](change-detection.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Monotonic Ticks | `World.ChangeTick` is a `uint32` incremented by the World before each system execution. |
+| **INV-2**: Added vs Changed | `ComponentTicks` stores separate fields for `Added` and `Changed` ticks. |
+| **INV-3**: Automatic mutation | `Mut[T].Value()` automatically sets the `Changed` tick to the current `World.ChangeTick`. |
+| **INV-4**: ClearTrackers timing | `ClearTrackers` is called once per frame in the `Last` schedule. |
+| **INV-5**: Removal persistence | `RemovedComponents[T]` entries are retained for two update cycles. |
 
 ## Go Package
 
@@ -277,12 +305,11 @@ ON REMOVE component T from entity E:
 - **Two-frame window**: Verify that changes made in frame N are visible to systems in both frame N and frame N+1, but not frame N+2.
 - **Benchmarks**: `BenchmarkChangedFilter1K` (1000 entities, 10 changed), `BenchmarkChangedFilter10K`. Target: column-level skip provides measurable speedup over naive per-entity scan.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `Tick` be `uint32` or `uint64`? A `uint64` eliminates any wrap concern but doubles storage per component.
-- Should there be a `Mutated[T]` filter that excludes `Added[T]` (matches only modifications to existing components)?
-- Should the engine support opt-in deep change detection (value comparison) for specific component types?
-- How should change detection interact with entity cloning — is a cloned entity's component marked as `Added`?
+- **Drawback**: `Mut[T]` access marks as changed even if no actual data was modified.
+- **Alternative**: Value-based comparison (deep equality).
+- **Decision**: Tick-based tracking is significantly faster and sufficient for 99% of ECS use cases.
 
 ## Document History
 

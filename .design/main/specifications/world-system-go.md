@@ -3,11 +3,12 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [world-system.md](world-system.md)
+**Implements:** [world-system.md](world-system.md)
 
 ## Overview
 
 This specification defines the Go implementation of the World — the central data store that owns all entities, components, resources, archetypes, and schedules.
+
 - **Chunk-based Allocation**: Sparse Sets and Tables MUST allocate memory in fixed blocks (e.g., 16KB) to ensure data locality and minimize pointer chasing.
 - **Reactive Hooks**: The World provides `OnAdd` and `OnRemove` signals for each component type, enabling observer-pattern behaviors for subsystems.
 - **Entity Lifecycle**: Uses a 64-bit ID with a 32/32 index-to-generation split for safe ID recycling.
@@ -16,6 +17,35 @@ It leverages Go 1.23+ features such as the `unique` package for identity managem
 ## Related Specifications
 
 - [world-system.md](world-system.md) — L1 concept specification (parent)
+- [task-system-go.md](task-system-go.md) — Uses task system for parallel archetype iteration
+
+## 1. Motivation
+
+A concrete Go implementation of the World is needed to:
+- Provide the actual data structures (archetypes, tables, sparse sets) for component storage.
+- Implement the safety mechanisms described in the concept spec using Go's type system and memory model.
+- Enable high-performance entity and component access via raw memory blocks and unsafe pointers.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on modern Go features like `unique`, `iter`, and `simd`.
+- **Memory Locality**: Storage MUST remain contiguous to maximize cache hits.
+- **Pinning**: Large component blocks are managed in a way that minimizes GC pressure (reuse via sync.Pool).
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [world-system.md §3](world-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Entity belongs to one World | Enforced by internal ID mapping; IDs are unique per World instance. |
+| **INV-2**: Archetype storage | The `ArchetypeStore` ensures entities with same component set share storage. |
+| **INV-3**: Monotonic change tick | `Tick` is a `uint32` incremented only within `RunSchedule`. |
+| **INV-4**: ClearTrackers timing | The `World.ClearTrackers()` method is the only entry point for reset. |
+| **INV-5**: DeferredWorld | A dedicated `DeferredWorld` struct limits available methods. |
 
 ## Go Package
 
@@ -383,12 +413,11 @@ var (
 - **Benchmarks**: `BenchmarkSpawn` (single and batch), `BenchmarkDespawn`, `BenchmarkGet`, `BenchmarkInsert`, `BenchmarkArchetypeTransition`.
 - **Stress test**: Spawn 100K entities with varying component sets, verify archetype correctness.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `World` support pre-allocation hints at the archetype level (e.g., "expect 10K entities with this component set")?
-- Should `Column.data` use `unsafe.Pointer` directly or keep `[]byte` with `unsafe.Slice` access patterns?
-- Should `ResourceMap` use `sync.RWMutex` or a lock-free concurrent map for read-heavy workloads?
-- Should `DeferredWorld` be an interface to allow mocking in tests?
+- **Drawback**: Archetype transitions (add/remove component) are expensive due to data copying between tables.
+- **Alternative**: An all-SparseSet approach would avoid copies but kill cache locality for iteration.
+- **Decision**: Hybrid approach (Table default, SparseSet optional) provides the best balance for game workloads.
 
 ## Document History
 

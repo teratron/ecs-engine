@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [hierarchy-system.md](hierarchy-system.md)
+**Implements:** [hierarchy-system.md](hierarchy-system.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ This specification defines the Go implementation of the hierarchy system describ
 ## Related Specifications
 
 - [hierarchy-system.md](hierarchy-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Hierarchy system enables complex entity relationships and spatial parent-child propagation. It ensures:
+
+- Robust tree-invariant maintenance (single parent per child).
+- Efficient world-space transform propagation from root to leaves.
+- High-performance traversal utilities using Go 1.23+ `iter`.
+- Safety via built-in cycle detection and recursive lifecycle management.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for relationship components and `iter` for tree walks.
+- **Single Parent**: Each entity can have at most one `ChildOf` component.
+- **Affine Math**: Relies on `internal/math` for high-performance SIMD-friendly transform calculations.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [hierarchy-system.md §3](hierarchy-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Tree Structure | `ChildOf` component hook prevents DAGs by enforcing a single parent. |
+| **INV-2**: Cycle Prevention | `ON INSERT ChildOf` walks the ancestor chain to reject self-referential links. |
+| **INV-3**: Lifecycle Sync | `DespawnRecursive` ensures child entities are cleaned up when a parent is removed. |
+| **INV-4**: Propagation | `propagate_transforms` system recomputes `GlobalTransform` in `PostUpdate`. |
+| **INV-5**: Traversal | `Descendants` and `Ancestors` provide zero-allocation iterators for tree walks. |
 
 ## Go Package
 
@@ -291,12 +321,11 @@ func (p HierarchyPlugin) Build(app *app.App)
 - **Benchmarks**: `BenchmarkPropagate1K` (1000 entities, 10 roots), `BenchmarkPropagate10K` (10,000 entities). Target: zero allocations per frame when no hierarchy changes occur.
 - **Fuzz tests**: Random sequences of AddChild/RemoveParent/Despawn, verify tree invariants hold.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `Children` component be removed when it becomes empty, or kept as an empty marker?
-- Should the engine support multiple hierarchy types (e.g., spatial hierarchy vs. UI hierarchy) with separate `ChildOf`-like relations?
-- Should `Descendants` provide both depth-first and breadth-first iteration variants?
-- Should transform propagation support parallelism across root subtrees in the initial implementation, or defer to a future optimization pass?
+- **Drawback**: Deep hierarchies can cause stack overflow if propagation is recursive.
+- **Alternative**: Iterative propagation using a queue/stack.
+- **Decision**: Recursive propagation is simpler and safe for typical game hierarchy depths (< 64). Iterative fallback will be added if needed.
 
 ## Document History
 

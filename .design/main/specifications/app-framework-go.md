@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [app-framework.md](app-framework.md)
+**Implements:** [app-framework.md](app-framework.md)
 
 ## Overview
 
@@ -12,6 +12,33 @@ This specification defines the Go implementation of the App framework described 
 ## Related Specifications
 
 - [app-framework.md](app-framework.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the App framework provides the glue that binds the ECS modules together into a usable engine. It ensures:
+
+- Type-safe plugin registration and initialization.
+- Predictable execution order of systems across multiple schedules.
+- Resource isolation via SubApps.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Uses `unique` for plugin identification and labels.
+- **Single-threaded Builder**: App construction is not concurrent safe; `Run()` starts the execution environment.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [app-framework.md §3](app-framework.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Hierarchy consistency | The App ensures the main World is the parent of all SubApp Worlds. |
+| **INV-2**: Idempotent Plugins | `PluginRegistry` uses `reflect.TypeOf` to prevent duplicate registration. |
+| **INV-3**: Schedule existence | `AddSystem` auto-creates schedules if they don't exist. |
+| **INV-4**: Graceful shutdown | `Run()` blocks on a `context.Context` and triggers `Cleanup`. |
 
 ## Go Package
 
@@ -377,12 +404,11 @@ FUNCTION App.AddPlugin(plugin):
 - **Integration**: Build a minimal App with TimePlugin and a counting system, run for 3 frames with RunOnce-like harness, verify frame count.
 - **Benchmarks**: `BenchmarkAppUpdate` with 10 empty systems — measure per-frame overhead of the schedule runner.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should plugins support explicit dependency declaration (plugin A requires plugin B) with automatic ordering, or is registration order sufficient?
-- Should SubApps support bidirectional data transfer, or is the extract function (main → sub) sufficient?
-- Should the App provide a `RunN(n int)` method for running exactly N frames, or is `RunOnce` + external loop sufficient for testing?
-- Should `context.Context` be accepted as a parameter to `Run()` for external cancellation control?
+- **Drawback**: Plugin registration order matters for simple dependencies, which can be fragile.
+- **Alternative**: Explicit dependency graph for plugins.
+- **Decision**: Registration order is simpler and follows Bevy's successful model.
 
 ## Document History
 

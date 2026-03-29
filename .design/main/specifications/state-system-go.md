@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [state-system.md](state-system.md)
+**Implements:** [state-system.md](state-system.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ This specification defines the Go implementation of the state system described i
 ## Related Specifications
 
 - [state-system.md](state-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the State system provides a hierarchical, type-safe finite state machine (FSM) for controlling high-level application flow. It ensures:
+
+- Clear separation of concerns via state-keyed schedules (`OnEnter`, `OnExit`).
+- Robust management of dependent logic via `SubStates` and `ComputedStates`.
+- Automated lifecycle management through `DespawnOnExit` markers.
+- Efficient state gating using `InState` run conditions.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for type-safe state resources and `comparable` constraints for transition checks.
+- **Single Transition**: Only one transition per state type can be pending at a time (last one wins).
+- **Schedule Flush**: Transitions are processed at explicit synchronization points in the main schedule.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [state-system.md §3](state-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Exclusive States | `State[S]` resource holds only one `current` value of type `S`. |
+| **INV-2**: Transition Guards | `state_transition` system enforces the `OnExit -> Swap -> OnEnter` sequence. |
+| **INV-3**: Hierarchical State | `SubState` activation/deactivation is driven by parent state transitions. |
+| **INV-4**: Reactive States | `ComputedState` is re-evaluated immediately after its source state transitions. |
+| **INV-5**: Automatic Cleanup | `DespawnOnExit` triggers immediate recursive despawning of marked entities. |
 
 ## Go Package
 
@@ -326,13 +356,11 @@ This satisfies `comparable`, is efficient as a map key, and works well with `iot
 - **Integration**: Register StatePlugin in an App, init state, add OnEnter systems, run app for 2 frames with a transition queued.
 - **Benchmarks**: `BenchmarkStateTransition` with 5 state types, 3 with SubStates. Target: negligible overhead on frames with no transitions.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should state transitions support transition guards (conditions that can reject a transition)?
-- Should there be a state history / stack for "return to previous state" patterns (e.g., unpause returns to Playing)?
-- How should state transitions interact with the fixed timestep loop — can transitions happen mid-FixedUpdate?
-- Should `OnTransition` schedules receive both old and new state values as resources for conditional logic?
-- How should SubState default values be specified in Go — a method on the SubState interface, or a separate registration call?
+- **Drawback**: State-keyed schedules can lead to complex "hidden" logic if too many transitions are chained.
+- **Alternative**: Centralized switch-based update logic.
+- **Decision**: State-keyed schedules are preferred for modularity and are safer when using visual debugging tools.
 
 ## Document History
 

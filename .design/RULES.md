@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.2.0
+**Version:** 1.4.0
 **Status:** Active
 
 ## Overview

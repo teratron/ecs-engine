@@ -1,6 +1,6 @@
 # Asset System
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -18,6 +18,7 @@ The asset system manages loading, tracking, and lifetime of external resources (
 ## 1. Motivation
 
 Games reference thousands of external files. A robust asset system must:
+
 - Load assets asynchronously to avoid frame stalls.
 - Track load state so systems can react when assets become available.
 - Support hot-reload for rapid iteration during development.
@@ -144,6 +145,7 @@ The system emits typed events each frame:
 ### 4.8 Hot-Reload
 
 In development builds, a file watcher monitors asset directories. When a file changes:
+
 1. The watcher enqueues the changed path.
 2. AssetServer calls `reload(path)`, transitioning the asset back to Loading.
 3. The loader re-processes the file; on success the asset slot is updated in-place.
@@ -175,6 +177,7 @@ VFS Structure:
 ```
 
 **Key Features:**
+
 - **Provider Abstraction**: Code refers to `vfs:///engine/shaders/pbr.glsl` regardless of whether it's an OS file, an embedded resource (`go:embed`), or a remote HTTP stream.
 - **Priority Mounting**: Overlapping mount points (e.g., mounting a "Patch" pack over `/app/`) enable easy modding and hot-fixing without modifying the original installation.
 - **Unified Path Syntax**: Forward slashes are used universally; the VFS provider handles OS-specific path separators and root directories.
@@ -191,6 +194,7 @@ AssetCompiler (interface)
 ```
 
 **Workflow:**
+
 - **Dependency Tracking**: Compilers declare file and type dependencies for incremental builds.
 - **Build Invalidation**: Changing a base material automatically triggers a re-compilation of all scenes referencing that material.
 - **Parallel Execution**: Independent build steps are dispatched via the **Task System** (§4.8 in [task-system.md](task-system.md)).
@@ -221,6 +225,7 @@ ContentManager
 ```
 
 **Memory Management:**
+
 - **Reference Counting**: Resources are shared; loading the same model twice just increments a counter.
 - **Sub-Resource Hierarchy**: Loading a complex object (like a `Scene`) automatically manages reference counts for its dependent `Materials`, `Textures`, and `Models`.
 - **Async Loading**: Non-blocking requests return a `Task` that provides the resource upon completion.

@@ -10,7 +10,6 @@ Components are pure data attached to entities. They carry no logic — systems p
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Components stored in the World
 - [entity-system.md](entity-system.md) — Components attached to entities
 - [query-system.md](query-system.md) — Systems access components via queries
 - [change-detection.md](change-detection.md) — Component mutations tracked by ticks

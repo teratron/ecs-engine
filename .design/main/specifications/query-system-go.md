@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [query-system.md](query-system.md)
+**Implements:** [query-system.md](query-system.md)
 
 ## Overview
 
@@ -12,6 +12,35 @@ This specification defines the Go implementation of the query system. Queries ar
 ## Related Specifications
 
 - [query-system.md](query-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Query system provides the primary mechanism for efficient entity data access. It ensures:
+- Type-safe iteration over entities with specific component sets.
+- High-performance caching of matched archetypes to avoid repeated searches.
+- Parallel iteration capabilities for massive entity counts.
+- Seamless integration with Go 1.23+ `iter` patterns for modern ergonomics.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for type-safe queries and `iter` for range-over-func loops.
+- **Arity limits**: Fixed-arity types (`Query1` to `Query8`) are used to work around Go's variadic generic limitations.
+- **Cache validity**: Query caches are invalidated only when new archetypes are created or destroyed.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [query-system.md §3](query-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Filter matching | `QueryState.Matches` correctly identifies archetypes containing all required components. |
+| **INV-2**: Cached iteration | `matchedArchetypes` stores direct column pointers for O(1) row access. |
+| **INV-3**: Read/Write Isolation | `Access` metadata is used by the scheduler to group non-conflicting systems. |
+| **INV-4**: Deferred Safety | Query results are immutable regarding structural changes during iteration. |
+| **INV-5**: Parallel Scaling | `ParIter` utilizes `errgroup` to distribute work across CPU cores safely. |
 
 ## Go Package
 
@@ -337,13 +366,11 @@ Commands are strictly buffered and only applied at explicit synchronization poin
 - **Benchmarks**: `BenchmarkIter1Component`, `BenchmarkIter3Components`, `BenchmarkParIter`, `BenchmarkQueryGet`, `BenchmarkCacheUpdate`. Compare callback iteration vs. hypothetical iterator alternatives.
 - **Fuzz tests**: Random spawn/despawn/query sequences to verify no panics or missed entities.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should we provide a code generator for `QueryState5` through `QueryState8`, or define them manually?
-- Should `ParIter` accept a `context.Context` for cancellation, or rely on the schedule executor's context?
-- Should query construction happen lazily (on first `Iter` call) or eagerly (at system registration)?
-- Is callback-based iteration ergonomic enough, or should we explore Go 1.23+ range-over-func iterators?
-- Should `Optional[T]` be a query fetch type (returns `*T` or nil for entities without T)?
+- **Drawback**: Fixed arity limits (up to 8) can be restrictive for extremely complex entity patterns.
+- **Alternative**: Reflection-based dynamic queries (type-erased).
+- **Decision**: Typed arity queries are significantly faster and cover the vast majority of real-world use cases.
 
 ## Document History
 

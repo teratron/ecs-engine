@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [component-system.md](component-system.md)
+**Implements:** [component-system.md](component-system.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ This specification defines the Go implementation of the component system. Compon
 ## Related Specifications
 
 - [component-system.md](component-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Component system provides the data-oriented foundation for the engine. It ensures:
+
+- Type-safe registration of Go structs as ECS components.
+- Strategic storage selection (Table vs SparseSet) based on usage patterns.
+- Automated lifecycle management via hooks (OnAdd, OnRemove, etc.).
+- Resource-efficient component bundles for complex entity initialization.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on `reflect` for type metadata and `unique` for component identification.
+- **Data Purity**: Components MUST be plain data structs; they should not contain logic or pointers to unmanaged memory.
+- **Alignment**: Component storage must respect Go's alignment requirements for the target architecture.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [component-system.md §3](component-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Unique Type ID | `ComponentRegistry` assigns a unique `uint32` to each Go type version. |
+| **INV-2**: Storage Selection | Struct tags in Go are used to override default Table storage to SparseSet. |
+| **INV-3**: Lifecycle Hooks | `ComponentHooks` are invoked by the World during entity modification. |
+| **INV-4**: Dependency Resolution | Required components are transitively resolved at registration time. |
+| **INV-5**: Bundle dissolution | `Bundle.Components()` recursively flattens nested groups into a flat slice. |
 
 ## Go Package
 
@@ -304,12 +334,11 @@ func validateQueryAccess(registry, access Access) error:
 - **Benchmarks**: `BenchmarkRegisterComponent`, `BenchmarkComponentInfoLookup`.
 - **Reflection edge cases**: Zero-size components (tag types), components with unexported fields.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `RegisterComponent` be thread-safe (using sync.Once per type) to allow registration from parallel plugin init?
-- Should component struct tags support additional metadata beyond storage type (e.g., `ecs:"sparse,immutable"`)?
-- Maximum number of component types per World — should we enforce a hard limit (e.g., 65535)?
-- Should `ComponentData.Value` use `unsafe.Pointer` instead of `any` to avoid boxing overhead?
+- **Drawback**: Using `any` in `ComponentData` causes interface boxing overhead during initialization.
+- **Alternative**: Code generation for every component type.
+- **Decision**: Reflection-based registration with `any` for initialization is flexible; hot paths use raw memory pointers to bypass this.
 
 ## Document History
 

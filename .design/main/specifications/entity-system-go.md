@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [entity-system.md](entity-system.md)
+**Implements:** [entity-system.md](entity-system.md)
 
 ## Overview
 
@@ -12,6 +12,34 @@ This specification defines the Go implementation of the entity system described 
 ## Related Specifications
 
 - [entity-system.md](entity-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Entity system provides the core identity mechanism for the engine. It ensures:
+
+- Extremely lightweight (8-byte) identifiers that fit in CPU registers.
+- Generational safety to prevent "stale reference" bugs where a new entity is mistaken for a deleted one.
+- O(1) allocation and deallocation performance.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Uses `unique` for internal labels if needed, though pure `uint64` is preferred for IDs.
+- **Memory Efficiency**: Entity IDs are packed into a single word to avoid pointer overhead in large slices.
+- **Generation limit**: A `uint32` generation counter is assumed to never wrap for a single slot in a session (~4 billion reuses).
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [entity-system.md §3](entity-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Unique ID | `EntityID` is a monotonically increasing index paired with a generation counter. |
+| **INV-2**: Generational shift | `EntityAllocator.Free` increments the generation counter for the slot. |
+| **INV-3**: Null entity | `EntityID(0)` is reserved as the null sentinel; index 0 starts at generation 1. |
+| **INV-4**: Valid check | `IsAlive` compares the provided generation with the current slot generation. |
 
 ## Go Package
 
@@ -216,11 +244,11 @@ func (a *EntityAllocator) AllocateMany(n int) []Entity
 - **EntitySet/EntityMap**: Insert/remove/contains correctness and performance with 10K+ entities.
 - **Fuzz tests**: Random sequences of Allocate/Free to verify invariant INV-1 through INV-4.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `EntitySet` use a flat sparse array (`[]int` indexed by `entity.Index()`) instead of a map for better performance at the cost of memory?
-- Should `EntityAllocator` support concurrent `Reserve()` from multiple threads for deferred spawn batching?
-- Should `Entity` implement `fmt.Stringer` with a human-readable format like `Entity(42v3)` for debugging?
+- **Drawback**: Packing ID into `uint64` limits the maximum number of entities to 4 billion.
+- **Alternative**: 128-bit UUIDs for entities.
+- **Decision**: 64-bit packed IDs are much faster and sufficient for even the largest game worlds.
 
 ## Document History
 

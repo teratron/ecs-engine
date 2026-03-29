@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [type-registry.md](type-registry.md)
+**Implements:** [type-registry.md](type-registry.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ Go-level design for the type registry. Provides runtime introspection of registe
 ## Related Specifications
 
 - [type-registry.md](type-registry.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Type Registry provides the metadata foundation for runtime introspection, dynamic UI generation, and serialization. It ensures:
+
+- Type safety through `reflect.Type` validation.
+- Efficient metadata retrieval via densly indexed `TypeID` lookups.
+- Extensible type-level and field-level attributes using Go struct tags.
+- Support for type-erased manipulation via `DynamicObject` proxies.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies heavily on the `reflect` package and generics.
+- **Initialization-Only Registration**: Types must be registered during application setup; registration is not thread-safe and is locked after init.
+- **Struct Alignment**: Relies on `reflect` to correctly compute field offsets and struct padding for memory-safe access.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [type-registry.md §3](type-registry.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Unique TypeID | `TypeRegistry` assigns monotonically increasing `TypeID` in a central registry. |
+| **INV-2**: Bijective Map | `byType` and `byName` maps ensure 1:1 mapping between Go types and registry entries. |
+| **INV-3**: Metadata Persistence | `TypeRegistration` caches all field metadata, tags, and size/alignment on first registration. |
+| **INV-4**: Type-Safe Proxy | `DynamicObject.Set` verifies types against `FieldInfo.Type` before mutation. |
+| **INV-5**: Hook Priority | `SerializeValue` and `DeserializeValue` prioritize custom `TypeHooks` over reflection. |
 
 ## Go Package
 
@@ -306,13 +336,11 @@ var (
 - **Benchmarks**: `BenchmarkResolveByID`, `BenchmarkDynamicObjectGet`, `BenchmarkDynamicObjectSet`, `BenchmarkFieldIteration`, `BenchmarkSerializeRoundtrip`.
 - **Go limitation test**: Verify that DynamicObject correctly handles types that cannot be constructed at runtime (interfaces, function types) with appropriate errors.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should `TypeRegistry` support unregistering types at runtime (for hot-reload scenarios)?
-- How to handle type versioning across save files (field renamed, type restructured)?
-- Should `DynamicObject` support nested field paths (`"Transform.Position.X"`)?
-- Default serialization format: JSON (`encoding/json`), binary (`encoding/gob`), or custom?
-- Should the registry support Go generics introspection (e.g., detecting `Query[T]` type params)?
+- **Drawback**: Reflection is slower than direct code, adding overhead to dynamic operations (e.g., editor UI).
+- **Alternative**: Code generation for all introspectable types.
+- **Decision**: Reflection is used with aggressive caching of offsets to balance performance and developer flexibility.
 
 ## Document History
 

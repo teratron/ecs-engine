@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [time-system.md](time-system.md)
+**Implements:** [time-system.md](time-system.md)
 
 ## Overview
 
@@ -12,6 +12,36 @@ This specification defines the Go implementation of the time system described in
 ## Related Specifications
 
 - [time-system.md](time-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Time system provides precise, multi-dimensional time tracking for gameplay, physics, and UI. It ensures:
+
+- High-precision timing using `time.Duration` (int64 nanoseconds).
+- Separation of Real, Virtual, and Fixed time scales for independent control.
+- Deterministic fixed-timestep updates for physics and network sync.
+- Convenient utilities like `Timer` and `Stopwatch` for common gameplay tasks.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on `time.Duration` and `time.Time` from the standard library.
+- **Single Source**: Wall-clock time is sampled exactly once per frame at the start of the `First` schedule.
+- **Accumulator Safety**: Fixed time accumulation is capped (default 1s) to prevent "death spirals."
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [time-system.md §3](time-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Non-decreasing Real | `RealTime.elapsed` adds monotonic `time.Duration` each frame. |
+| **INV-2**: Deterministic Fixed | `FixedTime.period` is constant; `Expend` only returns true for complete steps. |
+| **INV-3**: Virtual Independence | `VirtualTime` maintains its own `elapsed` and `delta` state relative to real time. |
+| **INV-4**: Interpolation Support | `FixedTime.overstep` stores the remainder for render-time sub-frame interpolation. |
+| **INV-5**: Precision | All internal accumulation uses `int64` nanoseconds via `time.Duration`. |
 
 ## Go Package
 
@@ -358,12 +388,11 @@ func (p TimePlugin) Build(app *app.App)
 - **Integration**: Register TimePlugin in an App, run 3 frames, verify Time resource updates correctly.
 - **Benchmarks**: `BenchmarkTimerTick`, `BenchmarkFixedTimeExpend` — target zero allocations.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should there be a per-entity time scale (e.g., slow-motion for individual characters)?
-- Should `Timer` and `Stopwatch` be components, or are they only useful as fields within user components?
-- Should `FixedTime` support changing the period at runtime, and if so, how should the accumulator be adjusted?
-- Should the engine provide a `FrameCount` resource separately from `Time`, or is it sufficient as a field on `Time`?
+- **Drawback**: Integer-based nanosecond accumulation can overflow after ~292 years of continuous uptime.
+- **Alternative**: Floating-point seconds.
+- **Decision**: Nanoseconds are preferred for precision and to match the Go standard library patterns. Overflow is not a practical concern for game sessions.
 
 ## Document History
 

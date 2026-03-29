@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**L1 Reference:** [event-system.md](event-system.md)
+**Implements:** [event-system.md](event-system.md)
 
 ## Overview
 
@@ -12,6 +12,35 @@ Go-level design for the three communication mechanisms: **Events** (broadcast, d
 ## Related Specifications
 
 - [event-system.md](event-system.md) — L1 concept specification (parent)
+
+## 1. Motivation
+
+The Go implementation of the Event system provides decoupled communication between systems and reactive responses to World changes. It ensures:
+
+- Double-buffered "broadcast" events for frame-to-frame signaling.
+- High-performance, cursor-based message channels for directed system-to-system communication.
+- Low-latency observers for immediate reaction to entity structural changes.
+
+## 2. Constraints & Assumptions
+
+- **Go 1.26.1+**: Relies on generics for type-safe event/message streams and `iter` for consumption.
+- **Double-buffering**: Events are retained for exactly two frames to ensure all systems have a chance to read them.
+- **Observer Depth**: A hard recursion limit (default 64) prevents infinite trigger loops.
+
+## 3. Core Invariants
+
+> [!NOTE]
+> See [event-system.md §3](event-system.md) for technology-agnostic invariants.
+
+## 4. Invariant Compliance
+
+| L1 Invariant | Implementation |
+| :--- | :--- |
+| **INV-1**: Broadcast Delivery | `EventBus[T]` uses double-buffering; `EventReader` cursors track progress across buffers. |
+| **INV-2**: Directed Messages | `MessageChannel[T]` uses a ring buffer with per-reader cursors to prevent global consumption. |
+| **INV-3**: Immediate Response | `TriggerObservers` executes callbacks synchronously during the triggering action. |
+| **INV-4**: Re-entrancy Guard | `ObserverContext` provides a `DeferredWorld` to restrict available mutations during callbacks. |
+| **INV-5**: Bubbling Support | `bubbleEvent` traverses the `ChildOf` hierarchy until Root or `StopPropagation`. |
 
 ## Go Package
 
@@ -359,13 +388,11 @@ var (
 - **Observer depth limit**: Create circular trigger chain, verify panic at depth limit.
 - **Benchmarks**: `BenchmarkEventWrite1000`, `BenchmarkEventRead1000`, `BenchmarkObserverDispatch`, `BenchmarkMessageWrite`.
 
-## Open Questions
+## 7. Drawbacks & Alternatives
 
-- Should event buses support a configurable retention policy (more than 2 frames)?
-- Should message channels support backpressure (block writer) instead of lossy overwrite?
-- Should observer priorities be supported (fire in a defined order)?
-- Maximum ring buffer size policy — fixed at registration or growable?
-- Should `ObserverContext` provide read-only World access beyond `DeferredWorld`?
+- **Drawback**: Immediate observers can make performance unpredictable if heavily used for frequent events.
+- **Alternative**: All events are deferred to the next frame.
+- **Decision**: Immediate observers are required for essential logic (e.g. cleanup hooks) and are safe when used with depth limits.
 
 ## Document History
 
