@@ -11,118 +11,118 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [world-system.md](specifications/world-system.md) | Central data store: entities, components, resources, change tracking | Draft | concept | 0.2.0 |
-| [world-system-go.md](specifications/world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Draft | go | 0.1.0 |
-| [entity-system.md](specifications/entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling, abstract concept entities | Draft | concept | 0.3.0 |
-| [entity-system-go.md](specifications/entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Draft | go | 0.1.0 |
-| [component-system.md](specifications/component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.3.0 |
-| [component-system-go.md](specifications/component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
-| [query-system.md](specifications/query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
-| [query-system-go.md](specifications/query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
-| [ecs-lifecycle-patterns.md](specifications/ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Draft | concept | 0.2.0 |
-| [system-scheduling.md](specifications/system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.3.0 |
-| [system-scheduling-go.md](specifications/system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
-| [command-system.md](specifications/command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
-| [command-system-go.md](specifications/command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
-| [event-system.md](specifications/event-system.md) | Events, messages, observers, reactive triggers | Draft | concept | 0.3.0 |
-| [event-system-go.md](specifications/event-system-go.md) | Go impl: EventBus, MessageChannel, Observers, entity event bubbling | Draft | go | 0.1.0 |
-| [type-registry.md](specifications/type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.2.0 |
-| [type-registry-go.md](specifications/type-registry-go.md) | Go impl: TypeRegistry, FieldInfo, DynamicObject, serialization hooks | Draft | go | 0.1.0 |
+| [l1-world-system.md](specifications/l1-world-system.md) | Central data store: entities, components, resources, change tracking | Draft | concept | 0.2.0 |
+| [l2-world-system-go.md](specifications/l2-world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Draft | go | 0.1.0 |
+| [l1-entity-system.md](specifications/l1-entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling, abstract concept entities | Draft | concept | 0.3.0 |
+| [l2-entity-system-go.md](specifications/l2-entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Draft | go | 0.1.0 |
+| [l1-component-system.md](specifications/l1-component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.3.0 |
+| [l2-component-system-go.md](specifications/l2-component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
+| [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
+| [l2-query-system-go.md](specifications/l2-query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
+| [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Draft | concept | 0.2.0 |
+| [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.3.0 |
+| [l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
+| [l1-command-system.md](specifications/l1-command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
+| [l2-command-system-go.md](specifications/l2-command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
+| [l1-event-system.md](specifications/l1-event-system.md) | Events, messages, observers, reactive triggers | Draft | concept | 0.3.0 |
+| [l2-event-system-go.md](specifications/l2-event-system-go.md) | Go impl: EventBus, MessageChannel, Observers, entity event bubbling | Draft | go | 0.1.0 |
+| [l1-type-registry.md](specifications/l1-type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.2.0 |
+| [l2-type-registry-go.md](specifications/l2-type-registry-go.md) | Go impl: TypeRegistry, FieldInfo, DynamicObject, serialization hooks | Draft | go | 0.1.0 |
 
 ## P2 — Framework
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [hierarchy-system.md](specifications/hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Draft | concept | 0.1.0 |
-| [hierarchy-system-go.md](specifications/hierarchy-system-go.md) | Go impl: ChildOf, Children, Transform, GlobalTransform, propagation | Draft | go | 0.1.0 |
-| [time-system.md](specifications/time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.1.0 |
-| [time-system-go.md](specifications/time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Draft | go | 0.1.0 |
-| [input-system.md](specifications/input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Draft | concept | 0.3.0 |
-| [input-system-go.md](specifications/input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], KeyCode, MouseButton, GamepadButton | Draft | go | 0.1.0 |
-| [state-system.md](specifications/state-system.md) | Hierarchical state machines, transitions, computed states | Draft | concept | 0.1.0 |
-| [state-system-go.md](specifications/state-system-go.md) | Go impl: State[S], NextState[S], SubState, ComputedState, DespawnOnExit | Draft | go | 0.1.0 |
-| [change-detection.md](specifications/change-detection.md) | Tick-based change tracking, Added/Changed filters, Ref/Mut wrappers | Draft | concept | 0.1.0 |
-| [change-detection-go.md](specifications/change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
-| [app-framework.md](specifications/app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
-| [app-framework-go.md](specifications/app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
-| [multi-repo-architecture.md](specifications/multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Stable | concept | 1.1.0 |
+| [l1-hierarchy-system.md](specifications/l1-hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Draft | concept | 0.1.0 |
+| [l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md) | Go impl: ChildOf, Children, Transform, GlobalTransform, propagation | Draft | go | 0.1.0 |
+| [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.1.0 |
+| [l2-time-system-go.md](specifications/l2-time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Draft | go | 0.1.0 |
+| [l1-input-system.md](specifications/l1-input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Draft | concept | 0.3.0 |
+| [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], KeyCode, MouseButton, GamepadButton | Draft | go | 0.1.0 |
+| [l1-state-system.md](specifications/l1-state-system.md) | Hierarchical state machines, transitions, computed states | Draft | concept | 0.1.0 |
+| [l2-state-system-go.md](specifications/l2-state-system-go.md) | Go impl: State[S], NextState[S], SubState, ComputedState, DespawnOnExit | Draft | go | 0.1.0 |
+| [l1-change-detection.md](specifications/l1-change-detection.md) | Tick-based change tracking, Added/Changed filters, Ref/Mut wrappers | Draft | concept | 0.1.0 |
+| [l2-change-detection-go.md](specifications/l2-change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
+| [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
+| [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
+| [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Stable | concept | 1.1.0 |
 
 ## P3 — Assets & Math
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [task-system.md](specifications/task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
-| [asset-system.md](specifications/asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
-| [scene-system.md](specifications/scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.3.0 |
-| [math-system.md](specifications/math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
+| [l1-task-system.md](specifications/l1-task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
+| [l1-asset-system.md](specifications/l1-asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
+| [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.3.0 |
+| [l1-math-system.md](specifications/l1-math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
 
 ## P4 — Render Pipeline
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [render-core.md](specifications/render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.5.0 |
-| [mesh-and-image.md](specifications/mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
-| [materials-and-lighting.md](specifications/materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Draft | concept | 0.1.0 |
-| [camera-and-visibility.md](specifications/camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Draft | concept | 0.1.0 |
-| [post-processing.md](specifications/post-processing.md) | Post-process effects, anti-aliasing, tonemapping, bloom | Draft | concept | 0.1.0 |
+| [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.5.0 |
+| [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
+| [l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Draft | concept | 0.1.0 |
+| [l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Draft | concept | 0.1.0 |
+| [l1-post-processing.md](specifications/l1-post-processing.md) | Post-process effects, anti-aliasing, tonemapping, bloom | Draft | concept | 0.1.0 |
 
 ## P5 — Content Systems
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [audio-system.md](specifications/audio-system.md) | Audio playback, spatial audio, backend abstraction | Draft | concept | 0.3.0 |
-| [asset-formats.md](specifications/asset-formats.md) | Asset loaders: glTF, images, audio codecs, scene files | Draft | concept | 0.1.0 |
-| [2d-rendering.md](specifications/2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.2.0 |
-| [animation-system.md](specifications/animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Draft | concept | 0.1.0 |
+| [l1-audio-system.md](specifications/l1-audio-system.md) | Audio playback, spatial audio, backend abstraction | Draft | concept | 0.3.0 |
+| [l1-asset-formats.md](specifications/l1-asset-formats.md) | Asset loaders: glTF, images, audio codecs, scene files | Draft | concept | 0.1.0 |
+| [l1-2d-rendering.md](specifications/l1-2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.2.0 |
+| [l1-animation-system.md](specifications/l1-animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Draft | concept | 0.1.0 |
 
 ## P6 — UI & Tools
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [definition-system.md](specifications/definition-system.md) | JSON declarative layer: UI, scenes, flows, templates — data-driven bridge | Draft | concept | 0.4.0 |
-| [window-system.md](specifications/window-system.md) | Window management, multi-window, platform abstraction | Draft | concept | 0.1.0 |
-| [diagnostic-system.md](specifications/diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
-| [ui-system.md](specifications/ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.2.0 |
-| [benchmark-spec.md](specifications/benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.1.0 |
-| [build-tooling.md](specifications/build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.3.0 |
-| [codegen-tools.md](specifications/codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
-| [platform-system.md](specifications/platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
-| [ai-assistant-system.md](specifications/ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
-| [examples-framework.md](specifications/examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
-| [compatibility-policy.md](specifications/compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.1.0 |
-| [error-core.md](specifications/error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.1.0 |
+| [l1-definition-system.md](specifications/l1-definition-system.md) | JSON declarative layer: UI, scenes, flows, templates — data-driven bridge | Draft | concept | 0.4.0 |
+| [l1-window-system.md](specifications/l1-window-system.md) | Window management, multi-window, platform abstraction | Draft | concept | 0.1.0 |
+| [l1-diagnostic-system.md](specifications/l1-diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
+| [l1-ui-system.md](specifications/l1-ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.2.0 |
+| [l2-benchmark-spec.md](specifications/l2-benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.1.0 |
+| [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.3.0 |
+| [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
+| [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
+| [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
+| [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
+| [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.1.0 |
+| [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.1.0 |
 
 ## P7 — Advanced Core
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [profiling-protocol.md](specifications/profiling-protocol.md) | Tracy integration, custom spans, pprof mapping, export formats | Draft | concept | 0.1.0 |
-| [networking-system.md](specifications/networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.2.0 |
-| [transport.md](specifications/transport.md) | UDP transport: channels, reliability, connection lifecycle, MTU discovery | Draft | concept | 0.1.0 |
-| [replication.md](specifications/replication.md) | State replication: markers, entity mapping, visibility, delta compression, priority | Draft | concept | 0.1.0 |
-| [snapshot-interpolation.md](specifications/snapshot-interpolation.md) | Sync model: server snapshots, client interpolation buffer, adaptive delay | Draft | concept | 0.1.0 |
-| [client-prediction.md](specifications/client-prediction.md) | Sync model: local input prediction, server reconciliation, rollback smoothing | Draft | concept | 0.1.0 |
-| [lockstep.md](specifications/lockstep.md) | Sync model: deterministic lockstep, input delay, speculative execution, desync detect | Draft | concept | 0.1.0 |
-| [rpc.md](specifications/rpc.md) | Typed network RPC: send/receive, event integration, rate limiting | Draft | concept | 0.1.0 |
-| [network-diagnostics.md](specifications/network-diagnostics.md) | Network metrics, alerts, debug overlay, profiling spans, desync reports | Draft | concept | 0.1.0 |
-| [hot-reload.md](specifications/hot-reload.md) | Go code hot-restart with state snapshot, shader hot-swap, reload orchestrator | Draft | concept | 0.1.0 |
+| [l1-profiling-protocol.md](specifications/l1-profiling-protocol.md) | Tracy integration, custom spans, pprof mapping, export formats | Draft | concept | 0.1.0 |
+| [l1-networking-system.md](specifications/l1-networking-system.md) | Multiplayer boundaries: snapshot/rollback primitives, fixed-step sync | Draft | concept | 0.2.0 |
+| [l1-transport.md](specifications/l1-transport.md) | UDP transport: channels, reliability, connection lifecycle, MTU discovery | Draft | concept | 0.1.0 |
+| [l1-replication.md](specifications/l1-replication.md) | State replication: markers, entity mapping, visibility, delta compression, priority | Draft | concept | 0.1.0 |
+| [l1-snapshot-interpolation.md](specifications/l1-snapshot-interpolation.md) | Sync model: server snapshots, client interpolation buffer, adaptive delay | Draft | concept | 0.1.0 |
+| [l1-client-prediction.md](specifications/l1-client-prediction.md) | Sync model: local input prediction, server reconciliation, rollback smoothing | Draft | concept | 0.1.0 |
+| [l1-lockstep.md](specifications/l1-lockstep.md) | Sync model: deterministic lockstep, input delay, speculative execution, desync detect | Draft | concept | 0.1.0 |
+| [l1-rpc.md](specifications/l1-rpc.md) | Typed network RPC: send/receive, event integration, rate limiting | Draft | concept | 0.1.0 |
+| [l1-network-diagnostics.md](specifications/l1-network-diagnostics.md) | Network metrics, alerts, debug overlay, profiling spans, desync reports | Draft | concept | 0.1.0 |
+| [l1-hot-reload.md](specifications/l1-hot-reload.md) | Go code hot-restart with state snapshot, shader hot-swap, reload orchestrator | Draft | concept | 0.1.0 |
 
 ## P8 — Extended Systems
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [physics-system.md](specifications/physics-system.md) | Physics server, deterministic solver, SubApp integration, interpolation | Draft | concept | 0.1.0 |
-| [rigid-body.md](specifications/rigid-body.md) | RigidBody component: mass, damping, axis locks, body types, sleep | Draft | concept | 0.1.0 |
-| [collider.md](specifications/collider.md) | Collision shapes: primitives, compound shapes, mesh/convex, filters | Draft | concept | 0.1.0 |
-| [physics-query.md](specifications/physics-query.md) | Ray/Shape/Point/Overlap queries, batching, filters, predicates | Draft | concept | 0.1.0 |
-| [joints.md](specifications/joints.md) | Joint constraints: Hinge, Piston, Ball, Distance, Fixed, Motorized | Draft | concept | 0.1.0 |
-| [collision-events.md](specifications/collision-events.md) | Contact/Trigger events, manifolds, filtering patterns, deferred despawn | Draft | concept | 0.1.0 |
-| [physics-materials.md](specifications/physics-materials.md) | Friction/Restitution assets, combine rules, surface tags, hot-reload | Draft | concept | 0.1.0 |
-| [character-controller.md](specifications/character-controller.md) | Kinematic capsule movement, iterative sweep, step-up, slope snapping | Draft | concept | 0.1.0 |
-| [scripting-system.md](specifications/scripting-system.md) | Scripting bridge (deferred): Lua/Tengo candidates, ECS API reference design | Draft | concept | 0.2.0 |
+| [l1-physics-system.md](specifications/l1-physics-system.md) | Physics server, deterministic solver, SubApp integration, interpolation | Draft | concept | 0.1.0 |
+| [l1-rigid-body.md](specifications/l1-rigid-body.md) | RigidBody component: mass, damping, axis locks, body types, sleep | Draft | concept | 0.1.0 |
+| [l1-collider.md](specifications/l1-collider.md) | Collision shapes: primitives, compound shapes, mesh/convex, filters | Draft | concept | 0.1.0 |
+| [l1-physics-query.md](specifications/l1-physics-query.md) | Ray/Shape/Point/Overlap queries, batching, filters, predicates | Draft | concept | 0.1.0 |
+| [l1-joints.md](specifications/l1-joints.md) | Joint constraints: Hinge, Piston, Ball, Distance, Fixed, Motorized | Draft | concept | 0.1.0 |
+| [l1-collision-events.md](specifications/l1-collision-events.md) | Contact/Trigger events, manifolds, filtering patterns, deferred despawn | Draft | concept | 0.1.0 |
+| [l1-physics-materials.md](specifications/l1-physics-materials.md) | Friction/Restitution assets, combine rules, surface tags, hot-reload | Draft | concept | 0.1.0 |
+| [l1-character-controller.md](specifications/l1-character-controller.md) | Kinematic capsule movement, iterative sweep, step-up, slope snapping | Draft | concept | 0.1.0 |
+| [l1-scripting-system.md](specifications/l1-scripting-system.md) | Scripting bridge (deferred): Lua/Tengo candidates, ECS API reference design | Draft | concept | 0.2.0 |
 
 ## Meta Information
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-29
-- **Total Specifications**: 75 (59 L1 concept + 14 L2 Go + 1 test + 1 tool)
+- **Total Specifications**: 74 (59 L1 concept + 14 L2 Go + 1 test + 1 tool)
