@@ -326,8 +326,12 @@ and respond to IPC signals — it does not spawn processes or watch the filesyst
 ```plaintext
 my-game/                    # Typical project using ecs-engine
 ├── assets/                 # Raw assets (glTF, images, audio, scenes)
+├── cmd/
+│   └── game/
+│       └── main.go         # App builder, plugin registration and game loop
+├── internal/               # Game-specific logic (private)
+│   ├── component/          # Custom components
+│   └── system/             # Custom systems
 ├── config/                 # Declarative definitions (UI, logic flows, templates)
-├── src/                    # Game-specific systems and components
-│   └── main.go             # App builder, plugin registration and game loop
-└── go.mod                  # go.mod: require github.com/org/ecs-engine v0.x.0
+└── go.mod                  # module my-game; require github.com/teratron/ecs-engine
 ```
