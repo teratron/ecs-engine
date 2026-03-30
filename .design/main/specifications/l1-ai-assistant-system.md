@@ -1,6 +1,6 @@
 # AI Assistant System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -249,3 +249,5 @@ The editor scans agent directories at startup and presents available agents in a
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft — AI assistant plugin architecture for editor |
+| 0.2.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned AI assistant stub example |
+| — | — | Planned examples: `examples/app/ai_assistant_stub/` |

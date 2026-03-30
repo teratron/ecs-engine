@@ -1,11 +1,11 @@
 # Workspace Specifications Registry
 
-**Version:** 2.19.0
+**Version:** 2.19.1
 **Status:** Active
 
 ## Overview
 
-Local registry of specifications for this workspace. Organized by priority batch (P1–P6).
+Local registry of specifications for this workspace. Organized by priority batch (P1–P8).
 
 ## P1 — ECS Core
 
@@ -45,7 +45,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-change-detection-go.md](specifications/l2-change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
 | [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
 | [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
-| [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | RFC | concept | 1.2.0 |
+| [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | RFC | concept | 1.3.0 |
 
 ## P3 — Assets & Math
 
@@ -88,9 +88,9 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
 | [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.1.0 |
 | [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
-| [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
+| [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.2.0 |
 | [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
-| [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.1.0 |
+| [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.2.0 |
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.1.0 |
 
 ## P7 — Advanced Core
@@ -125,5 +125,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-03-29
-- **Total Specifications**: 75 (60 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 74
+- **Last Updated**: 2026-03-30
+- **Total Specifications**: 75 (59 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 74

@@ -4,7 +4,7 @@
 | :--- | :--- |
 | **Layer** | 1 (concept) |
 | **Status** | RFC |
-| **Version** | 1.2.0 |
+| **Version** | 1.3.0 |
 | **Related Specifications** | [app-framework.md](app-framework.md), [hot-reload.md](hot-reload.md), [ai-assistant-system.md](ai-assistant-system.md), [definition-system.md](definition-system.md), [diagnostic-system.md](diagnostic-system.md) |
 
 ## Overview
@@ -12,8 +12,6 @@
 The engine ecosystem is split across two independent Git repositories: **`ecs-engine`** (the core runtime) and **`ecs-editor`** (the GUI editor application). The engine repository is the single source of truth for all runtime behaviour, ECS kernel, asset pipeline, rendering, physics, audio, and networking. The editor repository is a consumer of the engine's public API — it is architecturally identical to any third-party game that happens to implement tooling rather than gameplay.
 
 Communication between the two repositories occurs at three distinct levels: **compile-time** (Go module dependency), **runtime extension** (plugin interface contracts exported from the engine), and **process IPC** (hot-reload and live debugging protocol). Each level has a clearly defined boundary. The engine never imports the editor. The editor never imports `internal/` packages of the engine.
-
----
 
 ## 1. Motivation
 
@@ -27,8 +25,6 @@ The initial monorepo structure (`cmd/editor/` inside `ecs-engine`) creates three
 
 The specifications already anticipated this boundary. `app-framework.md §4.10` introduces `//go:build editor` build tags. `ai-assistant-system.md` states AI assistant plugins are entirely behind `//go:build editor`. `definition-system.md §4.11` explicitly prohibits definitions from crossing network boundaries. The split is the natural consequence of following those constraints to completion.
 
----
-
 ## 2. Constraints & Assumptions
 
 - The engine repository (`ecs-engine`) MUST compile, test, and pass benchmarks with zero knowledge of the editor repository.
@@ -40,8 +36,6 @@ The specifications already anticipated this boundary. `app-framework.md §4.10` 
 - Versioning follows SemVer. A breaking change to any type in `pkg/editor/` or `pkg/protocol/` triggers a major version bump in `ecs-engine` and a corresponding forced upgrade in `ecs-editor`.
 - The editor CI pipeline runs a job against the `@latest` published engine tag to detect drift within 24 hours of an engine release.
 
----
-
 ## 3. Core Invariants
 
 - **INV-1**: `ecs-engine` has zero import paths pointing to `ecs-editor`. This is verifiable with `go list -deps` and enforced in engine CI.
@@ -50,8 +44,6 @@ The specifications already anticipated this boundary. `app-framework.md §4.10` 
 - **INV-4**: `pkg/protocol/` contains only message types and their serialisation helpers. It has no dependency on any other engine package.
 - **INV-5**: A game that does not import `pkg/editor/` or `pkg/protocol/` incurs zero overhead from the existence of either package.
 - **INV-6**: All editor modifications to the game world go through the standard ECS command pipeline. The editor cannot bypass `CommandBuffer` via privileged API.
-
----
 
 ## 4. Detailed Design
 
@@ -412,16 +404,12 @@ workspace/
 
 Before opening a PR in `ecs-editor`, the developer removes the `replace` directive, runs `go get github.com/org/ecs-engine@<target-sha>` to pin the engine version, and verifies the build against the published module. This workflow is documented in the editor repository's `CONTRIBUTING.md`.
 
----
-
 ## 5. Open Questions
 
 - [RESOLVED v1.1.0] Should `pkg/protocol/` live in a third, dedicated mini-repository? **Decision**: No. Variant A (engine repo) is chosen for operational simplicity. See §4.4.3.
 - Should the IPC transport support WebSocket in addition to Unix sockets, to allow remote debugging of an engine process running on a different machine (e.g., Android device)?
 - Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
 - Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins?
-
----
 
 ## Document History
 
@@ -431,3 +419,5 @@ Before opening a PR in `ecs-editor`, the developer removes the `replace` directi
 | 1.0.0 | 2026-03-29 | [Auto-promote] Baseline Multi-Repo Architecture stabilized for implementation. |
 | 1.1.0 | 2026-03-29 | Fixed IPC Protocol repository decision (Variant A) — prioritized operational simplicity before v1.0.0. |
 | 1.2.0 | 2026-03-29 | Demoted Stable → RFC: open questions unresolved, no validating code (C29), architecture may evolve. |
+| 1.3.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned multi-repository boundary stub |
+| — | — | Planned examples: `examples/app/multi_repo_boundary/` |

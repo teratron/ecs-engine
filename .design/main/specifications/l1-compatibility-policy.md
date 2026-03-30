@@ -1,12 +1,12 @@
 # Compatibility and Versioning Policy
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
 ## Overview
 
-This specification defines the versioning strategy for the ECS engine and its relationship with the Go toolchain. As a high-performance engine, we often utilize bleeding-edge compiler and runtime features, necessitating a clear policy onGo version support and backwards compatibility.
+This specification defines the versioning strategy for the ECS engine and its relationship with the Go toolchain. As a high-performance engine, we often utilize bleeding-edge compiler and runtime features, necessitating a clear policy on Go version support and backwards compatibility.
 
 ## 1. Engine Versioning (SemVer)
 
@@ -56,3 +56,5 @@ If a new Go version introduces a critical performance feature (like a new GC or 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
+| 0.2.0 | 2026-03-30 | Added C26 example correlation placeholder for compatibility validation |
+| — | — | Planned examples: `examples/app/version_compatibility/` |
