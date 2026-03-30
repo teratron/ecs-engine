@@ -40,6 +40,8 @@ This document breaks down the Phase 1 goals into atomic, actionable tasks for AI
   - Integrate markdown-lint for specification consistency.
 - [ ] **Task 10: ADR-001** (Deadline: 2026-04-06, Deps: Task 3)
   - Create the first Architecture Decision Record documenting the choice of Table-based storage for the hot-path.
+- [ ] **Task 11: Scaffold pkg/ boundaries** (Deadline: TBD, Deps: None)
+  - Create pkg/editor/ and pkg/protocol/ with initial interface boundaries.
 
 ## Strategy for AI
 

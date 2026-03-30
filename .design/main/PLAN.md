@@ -60,6 +60,7 @@
 - [ ] l1-camera-and-visibility.md
 - [ ] l1-change-detection.md
 - [ ] l1-character-controller.md
+- [ ] l1-cli-tooling.md
 - [ ] l1-client-prediction.md
 - [ ] l1-collider.md
 - [ ] l1-collision-events.md

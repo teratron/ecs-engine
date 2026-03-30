@@ -86,6 +86,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-benchmark-spec.md](specifications/l2-benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.1.0 |
 | [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.3.0 |
 | [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
+| [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.1.0 |
 | [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
 | [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.1.0 |
 | [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
@@ -125,4 +126,4 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-03-29
-- **Total Specifications**: 74 (59 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 73
+- **Total Specifications**: 75 (60 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 74

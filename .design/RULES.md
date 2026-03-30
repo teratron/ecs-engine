@@ -115,7 +115,7 @@ Implementation plans in `PLAN.md` must follow a nested hierarchy: **Phase → Sp
 
 This rule ID is reserved for future extensions.
 
-### C12 — Quarantine Cascade (Каскад Карантина)
+### C12 — Quarantine Cascade
 
 If a Layer 1 (Concept) specification loses its `Stable` status or is removed, all dependent Layer 2/3 (Implementation) specifications must automatically and transparently be treated as demoted to `RFC` or moved to the Backlog by the Task workflow. The system must quarantine dependent specifications to prevent "orphaned" task scheduling without requiring manual status edits for every child in `INDEX.md`.
 
