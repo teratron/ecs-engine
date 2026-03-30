@@ -55,7 +55,36 @@ The specifications already anticipated this boundary. `app-framework.md §4.10` 
 
 ## 4. Detailed Design
 
-### 4.1 Repository Structure Overview
+### 4.1 Relationship Overview
+
+```mermaid
+graph TD
+    subgraph "Repository: ecs-editor"
+        ED_CMD[cmd/editor]
+        ED_AI[internal/ai]
+        ED_ORCH[internal/orchestrator]
+        ED_UI[internal/panels]
+    end
+
+    subgraph "Repository: ecs-engine"
+        ENG_CORE[internal/ecs]
+        ENG_HOT[internal/hotreload]
+        ENG_PKG[pkg/editor & pkg/protocol]
+        ENG_CI[cmd/ci & cmd/showcase]
+    end
+
+    %% Dependency Rules
+    ED_CMD -- "imports (public API)" --> ENG_PKG
+    ED_ORCH -- "monitors files & runs" --> ENG_CI
+    ED_AI -- "only if //go:build editor" --> ED_CMD
+    ENG_HOT -- "communicates via" --> ENG_PKG
+    
+    %% Isolation
+    ED_CMD -. "CANNOT IMPORT" .-> ENG_CORE
+    ENG_CORE -. "UNAWARE OF" .-> ED_CMD
+```
+
+### 4.2 Repository Structure Overview
 
 ```plaintext
 ecs-engine/                         ecs-editor/
