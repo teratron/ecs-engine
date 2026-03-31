@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.19.1
+**Version:** 2.19.2
 **Status:** Active
 
 ## Overview
@@ -84,12 +84,12 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-diagnostic-system.md](specifications/l1-diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
 | [l1-ui-system.md](specifications/l1-ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.2.0 |
 | [l2-benchmark-spec.md](specifications/l2-benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.1.0 |
-| [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.3.0 |
+| [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.4.0 |
 | [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
-| [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.1.0 |
+| [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.2.0 |
 | [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
 | [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.2.0 |
-| [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.3.0 |
+| [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.4.0 |
 | [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.2.0 |
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.1.0 |
 
@@ -125,5 +125,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-03-30
+- **Last Updated**: 2026-03-31
 - **Total Specifications**: 75 (59 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 74

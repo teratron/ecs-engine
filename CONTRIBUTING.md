@@ -1,6 +1,25 @@
 # Contributing
 
-## 📂 Engine Repository Structure (`ecs-engine`)
+## Current Repository State
+
+The project is currently in **Phase 0: Architecture & Specifications**. The repository already contains the primary specification workspace and the initial package skeleton, but most engine subsystems described below are still planned rather than implemented.
+
+Current implementation snapshot:
+
+```plaintext
+ecs-engine/
+├── .design/main/specifications/    # Active architecture and implementation specs
+├── cmd/cli/main.go                 # Bootstrap CLI stub
+├── internal/ecs/.../.gitkeep       # Planned ECS package layout
+├── pkg/{diagnostic,math,platform}/ # Planned reusable packages
+└── examples/ecs/.gitkeep           # Placeholder for validating examples
+```
+
+When implementation lands, update this file together with the affected specs so that the documented tree stays synchronized with the actual repository.
+
+## Target Engine Repository Structure (`ecs-engine`)
+
+The tree below describes the intended target architecture, not the current completed implementation:
 
 ```plaintext
 ecs-engine/                 # Root of the engine project
@@ -119,7 +138,9 @@ ecs-engine/                 # Root of the engine project
         └── diagnostics.go  # NetworkAlert, DiagnosticSnapshot
 ```
 
-## 📂 Editor Repository Structure (`ecs-editor`)
+## Target Editor Repository Structure (`ecs-editor`)
+
+This section describes the planned companion repository boundary used by the multi-repo architecture specs:
 
 The editor is a **separate Git repository** that depends on `ecs-engine` as a standard Go module.
 It never imports `internal/` packages from the engine — only `pkg/`. See `l1-multi-repo-architecture`

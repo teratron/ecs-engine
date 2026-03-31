@@ -88,7 +88,7 @@ Before finishing any task, the agent MUST verify the following:
   - [ ] C26 Correlation: L1 specs link to corresponding `examples/` dir.
 - [ ] **Cognitive Discipline**: No steps skipped, no assumptions made without asking.
 - [ ] **Rule Synchronization**: New agent-facing conventions from `.design/RULES.md` are added to this checklist.
-- [ ] **ECS Architecture Reference**: Skill loaded before any spec work; no external engine branding in project files.
+- [ ] **ECS Architecture Reference**: Skill loaded before any spec work.
 - [ ] **Visual Excellence**: Web/UI components (if any) follow premium design guidelines.
 - [ ] **Code Quality**:
   - [ ] All new Go files have at least 80% test coverage.

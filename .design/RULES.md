@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.5.0
+**Version:** 1.6.0
 **Status:** Active
 
 ## Overview
@@ -242,7 +242,6 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 
 1. **Load Skill**: Read `.agents/skills/ecs-engine-reference/SKILL.md` before starting spec work to ensure full architectural context is loaded.
 2. **Cross-Reference**: Verify that new specs are consistent with the module map, dependency graph, and Go conventions defined in the skill.
-3. **No External Branding**: The engine is a standalone project. Never reference external engines or frameworks in specifications, rules, or public documentation.
 
 ### C26 — Specification-Example Correlation
 
@@ -260,3 +259,4 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 | 1.3.0 | 2026-03-27 | Added C26 — Specification-Example Correlation |
 | 1.4.0 | 2026-03-27 | Integrated Research Insights: Green Tea GC, Bitmasks, SIMD. |
 | 1.5.0 | 2026-03-31 | Restored and formalized C15 — Workspace Scope Isolation. |
+| 1.6.0 | 2026-03-31 | Narrowed C25 scope by removing the public-documentation branding restriction. |

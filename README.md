@@ -1,20 +1,37 @@
 # ECS Engine
 
-## ⚔️ The "Battle Test" for Magic Spec
+Spec-first ECS game engine project in Go and a deliberate challenge for [Magic Spec](https://github.com/teratron/magic-spec).
 
-This high-performance ECS (Entity Component System) game engine, developed in **Go**, serves as a real-world validation of [Magic Spec](https://github.com/teratron/magic-spec) — a project-driven methodology for creating full-scale, production-ready specifications.
+## The Battle Test
 
-### 💡 The Challenge
+This repository is both an engine project and a stress test for specification-driven development in a performance-sensitive domain. The goal is not just to build an ECS engine, but to prove that a large, ambitious Go codebase can be shaped coherently from a strong specification layer first.
 
-The core objective is to translate the sophisticated architectural patterns of the [Bevy Engine](https://github.com/bevyengine/bevy) (originally written in **Rust**) into a robust, idiomatic **Go** implementation. This is not just an engine project; it is a "stress test" for specification-driven development, pushing the boundaries of what can be meticulously planned and executed in the Go ecosystem.
+The challenge is intentionally uncompromising: ECS architecture, subsystem boundaries, performance constraints, and long-horizon design pressure are exactly the kind of forces that expose weak specifications. If Magic Spec can carry a project like this without collapsing into drift, ambiguity, or documentation theater, then it is proving something real.
 
-### 🌟 Key Goals
+The repository is intentionally being built from architecture outward. The active source of truth is the specification workspace under `.design/main/`, while `cmd/`, `internal/`, `pkg/`, and `examples/` currently contain bootstrap stubs and skeletal package layout that will be filled as the P1-P3 foundation specs stabilize.
+
+## Current Status
+
+- Phase 0: architecture and specification drafting.
+- `PLAN.md` remains focused on the specification set; implementation tasks follow only after the POC specs are stable enough to validate in `examples/`.
+- The current codebase is intentionally skeletal. Missing subsystems are planned, not accidentally absent.
+
+## Project Direction
+
+The project studies data-oriented ECS patterns proven in modern engines and translates the useful architectural ideas into a standalone, idiomatic Go engine. External engines are treated as research input and comparison points, not as a compatibility target or branding layer.
+
+In that sense, the repository is intentionally a "battle test" for Magic Spec: if the specification workflow can survive an ECS engine with demanding architecture, evolving subsystem boundaries, and strict validation requirements, it can likely scale to other serious systems as well.
+
+## Key Goals
 
 - **Spec Verification**: Proving the effectiveness of [Magic Spec](https://github.com/teratron/magic-spec) in complex, performance-critical domains.
-- **Modern Architecture**: Implementing a modular, data-driven ECS inspired by the state-of-the-art Bevy engine.
+- **Modern Architecture**: Defining a modular, data-driven ECS architecture before scaling implementation work.
 - **Go Performance**: Leveraging Go's concurrency primitives to build a reactive and scalable game foundation.
+- **Traceable Delivery**: Moving each subsystem from Draft spec to validating example before treating it as implementation-ready.
 
 ## References
+
+The references below document the architectural research baseline for the project:
 
 - [Bevy Engine](https://github.com/bevyengine/bevy)
 - [Godot Engine](https://github.com/godotengine/godot)
