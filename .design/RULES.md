@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Status:** Active
 
 ## Overview
@@ -143,7 +143,14 @@ To ensure accurate engine state tracking and reliable updates, any modification 
 
 ### C15 — Workspace Scope Isolation
 
-...
+All workspace-aware workflows (`magic.analyze`, `magic.task`, `magic.run`, `magic.rule`) MUST enforce strict scope isolation based on the active workspace entry in `.design/workspace.json`.
+
+1. **Scope Source**: The active workspace `scope` array is the single source of truth for bounded scans and modifications.
+2. **Read/Write Boundary**: During scoped operations, file discovery, analysis, and writes MUST stay inside the declared scope paths.
+3. **Out-of-Scope Handling**: Files outside scope may be reported as `UNSCOPED` for visibility, but MUST NOT be treated as in-scope drift or blockers.
+4. **Cross-Workspace Exception (Read-Only)**: Cross-workspace reads are allowed only for integrity checks that require parent references (for example L2→L1 status/header parity). This exception never grants write access outside scope.
+5. **No Implicit Expansion**: The agent MUST NOT widen scope heuristically (by similarity, naming, or inferred ownership) without an explicit workspace change.
+6. **Invalid Scope Contract**: If a declared scope path is missing on disk, report a `STRUCTURE` violation and halt only the affected scoped workflow.
 
 ### C27 — GC Compensation (sync.Pool)
 
@@ -252,3 +259,4 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 | 1.2.0 | 2026-03-25 | Added C25 — ECS Architecture Reference Skill |
 | 1.3.0 | 2026-03-27 | Added C26 — Specification-Example Correlation |
 | 1.4.0 | 2026-03-27 | Integrated Research Insights: Green Tea GC, Bitmasks, SIMD. |
+| 1.5.0 | 2026-03-31 | Restored and formalized C15 — Workspace Scope Isolation. |
