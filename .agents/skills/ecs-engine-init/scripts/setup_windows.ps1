@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# ECS ENGINE DEV INIT (WINDOWS)
+# ECS ENGINE INIT (WINDOWS)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Safe junction/hardlink creation for Windows environment.
