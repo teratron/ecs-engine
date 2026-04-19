@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [type-registry.md](type-registry.md)
+**Implements:** [type-registry.md](l1-type-registry.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ Go-level design for the type registry. Provides runtime introspection of registe
 
 ## Related Specifications
 
-- [type-registry.md](type-registry.md) — L1 concept specification (parent)
+- [type-registry.md](l1-type-registry.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the Type Registry provides the metadata foundation for 
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [type-registry.md §3](type-registry.md) for technology-agnostic invariants.
+> See [type-registry.md §3](l1-type-registry.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

@@ -10,11 +10,11 @@ The character controller provides kinematic movement for player characters and N
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — Backend executes the movement sweep
-- [rigid-body.md](rigid-body.md) — Contrast: RigidBody::Kinematic for animated objects
-- [collider.md](collider.md) — Capsule shape and density settings
-- [physics-query.md](physics-query.md) — Uses ShapeCast internally for sweeping
-- [collision-events.md](collision-events.md) — CharacterCollision events emitted per move
+- [physics-system.md](l1-physics-system.md) — Backend executes the movement sweep
+- [rigid-body.md](l1-rigid-body.md) — Contrast: RigidBody::Kinematic for animated objects
+- [collider.md](l1-collider.md) — Capsule shape and density settings
+- [physics-query.md](l1-physics-query.md) — Uses ShapeCast internally for sweeping
+- [collision-events.md](l1-collision-events.md) — CharacterCollision events emitted per move
 
 ## 1. Motivation
 

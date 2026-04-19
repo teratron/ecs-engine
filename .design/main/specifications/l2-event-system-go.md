@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [event-system.md](event-system.md)
+**Implements:** [event-system.md](l1-event-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ Go-level design for the three communication mechanisms: **Events** (broadcast, d
 
 ## Related Specifications
 
-- [event-system.md](event-system.md) — L1 concept specification (parent)
+- [event-system.md](l1-event-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -30,7 +30,7 @@ The Go implementation of the Event system provides decoupled communication betwe
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [event-system.md §3](event-system.md) for technology-agnostic invariants.
+> See [event-system.md §3](l1-event-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

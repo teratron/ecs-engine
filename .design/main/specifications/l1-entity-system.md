@@ -10,9 +10,9 @@ Entities are lightweight identifiers for game objects. An Entity carries no data
 
 ## Related Specifications
 
-- [component-system.md](component-system.md) — Components are attached to Entities
-- [command-system.md](command-system.md) — Entity spawn/despawn via deferred commands
-- [hierarchy-system.md](hierarchy-system.md) — Parent-child relationships between entities
+- [component-system.md](l1-component-system.md) — Components are attached to Entities
+- [command-system.md](l1-command-system.md) — Entity spawn/despawn via deferred commands
+- [hierarchy-system.md](l1-hierarchy-system.md) — Parent-child relationships between entities
 
 ## 1. Motivation
 
@@ -104,7 +104,7 @@ Typed collections for efficient entity storage:
 
 ### 4.8 Dual-Phase Entity Registration
 
-When entities are added to the world in bulk (e.g., spawning a scene), cascading effects can occur: adding a component triggers system discovery (see [system-scheduling.md §4.10](system-scheduling.md)), which may spawn more entities. To prevent ordering issues and partial states, entity registration uses a reentrancy-safe two-phase approach:
+When entities are added to the world in bulk (e.g., spawning a scene), cascading effects can occur: adding a component triggers system discovery (see [system-scheduling.md §4.10](l1-system-scheduling.md)), which may spawn more entities. To prevent ordering issues and partial states, entity registration uses a reentrancy-safe two-phase approach:
 
 ```plaintext
 EntityRegistrationState
@@ -165,7 +165,7 @@ Not all entities represent visible game objects. Entities are equally suited for
 
 - If only one instance ever exists and no lifecycle hooks are needed, prefer `Res[T]`.
 - If multiple instances exist, or the concept benefits from component composition, use an entity.
-- Always use entity references (`EntityID`) rather than sharing pointers to the same data across entities (see [component-system.md §4.12](component-system.md) anti-pattern #1).
+- Always use entity references (`EntityID`) rather than sharing pointers to the same data across entities (see [component-system.md §4.12](l1-component-system.md) anti-pattern #1).
 
 ## 5. Open Questions
 

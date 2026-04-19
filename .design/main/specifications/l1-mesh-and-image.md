@@ -7,9 +7,9 @@
 Meshes and images are the two foundational GPU-side assets. A mesh describes geometry through vertex attributes and index data. An image describes texture data with format and mip information. Both are loaded through the asset system, transferred to the render World, and referenced by components via asset handles.
 
 ## Related Specifications
-- [Asset System](asset-system.md)
-- [Render Core](render-core.md)
-- [Animation System](animation-system.md)
+- [Asset System](l1-asset-system.md)
+- [Render Core](l1-render-core.md)
+- [Animation System](l1-animation-system.md)
 
 ## 1. Motivation
 Geometry and texture data follow different lifecycles than gameplay state. Treating them as assets with explicit GPU upload steps keeps memory ownership clear and enables streaming, caching, and hot-reload without touching the main World's component storage.

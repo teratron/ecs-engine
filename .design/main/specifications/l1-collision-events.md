@@ -10,11 +10,11 @@ Collision events are the push-based complement to physics queries. Where queries
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — Events phase that diffs contact sets and emits events
-- [collider.md](collider.md) — Collider sensor flag, CollisionGroups, contact_force_threshold
-- [rigid-body.md](rigid-body.md) — BodyType affects which event types are generated
-- [event-system.md](event-system.md) — EventWriter/EventReader infrastructure used for delivery
-- [physics-query.md](physics-query.md) — Pull-based alternative; ContactsBetween for synchronous reads
+- [physics-system.md](l1-physics-system.md) — Events phase that diffs contact sets and emits events
+- [collider.md](l1-collider.md) — Collider sensor flag, CollisionGroups, contact_force_threshold
+- [rigid-body.md](l1-rigid-body.md) — BodyType affects which event types are generated
+- [event-system.md](l1-event-system.md) — EventWriter/EventReader infrastructure used for delivery
+- [physics-query.md](l1-physics-query.md) — Pull-based alternative; ContactsBetween for synchronous reads
 
 ## 1. Motivation
 

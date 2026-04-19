@@ -10,11 +10,11 @@ The `RigidBody` component marks an entity as a participant in physics simulation
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — Server that consumes RigidBody and manages PhysicsBodyHandle
-- [collider.md](collider.md) — Collision shape attached alongside RigidBody
-- [hierarchy-system.md](hierarchy-system.md) — Transform component required alongside RigidBody
-- [component-system.md](component-system.md) — Required component pattern, OnAdd/OnRemove hooks
-- [change-detection.md](change-detection.md) — Field changes detected to sync properties to backend
+- [physics-system.md](l1-physics-system.md) — Server that consumes RigidBody and manages PhysicsBodyHandle
+- [collider.md](l1-collider.md) — Collision shape attached alongside RigidBody
+- [hierarchy-system.md](l1-hierarchy-system.md) — Transform component required alongside RigidBody
+- [component-system.md](l1-component-system.md) — Required component pattern, OnAdd/OnRemove hooks
+- [change-detection.md](l1-change-detection.md) — Field changes detected to sync properties to backend
 
 ## 1. Motivation
 

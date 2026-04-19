@@ -10,9 +10,9 @@ The time system provides three independent time dimensions — Real, Virtual, an
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Time dimensions are World resources
-- [system-scheduling.md](system-scheduling.md) — Fixed timestep drives the FixedUpdate schedule
-- [app-framework.md](app-framework.md) — Time updates occur in the First schedule before other systems
+- [world-system.md](l1-world-system.md) — Time dimensions are World resources
+- [system-scheduling.md](l1-system-scheduling.md) — Fixed timestep drives the FixedUpdate schedule
+- [app-framework.md](l1-app-framework.md) — Time updates occur in the First schedule before other systems
 
 ## 1. Motivation
 
@@ -85,7 +85,7 @@ At the start of each frame (in the First schedule):
 
 ### 4.3 Fixed Timestep Loop
 
-The RunFixedMainLoop schedule (see [app-framework.md](app-framework.md)) consumes accumulated time:
+The RunFixedMainLoop schedule (see [app-framework.md](l1-app-framework.md)) consumes accumulated time:
 
 ```
 while time_fixed.accumulator >= time_fixed.delta:

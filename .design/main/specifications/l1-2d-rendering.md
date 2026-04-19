@@ -7,9 +7,9 @@
 The 2D rendering pipeline handles sprites, text, and custom 2D meshes. It operates within the render core's extract-prepare-render model, copying visible 2D entities from the main world into the render world each frame. Sprites are sorted by layer and batched aggressively to minimize draw calls. An orthographic camera drives projection, with an optional pixel-perfect mode.
 
 ## Related Specifications
-- [Render Core](render-core.md)
-- [Mesh & Image](mesh-and-image.md)
-- [Camera & Visibility](camera-and-visibility.md)
+- [Render Core](l1-render-core.md)
+- [Mesh & Image](l1-mesh-and-image.md)
+- [Camera & Visibility](l1-camera-and-visibility.md)
 
 ## 1. Motivation
 Many games are purely 2D or mix 2D overlays with 3D scenes. A dedicated 2D path avoids forcing sprite-based games through a full 3D mesh pipeline. Batching sprites that share a texture into a single draw call is critical for performance when thousands of sprites are on screen.
@@ -88,7 +88,7 @@ The 2D picking backend performs ray-rectangle intersection against each sprite's
 
 ### 4.10 2D RenderFeature
 
-The 2D pipeline registers as a `RenderFeature` (see [render-core.md §4.10](render-core.md)), participating in the same Collect → Extract → Prepare → Draw phases as the 3D pipeline:
+The 2D pipeline registers as a `RenderFeature` (see [render-core.md §4.10](l1-render-core.md)), participating in the same Collect → Extract → Prepare → Draw phases as the 3D pipeline:
 
 ```plaintext
 Sprite2DFeature implements RenderFeature
@@ -117,7 +117,7 @@ Sprite2DFeature implements RenderFeature
 
 ### 4.11 Sprite Associated Data
 
-The sprite extraction system uses the associated data pattern (see [component-system.md §4.10](component-system.md)) to cache GPU-side resources per sprite entity:
+The sprite extraction system uses the associated data pattern (see [component-system.md §4.10](l1-component-system.md)) to cache GPU-side resources per sprite entity:
 
 ```plaintext
 SpriteProcessorData

@@ -7,9 +7,9 @@
 Cameras define the viewpoint from which a scene is rendered. The visibility system determines which entities should be drawn for a given camera by combining user-controlled visibility flags with automatic frustum culling. Together they gate what enters the render pipeline each frame.
 
 ## Related Specifications
-- [Render Core](render-core.md)
-- [Hierarchy System](hierarchy-system.md)
-- [Math System](math-system.md)
+- [Render Core](l1-render-core.md)
+- [Hierarchy System](l1-hierarchy-system.md)
+- [Math System](l1-math-system.md)
 
 ## 1. Motivation
 Without visibility management every entity would be submitted to the GPU regardless of whether it is on screen or intentionally hidden. A layered visibility model gives users explicit control while frustum culling provides automatic performance gains. Multiple cameras enable split-screen, render-to-texture, and minimap use cases.

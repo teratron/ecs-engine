@@ -6,9 +6,9 @@
 
 ## Related Specifications
 
-- [component-system.md](component-system.md) — Components register in the type registry
-- [scene-system.md](scene-system.md) — Scene serialization uses registry for dynamic types
-- [definition-system.md](definition-system.md) — Definition System resolves JSON type names through the registry
+- [component-system.md](l1-component-system.md) — Components register in the type registry
+- [scene-system.md](l1-scene-system.md) — Scene serialization uses registry for dynamic types
+- [definition-system.md](l1-definition-system.md) — Definition System resolves JSON type names through the registry
 
 ## Overview
 

@@ -10,10 +10,10 @@ The render core defines how frames are produced. A dedicated render SubApp owns 
 
 ## Related Specifications
 
-- [App Framework](app-framework.md)
-- [Mesh & Image](mesh-and-image.md)
-- [Materials & Lighting](materials-and-lighting.md)
-- [Platform System](platform-system.md) — RenderBackend selection per platform
+- [App Framework](l1-app-framework.md)
+- [Mesh & Image](l1-mesh-and-image.md)
+- [Materials & Lighting](l1-materials-and-lighting.md)
+- [Platform System](l1-platform-system.md) — RenderBackend selection per platform
 
 ## 1. Motivation
 

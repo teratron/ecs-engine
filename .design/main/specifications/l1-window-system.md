@@ -10,10 +10,10 @@ The window system manages operating-system windows as ECS entities. Each window 
 
 ## Related Specifications
 
-- [input-system.md](input-system.md) — Keyboard, mouse, and gamepad input routed per window
-- [render-core.md](render-core.md) — Each window owns a render surface / swapchain
-- [event-system.md](event-system.md) — Window lifecycle and interaction events
-- [platform-system.md](platform-system.md) — WindowBackend selection per platform, capability negotiation
+- [input-system.md](l1-input-system.md) — Keyboard, mouse, and gamepad input routed per window
+- [render-core.md](l1-render-core.md) — Each window owns a render surface / swapchain
+- [event-system.md](l1-event-system.md) — Window lifecycle and interaction events
+- [platform-system.md](l1-platform-system.md) — WindowBackend selection per platform, capability negotiation
 
 ## 1. Motivation
 

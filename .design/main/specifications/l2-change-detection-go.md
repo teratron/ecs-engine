@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [change-detection.md](change-detection.md)
+**Implements:** [change-detection.md](l1-change-detection.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the change detection system 
 
 ## Related Specifications
 
-- [change-detection.md](change-detection.md) — L1 concept specification (parent)
+- [change-detection.md](l1-change-detection.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -29,7 +29,7 @@ The Go implementation of change detection provides the high-performance tracking
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [change-detection.md §3](change-detection.md) for technology-agnostic invariants.
+> See [change-detection.md §3](l1-change-detection.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

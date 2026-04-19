@@ -10,9 +10,13 @@ Components are pure data attached to entities. They carry no logic — systems p
 
 ## Related Specifications
 
-- [entity-system.md](entity-system.md) — Components attached to entities
-- [query-system.md](query-system.md) — Systems access components via queries
-- [change-detection.md](change-detection.md) — Component mutations tracked by ticks
+- [entity-system.md](l1-entity-system.md) — Components attached to entities
+- [query-system.md](l1-query-system.md) — Systems access components via queries
+- [change-detection.md](l1-change-detection.md) — Component mutations tracked by ticks
+
+## 1. Motivation
+
+Entities are meaningless without data attached to them. The Component System is the mechanism by which arbitrary, user-defined data is associated with entities in a way that supports both cache-friendly iteration (hot inner loops) and ergonomic structural changes (add/remove at runtime). A naive solution — a map of entity to list of components — sacrifices performance. A monolithic array-of-struct layout sacrifices flexibility. The Component System resolves this tension by giving each component type its own storage strategy chosen at registration time.
 
 Key requirements:
 

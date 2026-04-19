@@ -10,8 +10,8 @@ The task system provides structured parallelism for the engine. Rather than expo
 
 ## Related Specifications
 
-- [system-scheduling.md](system-scheduling.md) — Systems are dispatched as tasks onto worker pools
-- [asset-system.md](asset-system.md) — Asset loading uses the IO pool for async operations
+- [system-scheduling.md](l1-system-scheduling.md) — Systems are dispatched as tasks onto worker pools
+- [asset-system.md](l1-asset-system.md) — Asset loading uses the IO pool for async operations
 
 ## 1. Motivation
 

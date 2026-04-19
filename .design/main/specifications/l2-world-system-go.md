@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [world-system.md](world-system.md)
+**Implements:** [world-system.md](l1-world-system.md)
 
 ## Overview
 
@@ -16,8 +16,8 @@ It leverages Go 1.23+ features such as the `unique` package for identity managem
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — L1 concept specification (parent)
-- [task-system-go.md](task-system-go.md) — Uses task system for parallel archetype iteration
+- [world-system.md](l1-world-system.md) — L1 concept specification (parent)
+- [task-system-go.md](l1-task-system.md) — Uses task system for parallel archetype iteration
 
 ## 1. Motivation
 
@@ -35,7 +35,7 @@ A concrete Go implementation of the World is needed to:
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [world-system.md §3](world-system.md) for technology-agnostic invariants.
+> See [world-system.md §3](l1-world-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

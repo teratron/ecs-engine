@@ -10,15 +10,15 @@ The Transport layer provides reliable and unreliable message delivery between pe
 
 ## Related Specifications
 
-- [networking-system.md](networking-system.md) — Parent networking boundary; this spec details the transport abstraction defined in §4.5
-- [app-framework.md](app-framework.md) — NetworkPlugin registers as a SubApp; ServiceRegistry for cross-system access
-- [event-system.md](event-system.md) — Connection lifecycle events delivered through the standard event bus
-- [diagnostic-system.md](diagnostic-system.md) — Latency, jitter, packet loss surfaced as diagnostics
-- [platform-system.md](platform-system.md) — Socket backend varies per platform (POSIX, WASM, console)
-- [task-system.md](task-system.md) — IO pool provides the goroutine for transport operations
-- [replication.md](replication.md) — State replication system; primary consumer of transport channels 0, 1, 3
-- [rpc.md](rpc.md) — Network RPC uses ChannelID 1 for typed message delivery
-- [network-diagnostics.md](network-diagnostics.md) — Reads ConnectionStats for RTT, packet loss, bandwidth metrics
+- [networking-system.md](l1-networking-system.md) — Parent networking boundary; this spec details the transport abstraction defined in §4.5
+- [app-framework.md](l1-app-framework.md) — NetworkPlugin registers as a SubApp; ServiceRegistry for cross-system access
+- [event-system.md](l1-event-system.md) — Connection lifecycle events delivered through the standard event bus
+- [diagnostic-system.md](l1-diagnostic-system.md) — Latency, jitter, packet loss surfaced as diagnostics
+- [platform-system.md](l1-platform-system.md) — Socket backend varies per platform (POSIX, WASM, console)
+- [task-system.md](l1-task-system.md) — IO pool provides the goroutine for transport operations
+- [replication.md](l1-replication.md) — State replication system; primary consumer of transport channels 0, 1, 3
+- [rpc.md](l1-rpc.md) — Network RPC uses ChannelID 1 for typed message delivery
+- [network-diagnostics.md](l1-network-diagnostics.md) — Reads ConnectionStats for RTT, packet loss, bandwidth metrics
 
 ## 1. Motivation
 

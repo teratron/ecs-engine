@@ -10,21 +10,21 @@ The Networking System defines the engine's boundary with multiplayer infrastruct
 
 ## Related Specifications
 
-- [app-framework.md](app-framework.md) — FixedUpdate schedule, SubApp isolation, deployment architecture (§4.11)
-- [time-system.md](time-system.md) — FixedTime drives deterministic simulation rate
-- [scene-system.md](scene-system.md) — World serialization for snapshots
-- [event-system.md](event-system.md) — Network events delivered through the standard event bus
-- [input-system.md](input-system.md) — Input serialization for rollback
-- [entity-system.md](entity-system.md) — Entity ID stability across snapshots
-- [definition-system.md](definition-system.md) — Network boundary rule (§4.11)
-- [task-system.md](task-system.md) — IO pool for network transport threads
-- [transport.md](transport.md) — Detailed UDP transport layer: channels, reliability, packet structure, connection lifecycle
-- [replication.md](replication.md) — State replication: markers, entity mapping, visibility, delta compression, priority
-- [snapshot-interpolation.md](snapshot-interpolation.md) — Sync model: snapshot buffer, interpolation timing, extrapolation
-- [client-prediction.md](client-prediction.md) — Sync model: input prediction, server reconciliation, rollback
-- [lockstep.md](lockstep.md) — Sync model: deterministic lockstep, input delay, speculative execution
-- [rpc.md](rpc.md) — Typed network RPC via event system
-- [network-diagnostics.md](network-diagnostics.md) — Network metrics, alerts, debug overlay, desync reports
+- [app-framework.md](l1-app-framework.md) — FixedUpdate schedule, SubApp isolation, deployment architecture (§4.11)
+- [time-system.md](l1-time-system.md) — FixedTime drives deterministic simulation rate
+- [scene-system.md](l1-scene-system.md) — World serialization for snapshots
+- [event-system.md](l1-event-system.md) — Network events delivered through the standard event bus
+- [input-system.md](l1-input-system.md) — Input serialization for rollback
+- [entity-system.md](l1-entity-system.md) — Entity ID stability across snapshots
+- [definition-system.md](l1-definition-system.md) — Network boundary rule (§4.11)
+- [task-system.md](l1-task-system.md) — IO pool for network transport threads
+- [transport.md](l1-transport.md) — Detailed UDP transport layer: channels, reliability, packet structure, connection lifecycle
+- [replication.md](l1-replication.md) — State replication: markers, entity mapping, visibility, delta compression, priority
+- [snapshot-interpolation.md](l1-snapshot-interpolation.md) — Sync model: snapshot buffer, interpolation timing, extrapolation
+- [client-prediction.md](l1-client-prediction.md) — Sync model: input prediction, server reconciliation, rollback
+- [lockstep.md](l1-lockstep.md) — Sync model: deterministic lockstep, input delay, speculative execution
+- [rpc.md](l1-rpc.md) — Typed network RPC via event system
+- [network-diagnostics.md](l1-network-diagnostics.md) — Network metrics, alerts, debug overlay, desync reports
 
 ## 1. Motivation
 
@@ -42,9 +42,9 @@ The Networking System provides the building blocks so that netcode libraries (ro
 - The engine does NOT implement any specific netcode model (rollback, lockstep, server-authoritative). It provides primitives.
 - No network I/O occurs inside the main game loop (`First` through `Last` schedules). All transport runs on IO pool threads.
 - Determinism is opt-in per system. Systems that declare `Deterministic: true` are scheduled in a fixed order with fixed-point math.
-- Snapshot serialization uses the same binary format as scene saves and hot-reload (see [scene-system.md](scene-system.md), [hot-reload.md](hot-reload.md)).
+- Snapshot serialization uses the same binary format as scene saves and hot-reload (see [scene-system.md](l1-scene-system.md), [hot-reload.md](l1-hot-reload.md)).
 - The transport layer is pluggable — UDP, WebSocket, WebRTC, or custom protocols.
-- Entity IDs must remain stable across snapshot/restore cycles (see [entity-system.md §4.8](entity-system.md)).
+- Entity IDs must remain stable across snapshot/restore cycles (see [entity-system.md §4.8](l1-entity-system.md)).
 
 ## 3. Core Invariants
 
@@ -166,7 +166,7 @@ RollbackCoordinator
 
 ### 4.5 Transport Abstraction
 
-Network transport runs on IO pool threads, completely isolated from the game loop. The full transport API — handle-based connection management, pre-configured delivery channels, packet structure, reliability layer, MTU discovery, and platform backends — is defined in [transport.md](transport.md).
+Network transport runs on IO pool threads, completely isolated from the game loop. The full transport API — handle-based connection management, pre-configured delivery channels, packet structure, reliability layer, MTU discovery, and platform backends — is defined in [transport.md](l1-transport.md).
 
 Key design decisions (see transport.md for rationale):
 

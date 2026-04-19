@@ -10,10 +10,10 @@ Commands are deferred mutations to the World. Systems cannot directly perform st
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Commands are applied to the World
-- [entity-system.md](entity-system.md) — Spawn/despawn commands create/destroy entities
-- [component-system.md](component-system.md) — Insert/remove commands modify entity components
-- [system-scheduling.md](system-scheduling.md) — ApplyDeferred sync points in schedule
+- [world-system.md](l1-world-system.md) — Commands are applied to the World
+- [entity-system.md](l1-entity-system.md) — Spawn/despawn commands create/destroy entities
+- [component-system.md](l1-component-system.md) — Insert/remove commands modify entity components
+- [system-scheduling.md](l1-system-scheduling.md) — ApplyDeferred sync points in schedule
 
 ## 1. Motivation
 

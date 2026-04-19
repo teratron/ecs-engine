@@ -10,13 +10,13 @@ Client-Side Prediction allows the local player to see the results of their input
 
 ## Related Specifications
 
-- [networking-system.md](networking-system.md) — SnapshotManager (§4.2) for rollback snapshots, InputBuffer (§4.3) for input history, RollbackCoordinator (§4.4) reference implementation, DeterministicSchedule (§4.1) for resimulation
-- [replication.md](replication.md) — Server state delivery to clients, NetworkAuthority (§4.10) for Predicted entities
-- [transport.md](transport.md) — Input sent via ChannelID 1 (ReliableUnordered), state via ChannelID 0 (Unreliable)
-- [snapshot-interpolation.md](snapshot-interpolation.md) — Remote (non-predicted) entities use interpolation for display
-- [time-system.md](time-system.md) — FixedTime drives deterministic simulation ticks
-- [input-system.md](input-system.md) — Raw input captured and serialized per tick
-- [command-system.md](command-system.md) — Server corrections applied via deferred commands
+- [networking-system.md](l1-networking-system.md) — SnapshotManager (§4.2) for rollback snapshots, InputBuffer (§4.3) for input history, RollbackCoordinator (§4.4) reference implementation, DeterministicSchedule (§4.1) for resimulation
+- [replication.md](l1-replication.md) — Server state delivery to clients, NetworkAuthority (§4.10) for Predicted entities
+- [transport.md](l1-transport.md) — Input sent via ChannelID 1 (ReliableUnordered), state via ChannelID 0 (Unreliable)
+- [snapshot-interpolation.md](l1-snapshot-interpolation.md) — Remote (non-predicted) entities use interpolation for display
+- [time-system.md](l1-time-system.md) — FixedTime drives deterministic simulation ticks
+- [input-system.md](l1-input-system.md) — Raw input captured and serialized per tick
+- [command-system.md](l1-command-system.md) — Server corrections applied via deferred commands
 
 ## 1. Motivation
 

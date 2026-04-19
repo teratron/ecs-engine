@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [system-scheduling.md](system-scheduling.md)
+**Implements:** [system-scheduling.md](l1-system-scheduling.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ Go-level design for the system scheduling subsystem. Defines the `System` interf
 
 ## Related Specifications
 
-- [system-scheduling.md](system-scheduling.md) — L1 concept specification (parent)
+- [system-scheduling.md](l1-system-scheduling.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the System Scheduling provides the execution engine for
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [system-scheduling.md §3](system-scheduling.md) for technology-agnostic invariants.
+> See [system-scheduling.md §3](l1-system-scheduling.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

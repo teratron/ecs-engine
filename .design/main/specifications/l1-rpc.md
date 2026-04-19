@@ -10,12 +10,12 @@ Network RPC (Remote Procedure Call) provides typed, one-shot message passing bet
 
 ## Related Specifications
 
-- [event-system.md](event-system.md) — RPCs are delivered as typed ECS events on the receiver
-- [transport.md](transport.md) — RPCs sent via ChannelID 1 (ReliableUnordered) by default; configurable per RPC
-- [replication.md](replication.md) — Replication handles continuous state; RPC handles discrete actions
-- [networking-system.md](networking-system.md) — Network message pipeline (§4.6) for send/receive flow
-- [type-registry.md](type-registry.md) — RPC payload serialization via registered types
-- [command-system.md](command-system.md) — Server-side RPC handlers may use commands for deferred mutations
+- [event-system.md](l1-event-system.md) — RPCs are delivered as typed ECS events on the receiver
+- [transport.md](l1-transport.md) — RPCs sent via ChannelID 1 (ReliableUnordered) by default; configurable per RPC
+- [replication.md](l1-replication.md) — Replication handles continuous state; RPC handles discrete actions
+- [networking-system.md](l1-networking-system.md) — Network message pipeline (§4.6) for send/receive flow
+- [type-registry.md](l1-type-registry.md) — RPC payload serialization via registered types
+- [command-system.md](l1-command-system.md) — Server-side RPC handlers may use commands for deferred mutations
 
 ## 1. Motivation
 

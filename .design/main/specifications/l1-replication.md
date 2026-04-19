@@ -10,18 +10,18 @@ The Replication system synchronizes entity and component state between a server 
 
 ## Related Specifications
 
-- [networking-system.md](networking-system.md) — Parent networking boundary; SnapshotManager, InputBuffer, DeterministicSchedule
-- [transport.md](transport.md) — Channel-based message delivery; ChannelID 0/3 for unreliable state, ChannelID 1 for reliable events
-- [change-detection.md](change-detection.md) — Tick-based dirty tracking (ChangedTick, AddedTick), Changed[T]/Added[T] filters
-- [entity-system.md](entity-system.md) — Generational Entity IDs, EntityAllocator, entity remapping
-- [component-system.md](component-system.md) — ComponentID, registration, clone behavior, lifecycle hooks
-- [scene-system.md](scene-system.md) — DynamicSceneBuilder, SceneFilter, entity remapping during instantiation
-- [type-registry.md](type-registry.md) — Runtime type metadata, serialization hooks, ReflectComponent
-- [event-system.md](event-system.md) — Replication events delivered through the standard event bus
-- [world-system.md](world-system.md) — World as the canonical state store, resources
-- [snapshot-interpolation.md](snapshot-interpolation.md) — Remote entities rendered via interpolation of replicated snapshots
-- [client-prediction.md](client-prediction.md) — Predicted entities use replication for server reconciliation
-- [network-diagnostics.md](network-diagnostics.md) — Reads ReplicationStats for entity count, bandwidth metrics
+- [networking-system.md](l1-networking-system.md) — Parent networking boundary; SnapshotManager, InputBuffer, DeterministicSchedule
+- [transport.md](l1-transport.md) — Channel-based message delivery; ChannelID 0/3 for unreliable state, ChannelID 1 for reliable events
+- [change-detection.md](l1-change-detection.md) — Tick-based dirty tracking (ChangedTick, AddedTick), Changed[T]/Added[T] filters
+- [entity-system.md](l1-entity-system.md) — Generational Entity IDs, EntityAllocator, entity remapping
+- [component-system.md](l1-component-system.md) — ComponentID, registration, clone behavior, lifecycle hooks
+- [scene-system.md](l1-scene-system.md) — DynamicSceneBuilder, SceneFilter, entity remapping during instantiation
+- [type-registry.md](l1-type-registry.md) — Runtime type metadata, serialization hooks, ReflectComponent
+- [event-system.md](l1-event-system.md) — Replication events delivered through the standard event bus
+- [world-system.md](l1-world-system.md) — World as the canonical state store, resources
+- [snapshot-interpolation.md](l1-snapshot-interpolation.md) — Remote entities rendered via interpolation of replicated snapshots
+- [client-prediction.md](l1-client-prediction.md) — Predicted entities use replication for server reconciliation
+- [network-diagnostics.md](l1-network-diagnostics.md) — Reads ReplicationStats for entity count, bandwidth metrics
 
 ## 1. Motivation
 

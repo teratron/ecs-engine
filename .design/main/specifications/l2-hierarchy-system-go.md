@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [hierarchy-system.md](hierarchy-system.md)
+**Implements:** [hierarchy-system.md](l1-hierarchy-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the hierarchy system describ
 
 ## Related Specifications
 
-- [hierarchy-system.md](hierarchy-system.md) — L1 concept specification (parent)
+- [hierarchy-system.md](l1-hierarchy-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the Hierarchy system enables complex entity relationshi
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [hierarchy-system.md §3](hierarchy-system.md) for technology-agnostic invariants.
+> See [hierarchy-system.md §3](l1-hierarchy-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

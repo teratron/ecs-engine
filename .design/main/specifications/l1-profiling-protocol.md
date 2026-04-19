@@ -10,11 +10,11 @@ The Profiling Protocol defines a standardized instrumentation layer for the engi
 
 ## Related Specifications
 
-- [diagnostic-system.md](diagnostic-system.md) — DiagnosticsStore consumes aggregated span timings
-- [system-scheduling.md](system-scheduling.md) — Each system execution is wrapped in a span
-- [task-system.md](task-system.md) — Worker pool threads carry span context for task attribution
-- [render-core.md](render-core.md) — Render passes emit GPU timing spans
-- [app-framework.md](app-framework.md) — Profiling plugin registration and build tag isolation
+- [diagnostic-system.md](l1-diagnostic-system.md) — DiagnosticsStore consumes aggregated span timings
+- [system-scheduling.md](l1-system-scheduling.md) — Each system execution is wrapped in a span
+- [task-system.md](l1-task-system.md) — Worker pool threads carry span context for task attribution
+- [render-core.md](l1-render-core.md) — Render passes emit GPU timing spans
+- [app-framework.md](l1-app-framework.md) — Profiling plugin registration and build tag isolation
 
 ## 1. Motivation
 

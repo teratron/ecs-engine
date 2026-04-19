@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [entity-system.md](entity-system.md)
+**Implements:** [entity-system.md](l1-entity-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the entity system described 
 
 ## Related Specifications
 
-- [entity-system.md](entity-system.md) — L1 concept specification (parent)
+- [entity-system.md](l1-entity-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -30,7 +30,7 @@ The Go implementation of the Entity system provides the core identity mechanism 
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [entity-system.md §3](entity-system.md) for technology-agnostic invariants.
+> See [entity-system.md §3](l1-entity-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

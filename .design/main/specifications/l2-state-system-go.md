@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [state-system.md](state-system.md)
+**Implements:** [state-system.md](l1-state-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the state system described i
 
 ## Related Specifications
 
-- [state-system.md](state-system.md) — L1 concept specification (parent)
+- [state-system.md](l1-state-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the State system provides a hierarchical, type-safe fin
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [state-system.md §3](state-system.md) for technology-agnostic invariants.
+> See [state-system.md §3](l1-state-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

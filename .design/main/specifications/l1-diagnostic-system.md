@@ -10,10 +10,10 @@ The diagnostic system provides runtime introspection tools for development and p
 
 ## Related Specifications
 
-- [system-scheduling.md](system-scheduling.md) — Diagnostic systems run in the Last schedule
-- [render-core.md](render-core.md) — Gizmo rendering and debug overlay pass
-- [app-framework.md](app-framework.md) — Plugin registration for diagnostic features
-- [network-diagnostics.md](network-diagnostics.md) — Networking-specific metrics, alerts, and debug overlay built on DiagnosticsStore
+- [system-scheduling.md](l1-system-scheduling.md) — Diagnostic systems run in the Last schedule
+- [render-core.md](l1-render-core.md) — Gizmo rendering and debug overlay pass
+- [app-framework.md](l1-app-framework.md) — Plugin registration for diagnostic features
+- [network-diagnostics.md](l1-network-diagnostics.md) — Networking-specific metrics, alerts, and debug overlay built on DiagnosticsStore
 
 ## 1. Motivation
 

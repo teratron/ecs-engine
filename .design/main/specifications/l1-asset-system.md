@@ -10,10 +10,10 @@ The asset system manages loading, tracking, and lifetime of external resources (
 
 ## Related Specifications
 
-- [task-system.md](task-system.md) — Async loading runs on the IO pool
-- [scene-system.md](scene-system.md) — Scenes are assets loaded through this system
-- [event-system.md](event-system.md) — Asset lifecycle events
-- [definition-system.md](definition-system.md) — JSON definitions loaded as assets with hot-reload
+- [task-system.md](l1-task-system.md) — Async loading runs on the IO pool
+- [scene-system.md](l1-scene-system.md) — Scenes are assets loaded through this system
+- [event-system.md](l1-event-system.md) — Asset lifecycle events
+- [definition-system.md](l1-definition-system.md) — JSON definitions loaded as assets with hot-reload
 
 ## 1. Motivation
 
@@ -197,7 +197,7 @@ AssetCompiler (interface)
 
 - **Dependency Tracking**: Compilers declare file and type dependencies for incremental builds.
 - **Build Invalidation**: Changing a base material automatically triggers a re-compilation of all scenes referencing that material.
-- **Parallel Execution**: Independent build steps are dispatched via the **Task System** (§4.8 in [task-system.md](task-system.md)).
+- **Parallel Execution**: Independent build steps are dispatched via the **Task System** (§4.8 in [task-system.md](l1-task-system.md)).
 
 ### 4.12 Content Manager & Reference Counting
 

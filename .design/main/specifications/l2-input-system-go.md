@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [input-system.md](input-system.md)
+**Implements:** [input-system.md](l1-input-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the input system described i
 
 ## Related Specifications
 
-- [input-system.md](input-system.md) — L1 concept specification (parent)
+- [input-system.md](l1-input-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the Input system provides a unified, cross-platform int
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [input-system.md §3](input-system.md) for technology-agnostic invariants.
+> See [input-system.md §3](l1-input-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

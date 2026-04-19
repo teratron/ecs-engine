@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [component-system.md](component-system.md)
+**Implements:** [component-system.md](l1-component-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the component system. Compon
 
 ## Related Specifications
 
-- [component-system.md](component-system.md) — L1 concept specification (parent)
+- [component-system.md](l1-component-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the Component system provides the data-oriented foundat
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [component-system.md §3](component-system.md) for technology-agnostic invariants.
+> See [component-system.md §3](l1-component-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

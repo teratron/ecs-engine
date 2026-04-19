@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [time-system.md](time-system.md)
+**Implements:** [time-system.md](l1-time-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the time system described in
 
 ## Related Specifications
 
-- [time-system.md](time-system.md) — L1 concept specification (parent)
+- [time-system.md](l1-time-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -31,7 +31,7 @@ The Go implementation of the Time system provides precise, multi-dimensional tim
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [time-system.md §3](time-system.md) for technology-agnostic invariants.
+> See [time-system.md §3](l1-time-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

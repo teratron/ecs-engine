@@ -10,13 +10,13 @@ The World is the central data store of the ECS engine. It owns all entities, com
 
 ## Related Specifications
 
-- [entity-system.md](entity-system.md) — Entity allocation lives inside the World
-- [component-system.md](component-system.md) — Component storage managed by the World
-- [query-system.md](query-system.md) — Queries operate on World data
-- [command-system.md](command-system.md) — Commands are deferred mutations applied to the World
-- [change-detection.md](change-detection.md) — World maintains the global change tick
+- [entity-system.md](l1-entity-system.md) — Entity allocation lives inside the World
+- [component-system.md](l1-component-system.md) — Component storage managed by the World
+- [query-system.md](l1-query-system.md) — Queries operate on World data
+- [command-system.md](l1-command-system.md) — Commands are deferred mutations applied to the World
+- [change-detection.md](l1-change-detection.md) — World maintains the global change tick
 
-### 1. Motivation
+## 1. Motivation
 
 Every ECS needs a single owner for all game data. Without a centralized World:
 
@@ -125,7 +125,7 @@ World
 
 **Why batch matters**: Spawning 10,000 entities one-by-one causes 10,000 archetype lookups, 10,000 table capacity checks, and 10,000 individual hook invocations. `SpawnBatch` does one lookup, one capacity check (with pre-allocation), and one batched hook invocation — typically 10–50x faster for large spawns.
 
-**Integration with dual-phase registration**: `SpawnBatch` increments the `add_level` counter once for the entire batch (see [entity-system.md §4.8](entity-system.md)), so any system discovery triggered by the new components is deferred until the batch completes. This prevents partially-initialized batches from being processed.
+**Integration with dual-phase registration**: `SpawnBatch` increments the `add_level` counter once for the entire batch (see [entity-system.md §4.8](l1-entity-system.md)), so any system discovery triggered by the new components is deferred until the batch completes. This prevents partially-initialized batches from being processed.
 
 ### 4.9 Processor Registry
 
@@ -144,7 +144,7 @@ ProcessorRegistry (World internal)
     // Phase 4: revalidate dependent processors
 ```
 
-This centralized registry enables the automatic system discovery pattern (see [system-scheduling.md §4.10](system-scheduling.md)) — when a new component type appears, the registry checks its descriptor for a `DefaultProcessor` and auto-instantiates it. The registry also drives the component change notification chain (see [event-system.md §4.9](event-system.md)).
+This centralized registry enables the automatic system discovery pattern (see [system-scheduling.md §4.10](l1-system-scheduling.md)) — when a new component type appears, the registry checks its descriptor for a `DefaultProcessor` and auto-instantiates it. The registry also drives the component change notification chain (see [event-system.md §4.9](l1-event-system.md)).
 
 ## 5. Open Questions
 
