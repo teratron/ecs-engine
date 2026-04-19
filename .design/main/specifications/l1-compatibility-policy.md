@@ -1,6 +1,6 @@
 # Compatibility and Versioning Policy
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Draft
 **Layer:** concept
 
@@ -73,4 +73,5 @@ If a new Go version introduces a critical performance feature (like a new GC or 
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
 | 0.2.0 | 2026-03-30 | Added C26 example correlation placeholder for compatibility validation |
+| 0.3.0 | 2026-04-19 | Added `## Related Specifications` and `## 1. Motivation` sections; renumbered §1–§5 → §2–§6 (RULES §5/§6 compliance) |
 | — | — | Planned examples: `examples/app/version_compatibility/` |

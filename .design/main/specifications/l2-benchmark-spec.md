@@ -1,6 +1,6 @@
 # Benchmark Suite Specification
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** test
 
@@ -40,6 +40,7 @@ This specification fixes all three by codifying a fixed set of benchmarks (`Benc
 ## 3. Competitive Comparison
 
 Measure against:
+
 - [Arche](https://github.com/mlange-42/arche) (benchmark for archetype-based ECS)
 - [go-ecs](https://github.com/bytearena/ecs)
 - [engo/ecs](https://github.com/engoengine/ecs)
@@ -66,3 +67,4 @@ Benchmarks should be part of the CI pipeline. A performance report is generated 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
+| 0.2.0 | 2026-04-19 | Added `## Related Specifications` and `## 1. Motivation` sections; renumbered §1–§5 → §2–§6 (RULES §5/§6 compliance) |

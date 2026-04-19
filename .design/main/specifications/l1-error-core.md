@@ -1,6 +1,6 @@
 # Error Core Specification
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -59,6 +59,7 @@ type EngineError interface {
 ### 3.1 Error Codes (E-Series)
 
 Codes follow the format `E[Category][ID]`:
+
 - `E0000-E0999`: Core ECS (Entity/Component/World)
 - `E1000-E1999`: Scheduling & Systems
 - `E2000-E2999`: Render & Assets
@@ -67,6 +68,7 @@ Codes follow the format `E[Category][ID]`:
 ## 4. Localization & UX
 
 Error messages are stored externally to the code to allow for localization:
+
 - **Registry**: A `locales/errors.en.json` file contains mapping from Error Codes to templates.
 - **Templates**: Support placeholders (e.g., "System {name} has cyclic dependency").
 
@@ -81,4 +83,5 @@ Error messages are stored externally to the code to allow for localization:
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
+| 0.2.0 | 2026-04-19 | Added `## Related Specifications` and `## 1. Motivation` sections; renumbered §1–§4 → §2–§5 (RULES §5/§6 compliance) |
 | — | — | Planned examples: `examples/diagnostic/` |
