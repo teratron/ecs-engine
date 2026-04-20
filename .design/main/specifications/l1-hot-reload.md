@@ -12,14 +12,14 @@ This specification covers the Go code reload pipeline, shader hot-swap, and the 
 
 ## Related Specifications
 
-- [asset-system.md](asset-system.md) — File watcher and hot-reload for data assets (§4.8 in definition-system)
-- [definition-system.md](definition-system.md) — JSON definition hot-reload workflow (§4.8)
-- [scene-system.md](scene-system.md) — World serialization and entity remapping used for state snapshots
-- [app-framework.md](app-framework.md) — Plugin lifecycle, SubApp isolation, RunMode
-- [scripting-system.md](scripting-system.md) — Lua bridge provides an alternative hot-reload path for gameplay logic
-- [render-core.md](render-core.md) — Shader compilation and render pipeline stages
-- [diagnostic-system.md](diagnostic-system.md) — Reload metrics and error overlay
-- [profiling-protocol.md](profiling-protocol.md) — Reload cycle timing spans
+- [asset-system.md](l1-asset-system.md) — File watcher and hot-reload for data assets (§4.8 in definition-system)
+- [definition-system.md](l1-definition-system.md) — JSON definition hot-reload workflow (§4.8)
+- [scene-system.md](l1-scene-system.md) — World serialization and entity remapping used for state snapshots
+- [app-framework.md](l1-app-framework.md) — Plugin lifecycle, SubApp isolation, RunMode
+- [scripting-system.md](l1-scripting-system.md) — Lua bridge provides an alternative hot-reload path for gameplay logic
+- [render-core.md](l1-render-core.md) — Shader compilation and render pipeline stages
+- [diagnostic-system.md](l1-diagnostic-system.md) — Reload metrics and error overlay
+- [profiling-protocol.md](l1-profiling-protocol.md) — Reload cycle timing spans
 
 ## 1. Motivation
 

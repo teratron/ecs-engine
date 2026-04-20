@@ -10,11 +10,11 @@ The `Collider` component defines the collision shape of an entity. It can live o
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — Server that reads Collider and calls backend.AddCollider
-- [rigid-body.md](rigid-body.md) — Parent body that owns colliders
-- [hierarchy-system.md](hierarchy-system.md) — Child entity colliders traversed via ChildOf
-- [component-system.md](component-system.md) — OnAdd/OnRemove hooks, required components
-- [math-system.md](math-system.md) — Vec3, Quat, AABB, Sphere primitives
+- [physics-system.md](l1-physics-system.md) — Server that reads Collider and calls backend.AddCollider
+- [rigid-body.md](l1-rigid-body.md) — Parent body that owns colliders
+- [hierarchy-system.md](l1-hierarchy-system.md) — Child entity colliders traversed via ChildOf
+- [component-system.md](l1-component-system.md) — OnAdd/OnRemove hooks, required components
+- [math-system.md](l1-math-system.md) — Vec3, Quat, AABB, Sphere primitives
 
 ## 1. Motivation
 

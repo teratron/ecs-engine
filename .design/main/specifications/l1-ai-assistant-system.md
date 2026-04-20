@@ -12,11 +12,11 @@ This is not about in-game AI (NPC behavior, pathfinding) — it is about develop
 
 ## Related Specifications
 
-- [definition-system.md](definition-system.md) — AI agents read and write definition files (UI, scenes, flows, templates)
-- [app-framework.md](app-framework.md) — AI assistant registers as an editor plugin via the plugin system
-- [type-registry.md](type-registry.md) — Agents query the type registry for component metadata and field info
-- [scene-system.md](scene-system.md) — Agents can compose and modify scenes programmatically
-- [diagnostic-system.md](diagnostic-system.md) — Agents receive diagnostics data for intelligent debugging
+- [definition-system.md](l1-definition-system.md) — AI agents read and write definition files (UI, scenes, flows, templates)
+- [app-framework.md](l1-app-framework.md) — AI assistant registers as an editor plugin via the plugin system
+- [type-registry.md](l1-type-registry.md) — Agents query the type registry for component metadata and field info
+- [scene-system.md](l1-scene-system.md) — Agents can compose and modify scenes programmatically
+- [diagnostic-system.md](l1-diagnostic-system.md) — Agents receive diagnostics data for intelligent debugging
 
 ## 1. Motivation
 

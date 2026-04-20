@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [app-framework.md](app-framework.md)
+**Implements:** [app-framework.md](l1-app-framework.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the App framework described 
 
 ## Related Specifications
 
-- [app-framework.md](app-framework.md) — L1 concept specification (parent)
+- [app-framework.md](l1-app-framework.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -29,7 +29,7 @@ The Go implementation of the App framework provides the glue that binds the ECS 
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [app-framework.md §3](app-framework.md) for technology-agnostic invariants.
+> See [app-framework.md §3](l1-app-framework.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

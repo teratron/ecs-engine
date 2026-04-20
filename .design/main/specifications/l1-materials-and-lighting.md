@@ -7,9 +7,9 @@
 Materials define the visual properties of a surface — which shader to use and what parameters to bind. Lighting components describe light sources and environmental illumination. Together they drive the shading pipeline: material parameters are combined with incoming light to produce final pixel colors.
 
 ## Related Specifications
-- [Render Core](render-core.md)
-- [Mesh & Image](mesh-and-image.md)
-- [Camera & Visibility](camera-and-visibility.md)
+- [Render Core](l1-render-core.md)
+- [Mesh & Image](l1-mesh-and-image.md)
+- [Camera & Visibility](l1-camera-and-visibility.md)
 
 ## 1. Motivation
 A unified material model lets artists and developers describe surfaces declaratively. Separating light definitions from material parameters allows the engine to evaluate any combination of materials and lights without combinatorial explosion in user code.
@@ -107,7 +107,7 @@ graph LR
 - **Skybox**: an `EnvironmentMapLight` cube map rendered as the background at infinite depth.
 
 ### 4.8 Material Specialization
-Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) produces a pipeline variant. The material system generates a specialization key and looks it up in the pipeline cache. See [Render Core — Pipeline Specialization](render-core.md#46-pipeline-specialization).
+Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) produces a pipeline variant. The material system generates a specialization key and looks it up in the pipeline cache. See [Render Core — Pipeline Specialization](l1-render-core.md#46-pipeline-specialization).
 
 ## 5. Open Questions
 1. Should the engine support a secondary specular-glossiness PBR workflow?

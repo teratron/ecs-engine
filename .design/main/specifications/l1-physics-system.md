@@ -10,14 +10,14 @@ The Physics System defines how rigid body simulation integrates with the ECS eng
 
 ## Related Specifications
 
-- [app-framework.md](app-framework.md) — SubApp pattern, FixedUpdate schedule, ServiceRegistry
-- [time-system.md](time-system.md) — FixedTime drives the physics step rate
-- [math-system.md](math-system.md) — TransformInterpolator for smooth rendering between steps
-- [component-system.md](component-system.md) — AssociatedDataMap for PhysicsBodyHandle per entity
-- [render-core.md](render-core.md) — RID + command queue pattern reused for PhysicsBodyHandle
-- [event-system.md](event-system.md) — Collision events delivered through the standard event bus
-- [hierarchy-system.md](hierarchy-system.md) — Compound colliders follow entity hierarchy
-- [diagnostic-system.md](diagnostic-system.md) — Collider wireframes rendered as gizmos
+- [app-framework.md](l1-app-framework.md) — SubApp pattern, FixedUpdate schedule, ServiceRegistry
+- [time-system.md](l1-time-system.md) — FixedTime drives the physics step rate
+- [math-system.md](l1-math-system.md) — TransformInterpolator for smooth rendering between steps
+- [component-system.md](l1-component-system.md) — AssociatedDataMap for PhysicsBodyHandle per entity
+- [render-core.md](l1-render-core.md) — RID + command queue pattern reused for PhysicsBodyHandle
+- [event-system.md](l1-event-system.md) — Collision events delivered through the standard event bus
+- [hierarchy-system.md](l1-hierarchy-system.md) — Compound colliders follow entity hierarchy
+- [diagnostic-system.md](l1-diagnostic-system.md) — Collider wireframes rendered as gizmos
 
 ## 1. Motivation
 

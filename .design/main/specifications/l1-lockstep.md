@@ -10,11 +10,11 @@ Deterministic Lockstep is a synchronization model where all peers run the same d
 
 ## Related Specifications
 
-- [networking-system.md](networking-system.md) — DeterministicSchedule (§4.1) guarantees identical execution, DeterministicRNG (§4.8) for reproducible randomness, DesyncDetector (§4.7) for checksum verification, InputBuffer (§4.3) for input serialization
-- [transport.md](transport.md) — Inputs sent via ChannelID 1 (ReliableUnordered); checksums via ChannelID 1
-- [time-system.md](time-system.md) — FixedTime drives simulation at a constant rate
-- [input-system.md](input-system.md) — Input serialization for network transmission
-- [replication.md](replication.md) — Not used in pure lockstep (no state replication); may be used for initial state sync on late join
+- [networking-system.md](l1-networking-system.md) — DeterministicSchedule (§4.1) guarantees identical execution, DeterministicRNG (§4.8) for reproducible randomness, DesyncDetector (§4.7) for checksum verification, InputBuffer (§4.3) for input serialization
+- [transport.md](l1-transport.md) — Inputs sent via ChannelID 1 (ReliableUnordered); checksums via ChannelID 1
+- [time-system.md](l1-time-system.md) — FixedTime drives simulation at a constant rate
+- [input-system.md](l1-input-system.md) — Input serialization for network transmission
+- [replication.md](l1-replication.md) — Not used in pure lockstep (no state replication); may be used for initial state sync on late join
 
 ## 1. Motivation
 

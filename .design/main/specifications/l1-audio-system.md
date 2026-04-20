@@ -7,9 +7,9 @@
 The audio system provides component-driven sound playback integrated with the ECS world. Each audio source is an asset; playback is controlled through components attached to entities. Spatial audio positions sound relative to a listener entity in 3D space. A backend abstraction allows the actual mixing and output to be handled by pluggable audio engines.
 
 ## Related Specifications
-- [Asset System](asset-system.md)
-- [App Framework](app-framework.md)
-- [Platform System](platform-system.md) — AudioDriver selection per platform
+- [Asset System](l1-asset-system.md)
+- [App Framework](l1-app-framework.md)
+- [Platform System](l1-platform-system.md) — AudioDriver selection per platform
 
 ## 1. Motivation
 Games require both global (music, UI sounds) and positional (footsteps, explosions) audio. Representing playback as ECS components means audio lifetime is tied to entity lifetime, enabling patterns like "despawn the bullet entity and its sound stops automatically." A backend interface avoids hard-coupling to any single audio library.
@@ -143,7 +143,7 @@ AudioServer (internal)
 
 ### 4.12 Associated Emitter Data
 
-The audio system uses the associated data pattern (see [component-system.md §4.10](component-system.md)) to cache runtime audio state per entity without polluting the `AudioPlayer` component:
+The audio system uses the associated data pattern (see [component-system.md §4.10](l1-component-system.md)) to cache runtime audio state per entity without polluting the `AudioPlayer` component:
 
 ```plaintext
 AudioProcessorData

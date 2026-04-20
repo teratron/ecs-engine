@@ -10,13 +10,13 @@ The Platform System defines how the engine and games built with it run across mu
 
 ## Related Specifications
 
-- [app-framework.md](app-framework.md) — Plugin system, DefaultPlugins vary per platform
-- [window-system.md](window-system.md) — WindowBackend per platform
-- [render-core.md](render-core.md) — RenderBackend per platform (OpenGL, Vulkan, WebGPU, Metal)
-- [audio-system.md](audio-system.md) — AudioDriver per platform
-- [input-system.md](input-system.md) — Input sources vary per platform (gamepad, touch, keyboard)
-- [build-tooling.md](build-tooling.md) — CI matrix for cross-platform builds
-- [asset-system.md](asset-system.md) — Asset packaging and IO backends per platform
+- [app-framework.md](l1-app-framework.md) — Plugin system, DefaultPlugins vary per platform
+- [window-system.md](l1-window-system.md) — WindowBackend per platform
+- [render-core.md](l1-render-core.md) — RenderBackend per platform (OpenGL, Vulkan, WebGPU, Metal)
+- [audio-system.md](l1-audio-system.md) — AudioDriver per platform
+- [input-system.md](l1-input-system.md) — Input sources vary per platform (gamepad, touch, keyboard)
+- [build-tooling.md](l1-build-tooling.md) — CI matrix for cross-platform builds
+- [asset-system.md](l1-asset-system.md) — Asset packaging and IO backends per platform
 
 ## 1. Motivation
 

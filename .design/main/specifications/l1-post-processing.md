@@ -10,9 +10,9 @@ Post-processing applies a chain of full-screen passes after the main scene rende
 
 ## Related Specifications
 
-- [render-core.md](render-core.md) — Render graph integration and pass scheduling
-- [camera-and-visibility.md](camera-and-visibility.md) — Camera entities own post-process settings
-- [materials-and-lighting.md](materials-and-lighting.md) — Lighting output feeds the post-process input
+- [render-core.md](l1-render-core.md) — Render graph integration and pass scheduling
+- [camera-and-visibility.md](l1-camera-and-visibility.md) — Camera entities own post-process settings
+- [materials-and-lighting.md](l1-materials-and-lighting.md) — Lighting output feeds the post-process input
 
 ## 1. Motivation
 

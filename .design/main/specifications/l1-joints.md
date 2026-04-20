@@ -10,11 +10,11 @@ Joints constrain the relative motion between two rigid bodies. Each joint type r
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — Server Sync phase that creates and destroys joint constraints
-- [rigid-body.md](rigid-body.md) — The two bodies connected by a joint
-- [component-system.md](component-system.md) — OnAdd/OnRemove hooks, required components
-- [event-system.md](event-system.md) — JointBroken event delivered through the event bus
-- [math-system.md](math-system.md) — Vec3, Quat, coordinate frames
+- [physics-system.md](l1-physics-system.md) — Server Sync phase that creates and destroys joint constraints
+- [rigid-body.md](l1-rigid-body.md) — The two bodies connected by a joint
+- [component-system.md](l1-component-system.md) — OnAdd/OnRemove hooks, required components
+- [event-system.md](l1-event-system.md) — JointBroken event delivered through the event bus
+- [math-system.md](l1-math-system.md) — Vec3, Quat, coordinate frames
 
 ## 1. Motivation
 

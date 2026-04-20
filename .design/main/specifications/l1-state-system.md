@@ -10,10 +10,10 @@ The state system provides hierarchical finite state machines for controlling app
 
 ## Related Specifications
 
-- [system-scheduling.md](system-scheduling.md) — State transitions run in the StateTransition schedule
-- [app-framework.md](app-framework.md) — States registered as App resources; StateTransition is a main schedule
-- [entity-system.md](entity-system.md) — DespawnOnExit marker component targets entities for cleanup
-- [definition-system.md](definition-system.md) — Flow definitions describe state graphs declaratively in JSON
+- [system-scheduling.md](l1-system-scheduling.md) — State transitions run in the StateTransition schedule
+- [app-framework.md](l1-app-framework.md) — States registered as App resources; StateTransition is a main schedule
+- [entity-system.md](l1-entity-system.md) — DespawnOnExit marker component targets entities for cleanup
+- [definition-system.md](l1-definition-system.md) — Flow definitions describe state graphs declaratively in JSON
 
 ## 1. Motivation
 
@@ -91,7 +91,7 @@ system request_pause(next: ResMut[NextState[AppState]], input: Res[ButtonInput[K
 
 ### 4.3 State Transition Schedule
 
-The StateTransition schedule runs once per frame (see [app-framework.md](app-framework.md)) and processes all pending transitions:
+The StateTransition schedule runs once per frame (see [app-framework.md](l1-app-framework.md)) and processes all pending transitions:
 
 ```
 For each registered state type S (in dependency order):

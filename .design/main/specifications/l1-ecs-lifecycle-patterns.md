@@ -10,9 +10,9 @@ This specification defines high-performance patterns for managing the lifecycle 
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) - Central data store and entity management.
-- [query-system.md](query-system.md) - Foundation for data access and filtering.
-- [component-system.md](component-system.md) - Component registration and storage.
+- [world-system.md](l1-world-system.md) - Central data store and entity management.
+- [query-system.md](l1-query-system.md) - Foundation for data access and filtering.
+- [component-system.md](l1-component-system.md) - Component registration and storage.
 
 ## 1. Motivation
 
@@ -104,9 +104,9 @@ In a system-based architecture, data written by System A may not be visible to S
 
 **Strategies:**
 
-1. **System Reordering**: The primary solution. If System B depends on System A's output, declare `B.After(A)` so both run in the same frame. The scheduler (see [system-scheduling.md §4.4](system-scheduling.md)) enforces this ordering.
+1. **System Reordering**: The primary solution. If System B depends on System A's output, declare `B.After(A)` so both run in the same frame. The scheduler (see [system-scheduling.md §4.4](l1-system-scheduling.md)) enforces this ordering.
 
-2. **On-Entity-Created Callbacks**: When an entity must be fully initialized the same frame it is spawned (e.g., visual representation ready before first render), use lifecycle hooks ([component-system.md §4.8](component-system.md)) to run initialization logic immediately during the spawn, rather than waiting for a system to pick it up next frame.
+2. **On-Entity-Created Callbacks**: When an entity must be fully initialized the same frame it is spawned (e.g., visual representation ready before first render), use lifecycle hooks ([component-system.md §4.8](l1-component-system.md)) to run initialization logic immediately during the spawn, rather than waiting for a system to pick it up next frame.
    - *Example*: A bullet entity needs a `Transform` computed from the weapon's barrel position. Without a callback, the bullet renders at origin for one frame before the positioning system moves it.
 
 3. **LateUpdate Schedule Stage**: Place visual-finalization systems (camera follow, UI sync, animation blending) in `PostUpdate` or a dedicated `LateUpdate` stage to ensure all gameplay mutations are complete before rendering reads begin.
@@ -150,7 +150,7 @@ Function Release(pool, entity):
     pool.available.Push(entity)
 ```
 
-**Integration with Entity Disabling** (see [entity-system.md §4.4](entity-system.md)): Pooled entities use the `DisabledTag` mechanism — they remain allocated with all components intact but invisible to default queries. This avoids the cost of archetype migration on spawn/despawn.
+**Integration with Entity Disabling** (see [entity-system.md §4.4](l1-entity-system.md)): Pooled entities use the `DisabledTag` mechanism — they remain allocated with all components intact but invisible to default queries. This avoids the cost of archetype migration on spawn/despawn.
 
 **Go Implementation Consideration**: Leverage `sync.Pool` semantics for goroutine-safe pool access when systems run in parallel. However, unlike `sync.Pool`, entity pools must NOT garbage-collect idle entries — the whole point is keeping them allocated.
 

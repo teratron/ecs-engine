@@ -10,9 +10,9 @@ Change detection enables systems to efficiently react only to data that has actu
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — The World maintains the global change tick and calls ClearTrackers
-- [query-system.md](query-system.md) — Changed and Added are query filter types
-- [component-system.md](component-system.md) — Components carry change tick metadata
+- [world-system.md](l1-world-system.md) — The World maintains the global change tick and calls ClearTrackers
+- [query-system.md](l1-query-system.md) — Changed and Added are query filter types
+- [component-system.md](l1-component-system.md) — Components carry change tick metadata
 
 ## 1. Motivation
 
@@ -30,7 +30,7 @@ Without engine-level change detection, developers build ad-hoc dirty flags that 
 - Change detection is automatic — any write through `Mut[T]` or `ResMut[T]` marks the data as changed. No manual dirty flags.
 - "Changed" means the data was potentially mutated (the mutable reference was obtained), not that the value actually differs. The engine does not perform value comparison.
 - Change detection is per-component-column, not per-field. If any field of a component is written, the entire component is marked changed.
-- Tick values are unsigned integers. They must not wrap during a single engine run (see INV-3 in [world-system.md](world-system.md)).
+- Tick values are unsigned integers. They must not wrap during a single engine run (see INV-3 in [world-system.md](l1-world-system.md)).
 - Zero external dependencies (C24).
 
 ## 3. Core Invariants
@@ -152,7 +152,7 @@ ClearTrackers():
   Clear RemovedComponents buffers older than 2 frames
 ```
 
-This is called in the Last schedule (see [app-framework.md](app-framework.md)). The two-frame persistence window ensures that systems running at different points in the schedule all have a chance to observe changes. A system that runs early in frame N can still detect changes made late in frame N-1.
+This is called in the Last schedule (see [app-framework.md](l1-app-framework.md)). The two-frame persistence window ensures that systems running at different points in the schedule all have a chance to observe changes. A system that runs early in frame N can still detect changes made late in frame N-1.
 
 ### 4.6 RemovedComponents[T]
 

@@ -10,13 +10,13 @@ Network Diagnostics extends the engine's diagnostic system with networking-speci
 
 ## Related Specifications
 
-- [diagnostic-system.md](diagnostic-system.md) — DiagnosticsStore, Diagnostic type, debug overlay infrastructure
-- [transport.md](transport.md) — ConnectionStats (§4.7) provides per-connection RTT, packet loss, bandwidth
-- [replication.md](replication.md) — ReplicationStats (§4.9) tracks replicated entity count, bytes, deferred updates
-- [networking-system.md](networking-system.md) — DesyncDetector (§4.7) fires DesyncDetected events
-- [client-prediction.md](client-prediction.md) — Misprediction frequency and rollback depth
-- [snapshot-interpolation.md](snapshot-interpolation.md) — Buffer fill level, interpolation quality
-- [lockstep.md](lockstep.md) — Stall frequency, input delay stats
+- [diagnostic-system.md](l1-diagnostic-system.md) — DiagnosticsStore, Diagnostic type, debug overlay infrastructure
+- [transport.md](l1-transport.md) — ConnectionStats (§4.7) provides per-connection RTT, packet loss, bandwidth
+- [replication.md](l1-replication.md) — ReplicationStats (§4.9) tracks replicated entity count, bytes, deferred updates
+- [networking-system.md](l1-networking-system.md) — DesyncDetector (§4.7) fires DesyncDetected events
+- [client-prediction.md](l1-client-prediction.md) — Misprediction frequency and rollback depth
+- [snapshot-interpolation.md](l1-snapshot-interpolation.md) — Buffer fill level, interpolation quality
+- [lockstep.md](l1-lockstep.md) — Stall frequency, input delay stats
 
 ## 1. Motivation
 

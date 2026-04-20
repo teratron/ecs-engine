@@ -10,10 +10,10 @@ Queries are the primary mechanism for systems to access entity data. A query dec
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Queries read from World data
-- [component-system.md](component-system.md) — Queries fetch components
-- [system-scheduling.md](system-scheduling.md) — Query access drives parallel scheduling
-- [change-detection.md](change-detection.md) — Changed/Added filters use change ticks
+- [world-system.md](l1-world-system.md) — Queries read from World data
+- [component-system.md](l1-component-system.md) — Queries fetch components
+- [system-scheduling.md](l1-system-scheduling.md) — Query access drives parallel scheduling
+- [change-detection.md](l1-change-detection.md) — Changed/Added filters use change ticks
 
 ## 1. Motivation
 

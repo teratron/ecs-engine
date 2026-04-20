@@ -12,15 +12,15 @@ This is the foundation for data-driven game development: **code defines capabili
 
 ## Related Specifications
 
-- [type-registry.md](type-registry.md) — Maps JSON type names to Go struct types at runtime
-- [ui-system.md](ui-system.md) — UI tree and style definitions expressed in JSON
-- [scene-system.md](scene-system.md) — Entity/component snapshots in definition format
-- [state-system.md](state-system.md) — State machine flows described declaratively
-- [app-framework.md](app-framework.md) — App configuration and plugin setup from definitions
-- [asset-system.md](asset-system.md) — Definition files loaded as assets with hot-reload
-- [component-system.md](component-system.md) — Component values deserialized from JSON via registry
-- [hierarchy-system.md](hierarchy-system.md) — Parent-child trees expressed in nested JSON structure
-- [ai-assistant-system.md](ai-assistant-system.md) — AI agents read and write definition files
+- [type-registry.md](l1-type-registry.md) — Maps JSON type names to Go struct types at runtime
+- [ui-system.md](l1-ui-system.md) — UI tree and style definitions expressed in JSON
+- [scene-system.md](l1-scene-system.md) — Entity/component snapshots in definition format
+- [state-system.md](l1-state-system.md) — State machine flows described declaratively
+- [app-framework.md](l1-app-framework.md) — App configuration and plugin setup from definitions
+- [asset-system.md](l1-asset-system.md) — Definition files loaded as assets with hot-reload
+- [component-system.md](l1-component-system.md) — Component values deserialized from JSON via registry
+- [hierarchy-system.md](l1-hierarchy-system.md) — Parent-child trees expressed in nested JSON structure
+- [ai-assistant-system.md](l1-ai-assistant-system.md) — AI agents read and write definition files
 
 ## 1. Motivation
 
@@ -426,7 +426,7 @@ Definitions operate strictly within a single engine process. They are **never tr
 
 Backend services (matchmaking, persistence, analytics) communicate with the game via typed network messages — not via definition files. If a server needs to describe a scene to a client, it sends a compact binary protocol; the client may then load a locally cached definition file referenced by that protocol. The definition system does not serialize or deserialize across network boundaries at runtime.
 
-This constraint preserves the engine's monolithic performance model (see [app-framework.md, Section 4.10](app-framework.md)).
+This constraint preserves the engine's monolithic performance model (see [app-framework.md, Section 4.10](l1-app-framework.md)).
 
 ### 4.12 Order-Based Field Serialization
 

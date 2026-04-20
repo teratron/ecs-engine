@@ -1,6 +1,6 @@
 # Component System
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -10,9 +10,13 @@ Components are pure data attached to entities. They carry no logic — systems p
 
 ## Related Specifications
 
-- [entity-system.md](entity-system.md) — Components attached to entities
-- [query-system.md](query-system.md) — Systems access components via queries
-- [change-detection.md](change-detection.md) — Component mutations tracked by ticks
+- [entity-system.md](l1-entity-system.md) — Components attached to entities
+- [query-system.md](l1-query-system.md) — Systems access components via queries
+- [change-detection.md](l1-change-detection.md) — Component mutations tracked by ticks
+
+## 1. Motivation
+
+Entities are meaningless without data attached to them. The Component System is the mechanism by which arbitrary, user-defined data is associated with entities in a way that supports both cache-friendly iteration (hot inner loops) and ergonomic structural changes (add/remove at runtime). A naive solution — a map of entity to list of components — sacrifices performance. A monolithic array-of-struct layout sacrifices flexibility. The Component System resolves this tension by giving each component type its own storage strategy chosen at registration time.
 
 Key requirements:
 
@@ -253,4 +257,5 @@ The following patterns are known to cause subtle bugs and architectural decay. A
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added component attachment validation rules, associated data pattern |
 | 0.3.0 | 2026-03-28 | Added anti-patterns section (shared mutable refs, bool flags, god components, monolithic systems) |
+| 0.4.0 | 2026-04-19 | Added `## 1. Motivation` section (RULES §5 compliance) |
 | — | — | Planned examples: `examples/ecs/` |

@@ -10,11 +10,11 @@ Physics queries allow game systems to interrogate the simulation world without w
 
 ## Related Specifications
 
-- [physics-system.md](physics-system.md) — PhysicsServer service exposes the query API
-- [collider.md](collider.md) — CollisionGroups used as query filter
-- [rigid-body.md](rigid-body.md) — BodyType affects query results
-- [math-system.md](math-system.md) — Ray3D, Vec3, Quat primitives
-- [event-system.md](event-system.md) — Queries are pull-based; contrast with push-based collision events
+- [physics-system.md](l1-physics-system.md) — PhysicsServer service exposes the query API
+- [collider.md](l1-collider.md) — CollisionGroups used as query filter
+- [rigid-body.md](l1-rigid-body.md) — BodyType affects query results
+- [math-system.md](l1-math-system.md) — Ray3D, Vec3, Quat primitives
+- [event-system.md](l1-event-system.md) — Queries are pull-based; contrast with push-based collision events
 
 ## 1. Motivation
 

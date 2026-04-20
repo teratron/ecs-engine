@@ -10,10 +10,10 @@ The animation system drives time-varying changes to component properties. An `An
 
 ## Related Specifications
 
-- [hierarchy-system.md](hierarchy-system.md) — Joint hierarchy via ChildOf relationships
-- [math-system.md](math-system.md) — Interpolation, quaternion slerp, transform types
-- [asset-system.md](asset-system.md) — Clips and graphs are loaded as assets
-- [mesh-and-image.md](mesh-and-image.md) — Morph target vertex data in meshes
+- [hierarchy-system.md](l1-hierarchy-system.md) — Joint hierarchy via ChildOf relationships
+- [math-system.md](l1-math-system.md) — Interpolation, quaternion slerp, transform types
+- [asset-system.md](l1-asset-system.md) — Clips and graphs are loaded as assets
+- [mesh-and-image.md](l1-mesh-and-image.md) — Morph target vertex data in meshes
 
 ## 1. Motivation
 

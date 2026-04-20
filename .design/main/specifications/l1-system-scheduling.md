@@ -10,11 +10,11 @@ Systems are functions that process components. The scheduling system organizes s
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Systems operate on World data
-- [query-system.md](query-system.md) — Systems declare access via queries
-- [command-system.md](command-system.md) — Systems enqueue deferred commands
-- [event-system.md](event-system.md) — Systems communicate via events/messages
-- [app-framework.md](app-framework.md) — Schedules registered in the App
+- [world-system.md](l1-world-system.md) — Systems operate on World data
+- [query-system.md](l1-query-system.md) — Systems declare access via queries
+- [command-system.md](l1-command-system.md) — Systems enqueue deferred commands
+- [event-system.md](l1-event-system.md) — Systems communicate via events/messages
+- [app-framework.md](l1-app-framework.md) — Schedules registered in the App
 
 ## 1. Motivation
 
@@ -211,7 +211,7 @@ SystemDescriptor {
 
 The scheduler builds a mapping: `ComponentType → []System`, tracking both direct processors and dependents. When a component changes on an entity:
 1. **Direct Processors**: Notified to recheck the entity's matching status.
-2. **Dependent Processors**: Notified to revalidate their **Associated Data** (§4.10 in [component-system.md](component-system.md)).
+2. **Dependent Processors**: Notified to revalidate their **Associated Data** (§4.10 in [component-system.md](l1-component-system.md)).
 
 Type matching supports **Interface Satisfaction** — a system requiring `Renderable` matches any component type that implements the `Renderable` interface in the type registry.
 

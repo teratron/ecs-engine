@@ -10,7 +10,7 @@ The math system is a pure math library with no ECS dependencies. It provides vec
 
 ## Related Specifications
 
-- [hierarchy-system.md](hierarchy-system.md) — Transform components use Vec3, Quat, and Affine3A
+- [hierarchy-system.md](l1-hierarchy-system.md) — Transform components use Vec3, Quat, and Affine3A
 
 ## 1. Motivation
 

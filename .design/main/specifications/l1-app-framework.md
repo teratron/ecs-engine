@@ -10,11 +10,11 @@ The App framework is the top-level entry point for the engine. It provides a bui
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Each App (and SubApp) owns a World
-- [system-scheduling.md](system-scheduling.md) — Systems are organized into named schedules
-- [event-system.md](event-system.md) — Event clearing runs in First
-- [definition-system.md](definition-system.md) — App configuration and game flow expressible as JSON definitions
-- [ai-assistant-system.md](ai-assistant-system.md) — AI assistant registers as an editor plugin
+- [world-system.md](l1-world-system.md) — Each App (and SubApp) owns a World
+- [system-scheduling.md](l1-system-scheduling.md) — Systems are organized into named schedules
+- [event-system.md](l1-event-system.md) — Event clearing runs in First
+- [definition-system.md](l1-definition-system.md) — App configuration and game flow expressible as JSON definitions
+- [ai-assistant-system.md](l1-ai-assistant-system.md) — AI assistant registers as an editor plugin
 
 ## 1. Motivation
 

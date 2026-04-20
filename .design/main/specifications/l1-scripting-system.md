@@ -9,8 +9,8 @@
 
 The Scripting System is **deferred** until the core engine is validated. The current architecture relies on two existing mechanisms for rapid iteration:
 
-1. **[definition-system.md](definition-system.md)** — JSON-based data-driven content (UI, scenes, flows, templates) with in-process hot-reload (~100ms).
-2. **[hot-reload.md](hot-reload.md)** — Go code hot-restart with World state snapshot (~1.2s).
+1. **[definition-system.md](l1-definition-system.md)** — JSON-based data-driven content (UI, scenes, flows, templates) with in-process hot-reload (~100ms).
+2. **[hot-reload.md](l1-hot-reload.md)** — Go code hot-restart with World state snapshot (~1.2s).
 
 Together, these cover the primary iteration workflows without introducing a scripting runtime. A scripting layer becomes valuable when:
 
@@ -22,14 +22,14 @@ This specification preserves the architectural design and API shape for future i
 
 ## Related Specifications
 
-- [type-registry.md](type-registry.md) — Scripts would discover and access component types at runtime
-- [command-system.md](command-system.md) — All World mutations from scripts go through CommandBuffers
-- [event-system.md](event-system.md) — Scripts subscribe to and emit events
-- [query-system.md](query-system.md) — Scripts iterate entities through a query API
-- [asset-system.md](asset-system.md) — Scripts loaded as assets with hot-reload
-- [hot-reload.md](hot-reload.md) — Go code hot-restart (the primary iteration mechanism for now)
-- [definition-system.md](definition-system.md) — JSON data-driven layer (covers most non-code iteration needs)
-- [app-framework.md](app-framework.md) — ScriptingPlugin registration, ServiceRegistry access
+- [type-registry.md](l1-type-registry.md) — Scripts would discover and access component types at runtime
+- [command-system.md](l1-command-system.md) — All World mutations from scripts go through CommandBuffers
+- [event-system.md](l1-event-system.md) — Scripts subscribe to and emit events
+- [query-system.md](l1-query-system.md) — Scripts iterate entities through a query API
+- [asset-system.md](l1-asset-system.md) — Scripts loaded as assets with hot-reload
+- [hot-reload.md](l1-hot-reload.md) — Go code hot-restart (the primary iteration mechanism for now)
+- [definition-system.md](l1-definition-system.md) — JSON data-driven layer (covers most non-code iteration needs)
+- [app-framework.md](l1-app-framework.md) — ScriptingPlugin registration, ServiceRegistry access
 
 ## 1. Motivation
 

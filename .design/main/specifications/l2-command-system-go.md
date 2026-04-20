@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [command-system.md](command-system.md)
+**Implements:** [command-system.md](l1-command-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ Go-level design for the command system. Commands are deferred mutations that buf
 
 ## Related Specifications
 
-- [command-system.md](command-system.md) — L1 concept specification (parent)
+- [command-system.md](l1-command-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -30,7 +30,7 @@ The Go implementation of the Command system provides a safe, deferred mechanism 
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [command-system.md §3](command-system.md) for technology-agnostic invariants.
+> See [command-system.md §3](l1-command-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

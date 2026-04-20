@@ -7,9 +7,9 @@
 This specification enumerates the file formats the engine can load and describes how each format maps to one or more engine asset types. Every format is handled by a dedicated `AssetLoader` registered with the `AssetServer`. Format support is modular — each loader can be included or excluded via build tags, keeping the binary size minimal for projects that do not need every format.
 
 ## Related Specifications
-- [Asset System](asset-system.md)
-- [Mesh & Image](mesh-and-image.md)
-- [Audio System](audio-system.md)
+- [Asset System](l1-asset-system.md)
+- [Mesh & Image](l1-mesh-and-image.md)
+- [Audio System](l1-audio-system.md)
 
 ## 1. Motivation
 A game engine must consume diverse content authored in external tools. Centralizing format knowledge in well-defined loaders keeps the rest of the engine format-agnostic. Modular inclusion means a 2D-only project need not compile glTF parsing, and a headless server need not compile image decoders.

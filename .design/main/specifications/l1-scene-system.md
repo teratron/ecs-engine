@@ -10,11 +10,11 @@ The scene system captures and restores collections of entities with their compon
 
 ## Related Specifications
 
-- [asset-system.md](asset-system.md) — Scenes are loaded as assets
-- [world-system.md](world-system.md) — Scenes are extracted from and instantiated into a World
-- [entity-system.md](entity-system.md) — Entity remapping during scene instantiation
-- [component-system.md](component-system.md) — Component reflection for DynamicScene
-- [definition-system.md](definition-system.md) — Scene definitions as JSON, extending DynamicScene with richer semantics
+- [asset-system.md](l1-asset-system.md) — Scenes are loaded as assets
+- [world-system.md](l1-world-system.md) — Scenes are extracted from and instantiated into a World
+- [entity-system.md](l1-entity-system.md) — Entity remapping during scene instantiation
+- [component-system.md](l1-component-system.md) — Component reflection for DynamicScene
+- [definition-system.md](l1-definition-system.md) — Scene definitions as JSON, extending DynamicScene with richer semantics
 
 ## 1. Motivation
 

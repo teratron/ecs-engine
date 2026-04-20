@@ -10,8 +10,8 @@ A physics material defines the surface response properties of a collider — how
 
 ## Related Specifications
 
-- [collider.md](collider.md) — Collider carries inline material fields or a Handle to PhysicsMaterial
-- [physics-system.md](physics-system.md) — Backend applies combined material values during contact solving
+- [collider.md](l1-collider.md) — Collider carries inline material fields or a Handle to PhysicsMaterial
+- [physics-system.md](l1-physics-system.md) — Backend applies combined material values during contact solving
 - [asset-system.md](../main/specifications/asset-system.md) — PhysicsMaterial loaded as an asset
 
 ## 1. Motivation

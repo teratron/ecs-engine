@@ -10,9 +10,9 @@ The input system provides a device-agnostic abstraction for keyboard, mouse, gam
 
 ## Related Specifications
 
-- [event-system.md](event-system.md) — Input events use the engine's event system
-- [hierarchy-system.md](hierarchy-system.md) — Pointer events bubble through parent-child hierarchy
-- [app-framework.md](app-framework.md) — Input systems run in PreUpdate schedule
+- [event-system.md](l1-event-system.md) — Input events use the engine's event system
+- [hierarchy-system.md](l1-hierarchy-system.md) — Pointer events bubble through parent-child hierarchy
+- [app-framework.md](l1-app-framework.md) — Input systems run in PreUpdate schedule
 
 ## 1. Motivation
 

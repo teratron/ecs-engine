@@ -3,7 +3,7 @@
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** go
-**Implements:** [query-system.md](query-system.md)
+**Implements:** [query-system.md](l1-query-system.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@ This specification defines the Go implementation of the query system. Queries ar
 
 ## Related Specifications
 
-- [query-system.md](query-system.md) — L1 concept specification (parent)
+- [query-system.md](l1-query-system.md) — L1 concept specification (parent)
 
 ## 1. Motivation
 
@@ -30,7 +30,7 @@ The Go implementation of the Query system provides the primary mechanism for eff
 ## 3. Core Invariants
 
 > [!NOTE]
-> See [query-system.md §3](query-system.md) for technology-agnostic invariants.
+> See [query-system.md §3](l1-query-system.md) for technology-agnostic invariants.
 
 ## 4. Invariant Compliance
 

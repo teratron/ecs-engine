@@ -10,16 +10,16 @@ Snapshot Interpolation is a synchronization model where the server periodically 
 
 ## Related Specifications
 
-- [networking-system.md](networking-system.md) — SnapshotManager (§4.2) provides snapshot capture and delta compression
-- [replication.md](replication.md) — Replication pipeline delivers per-entity component updates to clients
-- [transport.md](transport.md) — Snapshots sent via ChannelID 0/3 (Unreliable) for state, ChannelID 1 (Reliable) for spawns/despawns
-- [time-system.md](time-system.md) — TimeVirtual and TimeFixed drive interpolation timing
-- [change-detection.md](change-detection.md) — Server uses Changed[T] to build delta snapshots
-- [math-system.md](math-system.md) — Lerp/Slerp operations for interpolation
+- [networking-system.md](l1-networking-system.md) — SnapshotManager (§4.2) provides snapshot capture and delta compression
+- [replication.md](l1-replication.md) — Replication pipeline delivers per-entity component updates to clients
+- [transport.md](l1-transport.md) — Snapshots sent via ChannelID 0/3 (Unreliable) for state, ChannelID 1 (Reliable) for spawns/despawns
+- [time-system.md](l1-time-system.md) — TimeVirtual and TimeFixed drive interpolation timing
+- [change-detection.md](l1-change-detection.md) — Server uses Changed[T] to build delta snapshots
+- [math-system.md](l1-math-system.md) — Lerp/Slerp operations for interpolation
 
 ## 1. Motivation
 
-Client-side prediction (see [client-prediction.md](client-prediction.md)) is complex and error-prone. Many game types do not need it:
+Client-side prediction (see [client-prediction.md](l1-client-prediction.md)) is complex and error-prone. Many game types do not need it:
 
 - **Spectator mode**: Viewers watch a match with no input — pure state consumption.
 - **Slow-paced games**: Turn-based, strategy, simulation — 100ms of visual delay is imperceptible.
@@ -216,7 +216,7 @@ Build(app):
 
 ## 7. Drawbacks & Alternatives
 
-**Deliberate delay**: The fundamental trade-off. Snapshot interpolation adds ~100ms of visual latency by design. For fast-paced competitive games, this delay is unacceptable for the local player's character — client prediction (see [client-prediction.md](client-prediction.md)) is needed for the controlled entity. However, even in fast games, remote entities are typically displayed via interpolation.
+**Deliberate delay**: The fundamental trade-off. Snapshot interpolation adds ~100ms of visual latency by design. For fast-paced competitive games, this delay is unacceptable for the local player's character — client prediction (see [client-prediction.md](l1-client-prediction.md)) is needed for the controlled entity. However, even in fast games, remote entities are typically displayed via interpolation.
 
 **No client authority**: The client cannot affect the simulation. This is a feature for spectator/viewer modes but a limitation for interactive gameplay. The model must be combined with another (client prediction, lockstep) for the local player's input to feel responsive.
 

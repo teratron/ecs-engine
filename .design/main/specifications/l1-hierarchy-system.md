@@ -10,10 +10,10 @@ The hierarchy system provides parent-child relationships between entities, trans
 
 ## Related Specifications
 
-- [entity-system.md](entity-system.md) — Entities form hierarchy nodes
-- [component-system.md](component-system.md) — ChildOf as a relationship component
-- [math-system.md](math-system.md) — Transform and GlobalTransform types
-- [event-system.md](event-system.md) — Observers for hierarchy change notifications
+- [entity-system.md](l1-entity-system.md) — Entities form hierarchy nodes
+- [component-system.md](l1-component-system.md) — ChildOf as a relationship component
+- [math-system.md](l1-math-system.md) — Transform and GlobalTransform types
+- [event-system.md](l1-event-system.md) — Observers for hierarchy change notifications
 
 ## 1. Motivation
 

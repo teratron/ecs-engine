@@ -10,10 +10,10 @@ The event system provides three communication mechanisms between systems: **Even
 
 ## Related Specifications
 
-- [world-system.md](world-system.md) — Events/messages stored in World resources
-- [system-scheduling.md](system-scheduling.md) — Event readers/writers are system parameters
-- [command-system.md](command-system.md) — Observers can trigger commands
-- [entity-system.md](entity-system.md) — Entity events target specific entities
+- [world-system.md](l1-world-system.md) — Events/messages stored in World resources
+- [system-scheduling.md](l1-system-scheduling.md) — Event readers/writers are system parameters
+- [command-system.md](l1-command-system.md) — Observers can trigger commands
+- [entity-system.md](l1-entity-system.md) — Entity events target specific entities
 
 ## 1. Motivation
 
