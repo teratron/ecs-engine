@@ -36,6 +36,7 @@ The references below document the architectural research baseline for the projec
 - [Bevy Engine](https://github.com/bevyengine/bevy)
 - [Godot Engine](https://github.com/godotengine/godot)
 - [Stride Engine](https://github.com/stride3d/stride)
+- [Kaiju Engine](https://github.com/KaijuEngine/kaiju)
 - [A Simple 2D Golang collision detection and resolution library for games](https://github.com/solarlune/resolv)
 - [Go implementation of the ECS paradigm](https://github.com/ByteArena/ecs)
 - [Data-Oriented Design: Implementing ECS (Entity Component System) with Go Generics](https://alamrafiul.com/posts/go-ecs-pattern/?spm=a2ty_o01.29997173.0.0.37af5171laJQiA)
