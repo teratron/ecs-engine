@@ -1,6 +1,6 @@
 # Hierarchy System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -36,6 +36,7 @@ Games need entity hierarchies: a character's weapon moves with the character, UI
 - **INV-3**: Despawning a parent despawns all descendants recursively.
 - **INV-4**: GlobalTransform is always consistent with the hierarchy after the propagation system runs.
 - **INV-5**: Circular parent-child relationships are forbidden and detected at insertion time.
+- **INV-6**: Cascade activation utilizes a `deactivated_from_parent` flag to ensure that when a parent is re-activated, only children that were active before the parent's deactivation are restored.
 
 ## 4. Detailed Design
 
@@ -125,4 +126,5 @@ commands.Entity(child).RemoveParent()
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-04-20 | Added cascade activation edge-case invariant based on 3D Engine analysis |
 | — | — | Planned examples: `examples/world/` |

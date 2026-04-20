@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.20.0
+**Version:** 2.21.0
 **Status:** Active
 
 ## Overview
@@ -20,7 +20,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
 | [l2-query-system-go.md](specifications/l2-query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
 | [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Draft | concept | 0.2.0 |
-| [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.3.0 |
+| [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.4.0 |
 | [l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
 | [l1-command-system.md](specifications/l1-command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
 | [l2-command-system-go.md](specifications/l2-command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
@@ -33,9 +33,9 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-hierarchy-system.md](specifications/l1-hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Draft | concept | 0.1.0 |
+| [l1-hierarchy-system.md](specifications/l1-hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Draft | concept | 0.2.0 |
 | [l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md) | Go impl: ChildOf, Children, Transform, GlobalTransform, propagation | Draft | go | 0.1.0 |
-| [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.1.0 |
+| [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.2.0 |
 | [l2-time-system-go.md](specifications/l2-time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Draft | go | 0.1.0 |
 | [l1-input-system.md](specifications/l1-input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Draft | concept | 0.3.0 |
 | [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], KeyCode, MouseButton, GamepadButton | Draft | go | 0.1.0 |
@@ -53,7 +53,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-task-system.md](specifications/l1-task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
 | [l1-asset-system.md](specifications/l1-asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
-| [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.3.0 |
+| [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.4.0 |
 | [l1-math-system.md](specifications/l1-math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
 
 ## P4 — Render Pipeline
@@ -74,6 +74,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-asset-formats.md](specifications/l1-asset-formats.md) | Asset loaders: glTF, images, audio codecs, scene files | Draft | concept | 0.1.0 |
 | [l1-2d-rendering.md](specifications/l1-2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.2.0 |
 | [l1-animation-system.md](specifications/l1-animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Draft | concept | 0.1.0 |
+| [l1-tweening-system.md](specifications/l1-tweening-system.md) | Interpolation, easing curves, asynchronous animations | Draft | concept | 0.1.0 |
 
 ## P6 — UI & Tools
 
@@ -125,5 +126,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-04-19
-- **Total Specifications**: 75 (59 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 74
+- **Last Updated**: 2026-04-20
+- **Total Specifications**: 76 (60 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 75

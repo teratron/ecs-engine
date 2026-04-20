@@ -1,6 +1,6 @@
 # System Scheduling
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -79,7 +79,7 @@ Systems that take `&mut World` — full exclusive access. Cannot run in parallel
 
 A Schedule is a named, ordered collection of systems:
 
-- **Main Schedule Order**: `First` → `PreUpdate` → `StateTransition` → `RunFixedMainLoop` → `Update` → `PostUpdate` → `Last`
+- **Main Schedule Order**: `First` → `PreUpdate` → `UIUpdate` → `StateTransition` → `RunFixedMainLoop` → `Update` → `UILateUpdate` → `PostUpdate` → `Last`
 - **Startup Schedules**: `PreStartup` → `Startup` → `PostStartup` (run once)
 - **Fixed Timestep**: `FixedFirst` → `FixedPreUpdate` → `FixedUpdate` → `FixedPostUpdate` → `FixedLast` (run inside `RunFixedMainLoop`, may tick 0..N times per frame)
 
@@ -283,4 +283,5 @@ Test "NoAmbiguities":
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added automatic system discovery, dual-phase registration, dependency graph, flexible registration |
 | 0.3.0 | 2026-03-28 | Added system ordering verification and testing patterns |
+| 0.4.0 | 2026-04-20 | Added explicit UIUpdate and UILateUpdate schedule sets based on 3D Engine analysis |
 | — | — | Planned examples: `examples/ecs/` |

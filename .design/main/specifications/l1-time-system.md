@@ -1,6 +1,6 @@
 # Time System
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** concept
 
@@ -148,6 +148,15 @@ TimeVirtual.SetRelativeSpeed(speed float64)
 
 Pausing virtual time automatically pauses fixed timestep accumulation since fixed time derives from virtual time.
 
+### 4.8 Deferred Execution
+
+Systems frequently need to schedule logic for the near future without managing their own stateful timers. The Time system provides two primitives for this:
+
+- **FrameDelay(n, fn)**: Executes `fn` after exactly `n` frame updates. Useful for next-frame initialization, deferred cleanup, or visual pop-in prevention.
+- **TimerOnce(duration, fn)**: Executes `fn` after `duration` virtual time has elapsed. Obeys virtual time pause/scale rules.
+
+Deferred callbacks are executed by the engine host/mediator at a specific synchronization point in the frame (typically during the First or Last schedule).
+
 ## 5. Open Questions
 
 - Should there be a per-entity time scale (e.g., slow-motion for individual characters)?
@@ -159,4 +168,5 @@ Pausing virtual time automatically pauses fixed timestep accumulation since fixe
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
+| 0.2.0 | 2026-04-20 | Added deferred execution primitives (FrameDelay, TimerOnce) based on 3D Engine analysis |
 | — | — | Planned examples: `examples/time/` |

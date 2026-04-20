@@ -1,6 +1,6 @@
 # Scene System
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 **Status:** Draft
 **Layer:** concept
 
@@ -37,6 +37,7 @@ Games need to persist and restore world state for saving, loading, level streami
 2. **Reference integrity.** All entity references in spawned components point to valid remapped entities.
 3. **Filter consistency.** A SceneFilter applied during extraction and during instantiation produces the same component set.
 4. **Asset identity.** A scene loaded as an asset can be spawned multiple times independently.
+5. **Two-Pass Loading.** Scene loading MUST use a two-pass strategy: first create all entities and their basic components, then execute deferred binding of cross-references.
 
 ## 4. Detailed Design
 
@@ -105,11 +106,11 @@ flowchart TD
     C --> D[Allocate new EntityID in World]
     D --> E[Build remap table: old ID → new ID]
     E --> F[For each Component]
-    F --> G[Apply entity remap visitor to fields]
-    G --> H[Insert component on new entity]
-    H --> I{More entities?}
-    I -->|yes| C
-    I -->|no| J[Fire SceneInstanceReady event]
+    F --> G[Insert component on new entity without binding]
+    G --> H{More entities?}
+    H -->|yes| C
+    H -->|no| I[Two-Pass: Apply entity remap visitor to all fields]
+    I --> J[Fire SceneInstanceReady event]
 ```
 
 The remap table ensures that if Entity 5 in the scene file referenced Entity 3, and Entity 3 was remapped to Entity 1042, then the reference in Entity 5's components is updated to 1042.
@@ -277,4 +278,5 @@ Entity
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
 | 0.2.0 | 2026-03-26 | Added interned arrays, load context, format versioning, symmetric pack/unpack API |
 | 0.3.0 | 2026-03-26 | Added multi-scene hierarchy with offsets, entity metadata (GUID + name) |
+| 0.4.0 | 2026-04-20 | Added two-pass loading invariant based on 3D Engine analysis |
 | — | — | Planned examples: `examples/scene/` |
