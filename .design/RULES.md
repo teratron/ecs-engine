@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.6.0
+**Version:** 1.7.0
 **Status:** Active
 
 ## Overview
@@ -249,6 +249,10 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 2. **Reciprocal Updates**: When a new example is added to the codebase, the relevant specification's `Document History` must be updated to reflect this addition.
 3. **Draft Context**: For specifications in `Draft` status where examples do not yet exist, a placeholder link to the intended `examples/` path should be provided.
 
+### C30 — Reference Code Utilization
+
+When generating project code, it is highly recommended to consult the provided references. Do not blindly copy code; instead, extract the best solutions and optimize them to fit within our specifications, architectural plans, and current tasks.
+
 ## Document History
 
 | Version | Date | Description |
@@ -260,3 +264,4 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 | 1.4.0 | 2026-03-27 | Integrated Research Insights: Green Tea GC, Bitmasks, SIMD. |
 | 1.5.0 | 2026-03-31 | Restored and formalized C15 — Workspace Scope Isolation. |
 | 1.6.0 | 2026-03-31 | Narrowed C25 scope by removing the public-documentation branding restriction. |
+| 1.7.0 | 2026-04-20 | Added C30 — Reference Code Utilization. |
