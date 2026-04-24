@@ -76,6 +76,10 @@ Task execution defaults to **Parallel mode**. A Manager Agent coordinates execut
 
 Skip the user story priority prompt. The agent must automatically assign default priorities (P2) to User Stories during task generation to maximize automation and avoid interrupting the user.
 
+### C5 — [RESERVED]
+
+This rule ID is reserved for future extensions.
+
 ### C6 — Selective Planning
 
 During plan updates, specs are handled by their status:

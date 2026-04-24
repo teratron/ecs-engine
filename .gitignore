@@ -18,11 +18,17 @@ QWEN.md
 !.agents/workflows/
 !.agents/skills/
 !.agents/rules/
-.agents/skills/magic.*
+.agents/skills/magic*
 
 # Magic Spec
 .magic/
 .agents/workflows/magic.*.md
+
+# Generated graph artifacts
+.design/spec-graph.html
+.design/spec-graph.json
+.design/.graph-cache/
+.design/wiki/
 
 # Go
 # Binaries for programs and plugins
@@ -50,3 +56,5 @@ Thumbs.db
 
 # Game engines
 .references/
+
+cache/

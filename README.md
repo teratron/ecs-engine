@@ -1,5 +1,10 @@
 # ECS Engine
 
+![Engine Version](https://img.shields.io/badge/engine-v1.5.197-blue)
+![Go Version](https://img.shields.io/badge/go-1.26.1-00ADD8)
+![Phase](https://img.shields.io/badge/phase-0_Architecture-yellow)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 Spec-first ECS game engine project in Go and a deliberate challenge for [Magic Spec](https://github.com/teratron/magic-spec).
 
 ## The Battle Test
