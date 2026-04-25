@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.7.0
+**Version:** 1.7.1
 **Status:** Active
 
 ## Overview
@@ -23,8 +23,6 @@ Read by the agent before every operation. Updated only via explicit triggers.
 - **RFC → Draft**: needs rework or significant revision.
 - **Stable → RFC**: substantive amendment (minor/major bump) requires re-review.
 - **Any → Deprecated**: explicitly superseded; replacement must be named.
-
-## Sprint 3: Execution & API (P1.3)
 
 ## 3. Versioning Rules
 
@@ -156,23 +154,6 @@ All workspace-aware workflows (`magic.analyze`, `magic.task`, `magic.run`, `magi
 5. **No Implicit Expansion**: The agent MUST NOT widen scope heuristically (by similarity, naming, or inferred ownership) without an explicit workspace change.
 6. **Invalid Scope Contract**: If a declared scope path is missing on disk, report a `STRUCTURE` violation and halt only the affected scoped workflow.
 
-### C27 — GC Compensation (sync.Pool)
-
-All hot-path allocations (commands, events, temporary views) MUST utilize `sync.Pool` for object reuse to minimize GC pauses and overhead.
-
-### C28 — Performance-First QA
-
-All core engine modules MUST include:
-
-1. **Table-driven tests**: Covering edge cases and common scenarios.
-2. **Fuzzing**: For all input-parsing and data-transformation logic.
-3. **Race Detection**: All concurrent tests MUST pass with `-race`.
-4. **Baselines**: Benchmarks with regression thresholds (CI-gates).
-
-### C29 — Code Validation Stop-Factor
-
-No new Layer 1 (Concept) or Layer 2 (Go) specifications may be moved to `Stable` status without a corresponding validating implementation in the `examples/` directory (per C26).
-
 ### C16 — Micro-spec Convention
 
 For minor features, simple bugfixes, or changes expected to be under 50 lines of documentation, the agent is authorized to use the lightweight `.magic/templates/micro-spec.md` instead of the full specification template. If a Micro-spec exceeds 50 lines or architectural complexity increases, it MUST be promoted to the full Standard template.
@@ -253,6 +234,23 @@ When creating, reviewing, or amending any specification (L1 or L2), the agent MU
 2. **Reciprocal Updates**: When a new example is added to the codebase, the relevant specification's `Document History` must be updated to reflect this addition.
 3. **Draft Context**: For specifications in `Draft` status where examples do not yet exist, a placeholder link to the intended `examples/` path should be provided.
 
+### C27 — GC Compensation (sync.Pool)
+
+All hot-path allocations (commands, events, temporary views) MUST utilize `sync.Pool` for object reuse to minimize GC pauses and overhead.
+
+### C28 — Performance-First QA
+
+All core engine modules MUST include:
+
+1. **Table-driven tests**: Covering edge cases and common scenarios.
+2. **Fuzzing**: For all input-parsing and data-transformation logic.
+3. **Race Detection**: All concurrent tests MUST pass with `-race`.
+4. **Baselines**: Benchmarks with regression thresholds (CI-gates).
+
+### C29 — Code Validation Stop-Factor
+
+No new Layer 1 (Concept) or Layer 2 (Go) specifications may be moved to `Stable` status without a corresponding validating implementation in the `examples/` directory (per C26).
+
 ### C30 — Reference Code Utilization
 
 When generating project code, it is highly recommended to consult the provided references. Do not blindly copy code; instead, extract the best solutions and optimize them to fit within our specifications, architectural plans, and current tasks.
@@ -269,3 +267,4 @@ When generating project code, it is highly recommended to consult the provided r
 | 1.5.0 | 2026-03-31 | Restored and formalized C15 — Workspace Scope Isolation. |
 | 1.6.0 | 2026-03-31 | Narrowed C25 scope by removing the public-documentation branding restriction. |
 | 1.7.0 | 2026-04-20 | Added C30 — Reference Code Utilization. |
+| 1.7.1 | 2026-04-25 | Cleanup: removed stray `Sprint 3` heading; reordered §7 conventions monotonically (C1..C30). |

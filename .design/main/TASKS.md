@@ -3,7 +3,7 @@
 **Version:** 1.0.0
 **Generated:** 2026-04-25
 **Based on:** .design/main/PLAN.md v1.0.0
-**Based on RULES:** .design/RULES.md v1.7.0
+**Based on RULES:** .design/RULES.md v1.7.1
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
 **Mode:** `[Bootstrap]` — full Draft cohort, C29 unblock pending

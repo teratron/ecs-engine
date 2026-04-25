@@ -3,7 +3,7 @@
 **Version:** 1.0.0
 **Generated:** 2026-04-25
 **Based on:** .design/main/INDEX.md v2.21.0
-**Based on RULES:** .design/RULES.md v1.7.0
+**Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
 **Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until C29 unblock via `examples/ecs/poc/`.
 
