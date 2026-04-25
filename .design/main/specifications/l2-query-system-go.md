@@ -372,6 +372,18 @@ Commands are strictly buffered and only applied at explicit synchronization poin
 - **Alternative**: Reflection-based dynamic queries (type-erased).
 - **Decision**: Typed arity queries are significantly faster and cover the vast majority of real-world use cases.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

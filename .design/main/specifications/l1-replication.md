@@ -443,6 +443,18 @@ Build(app):
 
 **Priority accumulator vs fixed frequency**: The accumulator adapts to bandwidth pressure automatically, but adds complexity compared to simple "send Transform every 2 ticks". The accumulator is strictly better when bandwidth is constrained; fixed frequency is a special case where accumulator base_priority equals the inverse of the desired interval.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

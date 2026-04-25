@@ -104,6 +104,18 @@ Build tags control which registration calls are compiled. A convenience `Default
 - How should format-specific load settings (e.g., JPEG quality threshold, glTF coordinate system override) be passed through the asset pipeline?
 - Is runtime format detection (magic bytes) worth the complexity, or is extension-based sufficient?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 | Version | Date | Description |
 | :--- | :--- | :--- |

@@ -114,6 +114,18 @@ Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) pro
 2. How many cascades should the default `CascadeShadowConfig` use?
 3. What is the light count threshold before clustered shading becomes mandatory?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 | Version | Date | Description |
 | :--- | :--- | :--- |

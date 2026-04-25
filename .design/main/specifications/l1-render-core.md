@@ -234,6 +234,18 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 4. Should physics and audio servers follow the same RID + command queue pattern as the render server, or is a simpler interface sufficient?
 5. Should the physics server use callback inversion (pushing a state context into body callbacks during integration) rather than exposing query-from-game-thread APIs?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

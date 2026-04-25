@@ -266,6 +266,18 @@ The asset packager is a build-time tool (not runtime). It processes assets into 
 - Should WASM+Go target eventually be replaced with TinyGo for smaller binary sizes, or is standard Go sufficient?
 - How should platform-specific shader variants be managed — preprocessor in shader files or separate files per backend?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

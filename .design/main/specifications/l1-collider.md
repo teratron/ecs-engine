@@ -365,6 +365,18 @@ Entities may require complex physical representation that a single primitive can
 - **Local Transformation**: The `Transform` component on each child entity defines the offset and rotation of that primitive relative to the root `RigidBody`.
 - **Unified Inertia**: The Physics Server treats the collection of child colliders as a single compound shape for mass and inertia tensor calculations (if `MassProperties::Auto` is enabled).
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description | Examples |

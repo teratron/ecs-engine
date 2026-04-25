@@ -79,6 +79,18 @@ Emitted for every surface hit during a move. Includes `hit_entity`, `normal`, `p
 - Interaction with moving kinematic platforms (velocity inheritance).
 - Support for multiple capsule shapes (crouching vs standing).
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description | Examples |

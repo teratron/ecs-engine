@@ -67,6 +67,18 @@ If a new Go version introduces a critical performance feature (like a new GC or 
 - All PRs are tested against the current and previous Go version in CI.
 - Benchmarks are run on the latest Go version to ensure performance gains from the new runtime are captured.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

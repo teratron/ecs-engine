@@ -175,6 +175,18 @@ Scripting becomes high-priority when "NOT possible" rows become requirements.
 - Should there be a visual scripting layer (node graphs) that compiles to the chosen runtime?
 - How should deterministic simulation (networking-system.md) interact with scripts?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

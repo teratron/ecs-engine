@@ -163,6 +163,18 @@ Disabled effects are simply omitted; the graph reconnects adjacent nodes automat
 - How should custom post-process effects declare their ordering constraints relative to built-in effects?
 - What is the performance budget for post-processing on low-end hardware targets?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

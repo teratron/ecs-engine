@@ -244,6 +244,18 @@ The editor scans agent directories at startup and presents available agents in a
 - Should there be a marketplace/catalog for community agents, or is local-only sufficient?
 - Should agents have access to the running game's state (not just editor state) for runtime debugging assistance?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

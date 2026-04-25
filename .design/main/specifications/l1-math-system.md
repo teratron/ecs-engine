@@ -298,6 +298,18 @@ Post-operations run in declaration order and modify the matrix in-place. They ar
 3. Are there additional color spaces needed (OKLCH, CIE-Lab)?
 4. Should the math library support a build-time precision switch (compile tag) that changes the base float type for all math types between float32 and float64, or should float64 variants be separate types with explicit suffixes?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

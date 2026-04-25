@@ -220,6 +220,18 @@ Build(app):
 
 **Determinism requirement**: Predicted systems must be deterministic. This constrains what systems can participate in prediction. Floating-point non-determinism across platforms can cause persistent mispredictions. Mitigation: use fixed-point math for predicted systems, or accept that cross-platform determinism is best-effort.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

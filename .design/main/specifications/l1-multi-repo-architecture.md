@@ -411,6 +411,18 @@ Before opening a PR in `ecs-editor`, the developer removes the `replace` directi
 - Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
 - Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins?
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

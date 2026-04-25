@@ -132,6 +132,18 @@ Until then, the framework prioritizes a small number of honest validation exampl
 **Alternative considered**: Skip example planning until after implementation.
 **Rejected**: That weakens C26/C29 traceability and makes spec validation ad hoc.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |

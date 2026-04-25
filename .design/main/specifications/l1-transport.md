@@ -353,6 +353,18 @@ The network SubApp ticks at a configurable rate (default: every frame, in sync w
 
 **No encryption in v1**: A deliberate scope cut. Any competitive multiplayer game shipping without encryption is vulnerable to packet sniffing and injection. The `SocketBackend` interface is designed to accommodate a DTLS-wrapping backend without changes to higher layers.
 
+## Canonical References
+
+<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
+     MUST read before implementing this spec. Use relative paths from project root.
+     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+
+| Alias | Path | Purpose |
+| :--- | :--- | :--- |
+
+<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
+     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+
 ## Document History
 
 | Version | Date | Description |
