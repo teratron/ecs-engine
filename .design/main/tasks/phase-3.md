@@ -1,0 +1,43 @@
+---
+phase: 3
+name: "Assets, Math & Concurrency"
+status: Todo
+subsystem: "pkg/math, pkg/asset, internal/scene, internal/task"
+requires:
+  - "Phase 1 ECS Core"
+  - "Phase 2 App/Plugin assembly"
+provides:
+  - "Parallel task pool (work-stealing)"
+  - "Asset server + handles + hot-reload IO abstraction"
+  - "Scene serialization + entity remapping"
+  - "Math primitives (vectors, matrices, quaternions, color)"
+key_files:
+  created: []
+  modified: []
+patterns_established: []
+duration_minutes: ~
+bootstrap: true
+---
+
+# Stage 3 Tasks — Assets, Math & Concurrency
+
+**Phase:** 3
+**Status:** Todo
+**Strategic Goal:** Final foundation phase before the STOP FACTOR gate. After Phase 3 the upper render/physics/network stack can be unblocked.
+
+## High-Level Checklist
+
+- [ ] [T-3A] Task pool: worker pools, scoped tasks, parallel iteration (work-stealing). ([l1-task-system.md](../specifications/l1-task-system.md))
+- [ ] [T-3B] Asset server: loaders, handles, hot-reload, IO abstraction. ([l1-asset-system.md](../specifications/l1-asset-system.md))
+- [ ] [T-3C] Scene system: serialization, dynamic scenes, entity remapping. ([l1-scene-system.md](../specifications/l1-scene-system.md))
+- [ ] [T-3D] Math: vectors, matrices, quaternions, colors, geometric primitives, `simd/archsimd` accel. ([l1-math-system.md](../specifications/l1-math-system.md))
+- [ ] [T-3T] Validation: parallel-iter determinism (deterministic seed), asset hot-reload roundtrip, scene save/load fixture, math correctness vs. reference impl.
+
+## Atomic Decomposition
+
+> Pending. Run `/magic.task main "decompose phase-3"` once Phase 2 ≥ 50% Done.
+
+## Notes
+
+- L2 Go specs for math/asset/scene/task are **not yet drafted**. Either author them mid-Phase 3 or implement directly from L1 (acceptable for this layer if no architectural risk surfaces).
+- Phase 3 is the **last** Bootstrap phase that runs without the C29 unblock. Phases 4+ require POC validation.
