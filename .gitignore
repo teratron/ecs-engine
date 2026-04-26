@@ -9,7 +9,9 @@
 # Agents
 CLAUDE.md
 GEMINI.md
+CODEX.md
 QWEN.md
+copilot-instructions.md
 .*/workflows/
 .*/commands/
 .*/prompts/
