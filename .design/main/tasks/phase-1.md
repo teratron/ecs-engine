@@ -58,8 +58,8 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track C — World
 
-- [ ] [T-1C01] Implement `World` struct: entities, components, `ResourceMap` (typed singletons), monotonic change tick.
-- [ ] [T-1C02] Implement `DeferredWorld` view + apply points (consumed by Track F).
+- [x] [T-1C01] Implement `World` struct: entities, components, `ResourceMap` (typed singletons), monotonic change tick. — `internal/ecs/world/{world,resource}.go` + tests (100% coverage). [Bootstrap]
+- [x] [T-1C02] Implement `DeferredWorld` view + apply points (consumed by Track F). — `internal/ecs/world/deferred.go` + tests (100% coverage). [Bootstrap]
 - [ ] [T-1C03] Implement archetype graph + entity migration on component add/remove.
 
 ### Track D — Query
