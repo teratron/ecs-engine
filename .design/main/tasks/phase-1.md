@@ -46,15 +46,15 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track A — Entity
 
-- [ ] [T-1A01] Implement `EntityID` (uint64, 32-bit index / 32-bit generation) and `Entity` value type.
-- [ ] [T-1A02] Implement `EntityAllocator`: free-list + generation increment on reuse.
-- [ ] [T-1A03] Implement `EntitySet` / `EntityMap` helpers and `DisabledTag` empty-struct component.
+- [x] [T-1A01] Implement `EntityID` (uint64, 32-bit index / 32-bit generation) and `Entity` value type. — `internal/ecs/entity/entity.go` + tests (100% coverage). [Bootstrap]
+- [x] [T-1A02] Implement `EntityAllocator`: free-list + generation increment on reuse. — `internal/ecs/entity/allocator.go` + tests (98.6% coverage). [Bootstrap]
+- [x] [T-1A03] Implement `EntitySet` / `EntityMap` helpers and `DisabledTag` empty-struct component. — `internal/ecs/entity/{set,tags}.go` + tests (99.2% coverage). Track A complete. [Bootstrap]
 
 ### Track B — Component (Critical Path)
 
-- [ ] [T-1B01] Implement `ComponentRegistry`: type→`ComponentID` allocation, deterministic ordering for archetype hashing.
-- [ ] [T-1B02] Implement storage strategies: chunk-based `Table` (16 KB blocks) primary path; `SparseSet` fallback for `StorageSparseSet`-tagged components.
-- [ ] [T-1B03] Implement `OnAdd`/`OnRemove` hooks, required-component graph, bundle insertion.
+- [x] [T-1B01] Implement `ComponentRegistry`: type→`ComponentID` allocation, deterministic ordering for archetype hashing. — `internal/ecs/component/{component,registry}.go` + tests (97.6% coverage). [Bootstrap]
+- [x] [T-1B02] Implement storage strategies: chunk-based `Table` (16 KB blocks) primary path; `SparseSet` fallback for `StorageSparseSet`-tagged components. — `internal/ecs/component/{column,sparseset,table}.go` + tests (97.2% coverage). [Bootstrap]
+- [x] [T-1B03] Implement `OnAdd`/`OnRemove` hooks, required-component graph, bundle insertion. — `internal/ecs/component/{hooks,bundle,required}.go` + tests (95.7% pkg coverage). Track B complete. [Bootstrap]
 
 ### Track C — World
 
@@ -107,18 +107,20 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 ### [T-1A01] EntityID layout
 
 - **Spec:** [l2-entity-system-go.md](../specifications/l2-entity-system-go.md) §3
-- **Status:** Todo
+- **Status:** Done [Bootstrap]
 - **Assignment:** Agent
 - **Handoff:** Required by T-1A02 (allocator), T-1B01 (registry component-of-entity check), T-1C01 (world).
 - **Notes:** Use `uint64` packed; expose `Index()`/`Generation()` accessors. Stack-only struct, no heap allocations.
+- **Changes:** Added `internal/ecs/entity/entity.go` with `EntityID` (uint64 packed), `Entity` value type, `NewEntityID`/`NewEntity`/`FromID` constructors and accessors. Tests: 100% coverage, fuzz target `FuzzEntityIDRoundTrip`, size assertion (8 bytes). `-race` deferred — local toolchain lacks CGO/gcc; CI gate (T-1T02) will enforce.
 
 ### [T-1B02] Storage strategies (Critical Path)
 
 - **Spec:** [l2-component-system-go.md](../specifications/l2-component-system-go.md), [l1-ecs-lifecycle-patterns.md](../specifications/l1-ecs-lifecycle-patterns.md)
-- **Status:** Todo
+- **Status:** Done [Bootstrap]
 - **Assignment:** Agent — strongest contributor (C26 cascade risk).
 - **Handoff:** Unblocks T-1C03 (archetype migration), T-1D01 (bitmask matching), T-1I02 (pooling).
 - **Notes:** Chunk size = 16 KB; document layout in ADR-001 (T-1T05 references). Sparse-set fallback only when `StorageSparseSet` tag is registered.
+- **Changes:** Added `column.go` (ColumnSpec + alignment-desc sort utility), `sparseset.go` (per-type dense+sparse, swap-and-pop, zero-size tag support), `table.go` (chunked 16 KB SOA layout, columns sorted by Align desc + Size desc + ID asc for determinism, AddRow/SetCell/CellPtr/RemoveRow swap-and-pop, trailing-empty-chunk release on Remove). Layout math packs columns sequentially with `alignUp` padding; row stride exceeding chunk size panics at construction. Tag-only archetypes skip physical chunk allocation. ADR-001 not yet authored — to be drafted before T-1T05.
 
 ### [T-1C03] Archetype graph
 

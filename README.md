@@ -47,3 +47,4 @@ The references below document the architectural research baseline for the projec
 - [Go implementation of the ECS paradigm](https://github.com/ByteArena/ecs)
 - [Data-Oriented Design: Implementing ECS (Entity Component System) with Go Generics](https://alamrafiul.com/posts/go-ecs-pattern/?spm=a2ty_o01.29997173.0.0.37af5171laJQiA)
 - [Design decisions when building games using ECS](https://arielcoppes.dev/2023/07/13/design-decisions-when-building-games-using-ecs.html?spm=a2ty_o01.29997173.0.0.37af5171laJQiA)
+- [Go Modules](https://cs.opensource.google/go)
