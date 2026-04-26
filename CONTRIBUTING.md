@@ -2,7 +2,7 @@
 
 ## Current Repository State
 
-The project is currently in **Phase 0: Architecture & Specifications**. The repository already contains the primary specification workspace and the initial package skeleton, but most engine subsystems described below are still planned rather than implemented.
+The project is currently in **Phase 1: ECS Core POC**. The repository already contains the primary specification workspace and the initial package skeleton; foundation runtime subsystems (world, entities, components, queries, scheduler) are under active implementation, while later-phase subsystems described below remain planned.
 
 Current implementation snapshot:
 

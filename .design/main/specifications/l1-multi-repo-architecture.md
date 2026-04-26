@@ -3,8 +3,8 @@
 | Metadata | Value |
 | :--- | :--- |
 | **Layer** | 1 (concept) |
-| **Status** | RFC |
-| **Version** | 1.3.0 |
+| **Status** | Draft |
+| **Version** | 1.4.0 |
 | **Related Specifications** | [app-framework.md](l1-app-framework.md), [hot-reload.md](l1-hot-reload.md), [ai-assistant-system.md](l1-ai-assistant-system.md), [definition-system.md](l1-definition-system.md), [diagnostic-system.md](l1-diagnostic-system.md) |
 
 ## Overview
@@ -407,9 +407,9 @@ Before opening a PR in `ecs-editor`, the developer removes the `replace` directi
 ## 5. Open Questions
 
 - [RESOLVED v1.1.0] Should `pkg/protocol/` live in a third, dedicated mini-repository? **Decision**: No. Variant A (engine repo) is chosen for operational simplicity. See §4.4.3.
-- Should the IPC transport support WebSocket in addition to Unix sockets, to allow remote debugging of an engine process running on a different machine (e.g., Android device)?
-- Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
-- Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins?
+- [DEFERRED — Phase 4, ecs-editor kickoff] Should the IPC transport support WebSocket in addition to Unix sockets, to allow remote debugging of an engine process running on a different machine (e.g., Android device)? `pkg/protocol/` is transport-agnostic; adding WebSocket is a non-breaking additive change.
+- [DEFERRED — Phase 4, ecs-editor kickoff] Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
+- [DEFERRED — Phase 4, ecs-editor kickoff] Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins? Lean toward yes; defer to when the first `EditorPlugin` is implemented.
 
 ## Canonical References
 
@@ -433,3 +433,4 @@ Before opening a PR in `ecs-editor`, the developer removes the `replace` directi
 | 1.2.0 | 2026-03-29 | Demoted Stable → RFC: open questions unresolved, no validating code (C29), architecture may evolve. |
 | 1.3.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned multi-repository boundary stub |
 | — | — | Planned examples: `examples/app/multi_repo_boundary/` |
+| 1.4.0 | 2026-04-26 | Demoted RFC → Draft: architecture agreed (Variant A resolved, three-level model stable), open questions 2–4 deferred to Phase 4 (ecs-editor kickoff); not blocking Phase 1–3 |

@@ -1,8 +1,8 @@
 # ECS Engine
 
-![Engine Version](https://img.shields.io/badge/engine-v1.5.197-blue)
+![Engine Version](https://img.shields.io/badge/engine-v1.5.206-blue)
 ![Go Version](https://img.shields.io/badge/go-1.26.1-00ADD8)
-![Phase](https://img.shields.io/badge/phase-0_Architecture-yellow)
+![Phase](https://img.shields.io/badge/phase-1_ECS_Core_POC-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 Spec-first ECS game engine project in Go and a deliberate challenge for [Magic Spec](https://github.com/teratron/magic-spec).
@@ -17,8 +17,9 @@ The repository is intentionally being built from architecture outward. The activ
 
 ## Current Status
 
-- Phase 0: architecture and specification drafting.
-- `PLAN.md` remains focused on the specification set; implementation tasks follow only after the POC specs are stable enough to validate in `examples/`.
+- Phase 1: ECS Core POC — foundation runtime (world, entities, components, queries, scheduler) under active implementation.
+- `PLAN.md` covers all 76 registered specifications across 8 phases (Bootstrap mode, C6 override). Phases ≥ 4 remain `Hold` until the Phase 1 POC is validated in `examples/ecs/poc/` (C29 gate).
+- All specs remain `Draft` (or `RFC`) until the validating example exists; `Stable` promotion is gated on `Canonical References` populated with concrete source files.
 - The current codebase is intentionally skeletal. Missing subsystems are planned, not accidentally absent.
 
 ## Project Direction

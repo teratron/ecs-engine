@@ -45,7 +45,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-change-detection-go.md](specifications/l2-change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
 | [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
 | [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
-| [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | RFC | concept | 1.3.0 |
+| [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Draft | concept | 1.4.0 |
 
 ## P3 — Assets & Math
 
@@ -126,5 +126,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-04-25
-- **Total Specifications**: 76 (60 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 1 | Draft: 75
+- **Last Updated**: 2026-04-26
+- **Total Specifications**: 76 (60 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 76

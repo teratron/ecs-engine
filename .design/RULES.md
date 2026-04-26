@@ -255,6 +255,12 @@ No new Layer 1 (Concept) or Layer 2 (Go) specifications may be moved to `Stable`
 
 When generating project code, it is highly recommended to consult the provided references. Do not blindly copy code; instead, extract the best solutions and optimize them to fit within our specifications, architectural plans, and current tasks.
 
+### C31 — sync-docs Safety Gate
+
+Do not invoke `node .magic/scripts/executor.js sync-docs` (or any automation that calls it) to update `CONTRIBUTING.md` or `README.md`. These files contain project-specific content that `sync-docs` overwrites from a generic template, destroying customisations. Apply targeted manual edits instead — patch the specific line or badge that changed; do not regenerate the file.
+
+Applies to all workflows that perform documentation repair or version-sync steps.
+
 ## Document History
 
 | Version | Date | Description |
@@ -268,3 +274,4 @@ When generating project code, it is highly recommended to consult the provided r
 | 1.6.0 | 2026-03-31 | Narrowed C25 scope by removing the public-documentation branding restriction. |
 | 1.7.0 | 2026-04-20 | Added C30 — Reference Code Utilization. |
 | 1.7.1 | 2026-04-25 | Cleanup: removed stray `Sprint 3` heading; reordered §7 conventions monotonically (C1..C30). |
+| 1.8.0 | 2026-04-26 | Added C31 — sync-docs Safety Gate. |
