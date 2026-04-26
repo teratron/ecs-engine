@@ -168,6 +168,61 @@ func (t *Table) RemoveRow(row int) int {
 // Reset clears the table without releasing chunk memory.
 func (t *Table) Reset() { t.nRows = 0 }
 
+// HasColumn reports whether the table has a column for the given component ID.
+func (t *Table) HasColumn(id ID) bool {
+	_, ok := t.colByID[id]
+	return ok
+}
+
+// CellPtrByID returns a pointer to the component cell at (component ID, row).
+// Returns (nil, false) if the ID has no column in this table.
+// Returns (nil, true) for zero-size (tag) columns — the component is present
+// but has no physical data.
+func (t *Table) CellPtrByID(id ID, row int) (unsafe.Pointer, bool) {
+	col, ok := t.colByID[id]
+	if !ok {
+		return nil, false
+	}
+	if row < 0 || row >= t.nRows {
+		panic(fmt.Sprintf("component.Table.CellPtrByID: row %d out of range [0,%d)", row, t.nRows))
+	}
+	if t.cols[col].Size == 0 {
+		return nil, true
+	}
+	b := t.columnRowBytes(col, row)
+	return unsafe.Pointer(&b[0]), true
+}
+
+// SetCellByID writes a value into the cell at (component ID, row).
+// Panics if the ID has no column or the value type does not match.
+func (t *Table) SetCellByID(id ID, row int, value any) {
+	col, ok := t.colByID[id]
+	if !ok {
+		panic(fmt.Sprintf("component.Table.SetCellByID: unknown component ID %d", id))
+	}
+	t.boundsCheck(col, row)
+	t.setRowValue(col, row, value)
+}
+
+// RowValues extracts all component values in row into a map keyed by component
+// ID. Used during archetype migration to carry data between tables.
+func (t *Table) RowValues(row int) map[ID]any {
+	if row < 0 || row >= t.nRows {
+		panic(fmt.Sprintf("component.Table.RowValues: row %d out of range [0,%d)", row, t.nRows))
+	}
+	out := make(map[ID]any, len(t.cols))
+	for i, spec := range t.cols {
+		if spec.Size == 0 {
+			out[spec.ID] = reflect.New(spec.Type).Elem().Interface()
+			continue
+		}
+		b := t.columnRowBytes(i, row)
+		v := reflect.NewAt(spec.Type, unsafe.Pointer(&b[0])).Elem().Interface()
+		out[spec.ID] = v
+	}
+	return out
+}
+
 // computeLayout fills sortedOffset, chunkRows, rowStride based on
 // t.sortedCols and t.chunkSize.
 func (t *Table) computeLayout() {
