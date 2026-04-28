@@ -24,7 +24,7 @@ Consistency in communication and code is paramount.
 ## 3. Technology Stack
 
 - **Language**: Go (latest stable version).
-- **Dependencies**: Prefer standard library. After the local standard library, the next in priority is the remote standard library <https://cs.opensource.google/go>. Third-party packages require explicit justification.
+- **Dependencies**: Prefer standard library. After the local standard library, the next in priority is the remote standard library <https://cs.opensource.google/go>, <https://pkg.go.dev/golang.org/x>. Third-party packages require explicit justification.
 
 ## 4. Go Development Rules
 
@@ -74,7 +74,7 @@ Consistency in communication and code is paramount.
 - **System Separation**: Split complex logic into multiple systems that each depend on the minimum set of components.
 - **Lazy Initialization**: Delay creating expensive visual or OS resources until the entity is actually needed for rendering or physics.
 
-## 5. Completion Protocol (Mandatory Checklist)
+## Completion Protocol (Mandatory Checklist)
 
 Before finishing any task, the agent MUST verify the following:
 
