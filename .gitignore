@@ -6,6 +6,10 @@
 */settings.json
 */settings.*.json
 
+# Dotenv files (local secrets — never commit)
+.env*
+!.env.example
+
 # Agents
 CLAUDE.md
 GEMINI.md
