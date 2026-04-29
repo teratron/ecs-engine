@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-26 12:00
+**Updated:** 2026-04-26 14:30
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-1C03 Archetype graph + entity migration — next (Track C critical path)
-- **Spec:** l1-world-system.md §3, l2-world-system-go.md §ArchetypeID/Archetype/ArchetypeStore
-- **Next Action:** Implement archetype graph (component-set → archetype identity), entity migration (add/remove component moves entity between archetypes), `FindOrCreateArchetype`, `Spawn` with full component storage.
+- **Task:** Track D (Query) — T-1D01 bitmask matching, next critical path step
+- **Spec:** l2-query-system-go.md, l1-query-system.md
+- **Next Action:** Tracks A+B+C fully closed; **recommended commit point**. Then Track D (queries) can begin, with E/F/G/H/I parallelizable.
 
 ## Progress
 
 ```
-Phase 1: [8/27] ███░░░░░ 30%
-Overall: [8/27] ███░░░░░ 30%
+Phase 1: [9/27] ███░░░░░ 33%
+Overall: [9/27] ███░░░░░ 33%
 ```
 
 ## Recent Decisions
@@ -31,6 +31,8 @@ Overall: [8/27] ███░░░░░ 30%
 - 2026-04-26 **Done:** T-1C01 — `internal/ecs/world/{world,resource}.go`. World struct (EntityAllocator + Registry + ResourceMap + Tick), Tick type with IsNewerThan, ResourceMap (sync.RWMutex, stores *T as any for stable mutable pointers), SpawnEmpty/Contains/Despawn, IncrementChangeTick/ClearTrackers, package-level generics SetResource/Resource/RemoveResource/ContainsResource. 100% coverage.
 - 2026-04-26 **Pattern:** ResourceMap stores `*T` (wrapped as `any`) so Resource[T] returns a stable mutable pointer; mutation through the pointer is immediately visible on re-fetch.
 - 2026-04-26 **Done:** T-1C02 — `internal/ecs/world/deferred.go`. DeferredWorld wraps *World, satisfies component.HookContext (compile-time assertion), exposes resource ops (DeferredResource/SetDeferredResource/RemoveDeferredResource/ContainsDeferredResource), IsAlive, and ApplyDeferred stub (wired by T-1F02). World.NewDeferred() convenience constructor. 100% coverage.
+- 2026-04-26 **Done:** T-1C03 — `internal/ecs/world/{archetype,entity_ops}.go` + Table/Registry extensions. ArchetypeStore (sorted-IDs string key, generation counter), Archetype (componentIDs/table/entities/edges), entityRecord (archetypeID + row). Spawn/Insert/Remove/Get implemented with full archetype migration: extract RowValues from old table, swap-and-pop, AddRow into new archetype's table; SparseSet components survive migration without reload. Required components transitively auto-injected at Spawn. Track C complete. component 96.6%, world 94.7% coverage.
+- 2026-04-26 **Pattern:** Empty archetype (ID 0) is the home of SpawnEmpty entities; Insert from empty archetype to the spawn target follows the same migration path as later transitions. Archetype keys = LE-encoded sorted component IDs as a string (`componentSetKey`).
 
 ## Blockers
 

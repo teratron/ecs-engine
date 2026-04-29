@@ -30,16 +30,16 @@ const (
 )
 
 // World is the central data store of the ECS engine. It owns all entities,
-// component registrations, resources, and the global change tick.
-// Not thread-safe — concurrent access must be coordinated by the schedule
-// executor.
-//
-// Archetype storage (tables, sparse sets, archetype graph) is initialized
-// during T-1C03 and lives in separate fields added in that task.
+// component registrations, resources, archetypes, sparse-set storage, and
+// the global change tick. Not thread-safe — concurrent access must be
+// coordinated by the schedule executor.
 type World struct {
 	entities       *entity.EntityAllocator
 	components     *component.Registry
 	resources      *ResourceMap
+	archetypes     *ArchetypeStore
+	sparseSets     map[component.ID]*component.SparseSet
+	records        map[entity.EntityID]entityRecord
 	changeTick     Tick
 	lastChangeTick Tick
 }
@@ -57,8 +57,14 @@ func NewWorldWithCapacity(entityCapacity, _ int) *World {
 		entities:   entity.NewEntityAllocator(entityCapacity),
 		components: component.NewRegistry(),
 		resources:  NewResourceMap(),
+		archetypes: newArchetypeStore(),
+		sparseSets: make(map[component.ID]*component.SparseSet),
+		records:    make(map[entity.EntityID]entityRecord, entityCapacity),
 	}
 }
+
+// Archetypes exposes the archetype store for query and observer subsystems.
+func (w *World) Archetypes() *ArchetypeStore { return w.archetypes }
 
 // Entities exposes the underlying EntityAllocator for packages that need
 // direct allocator access (archetype graph, commands).
@@ -72,9 +78,16 @@ func (w *World) Components() *component.Registry { return w.components }
 // iteration or direct map access (e.g., serialization).
 func (w *World) Resources() *ResourceMap { return w.resources }
 
-// SpawnEmpty allocates a new entity with no components.
+// SpawnEmpty allocates a new entity and parks it in the empty archetype.
+// The entity has no components and lives in archetype 0 until [World.Insert]
+// or a related operation moves it.
 func (w *World) SpawnEmpty() entity.Entity {
-	return w.entities.Allocate()
+	e := w.entities.Allocate()
+	empty := w.archetypes.get(0)
+	row := len(empty.entities)
+	empty.entities = append(empty.entities, e)
+	w.records[e.ID()] = entityRecord{archetypeID: 0, row: row}
+	return e
 }
 
 // Contains reports whether the entity is currently alive in this World.
@@ -82,12 +95,17 @@ func (w *World) Contains(e entity.Entity) bool {
 	return w.entities.IsAlive(e)
 }
 
-// Despawn removes the entity from the World. Returns ErrEntityNotAlive if
-// the entity is already dead or was never part of this World.
-// Component removal hooks and archetype migration are handled in T-1C03.
+// Despawn removes the entity from the World, evicting it from its archetype
+// (table row + sparse-set slots) and freeing its ID. Returns ErrEntityNotAlive
+// if the entity is already dead.
 func (w *World) Despawn(e entity.Entity) error {
 	if !w.entities.IsAlive(e) {
 		return ErrEntityNotAlive
+	}
+	if rec, ok := w.records[e.ID()]; ok {
+		arch := w.archetypes.get(rec.archetypeID)
+		w.removeEntityFromArchetype(arch, e, rec.row, true)
+		delete(w.records, e.ID())
 	}
 	w.entities.Free(e)
 	return nil

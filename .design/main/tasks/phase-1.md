@@ -60,7 +60,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 - [x] [T-1C01] Implement `World` struct: entities, components, `ResourceMap` (typed singletons), monotonic change tick. — `internal/ecs/world/{world,resource}.go` + tests (100% coverage). [Bootstrap]
 - [x] [T-1C02] Implement `DeferredWorld` view + apply points (consumed by Track F). — `internal/ecs/world/deferred.go` + tests (100% coverage). [Bootstrap]
-- [ ] [T-1C03] Implement archetype graph + entity migration on component add/remove.
+- [x] [T-1C03] Implement archetype graph + entity migration on component add/remove. — `internal/ecs/world/{archetype,entity_ops}.go` + Table/Registry extras (`CellPtrByID`, `RowValues`, `SetCellByID`, `RegisterByType`). Spawn/Insert/Remove/Get with archetype migration; required components auto-injected. component 96.6%, world 94.7% coverage. Track C complete. [Bootstrap]
 
 ### Track D — Query
 

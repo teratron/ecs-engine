@@ -144,6 +144,20 @@ func RegisterType[T any](r *Registry) ID {
 	})
 }
 
+// RegisterByType registers a component identified by reflect.Type using the
+// default [Info] (StorageTable). Idempotent — returns the existing ID if the
+// type is already registered. Used by the World layer to auto-register
+// component types passed via [Data] without resorting to generics.
+func (r *Registry) RegisterByType(t reflect.Type) ID {
+	if t == nil {
+		panic("component.Registry.RegisterByType: nil reflect.Type")
+	}
+	if existing, ok := r.typeToID[t]; ok {
+		return existing
+	}
+	return r.Register(Info{Type: t, Storage: StorageTable})
+}
+
 // qualifiedTypeName returns "<pkg-path>.<type-name>" for named types and
 // reflect.Type.String() for anonymous types.
 func qualifiedTypeName(t reflect.Type) string {
