@@ -4,7 +4,7 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-26 14:30
+**Updated:** 2026-04-29 19:05
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
@@ -12,7 +12,7 @@
 
 - **Task:** Track D (Query) — T-1D01 bitmask matching, next critical path step
 - **Spec:** l2-query-system-go.md, l1-query-system.md
-- **Next Action:** Tracks A+B+C fully closed; **recommended commit point**. Then Track D (queries) can begin, with E/F/G/H/I parallelizable.
+- **Next Action:** Begin Track D — T-1D01 bitmask matching (QueryState, 128-bit archetype masks, Access tracking)
 
 ## Progress
 

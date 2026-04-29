@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-04-25
+**Generated:** 2026-04-29
 
 ## Active Technologies
 
@@ -15,11 +15,11 @@
 │   ├── INDEX.md
 │   ├── RULES.md
 │   ├── main/
+│   ├── wiki/
 │   └── workspace.json
 ├── cmd/
 │   └── cli/
 ├── examples/
-│   ├── .gitkeep
 │   └── ecs/
 ├── internal/
 │   └── ecs/
