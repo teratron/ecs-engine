@@ -20,25 +20,32 @@ var errSameTypeInQuery = errors.New("ecs: query type parameters must be distinct
 type Query3[A, B, C any] struct {
 	state    *QueryState
 	ids      [3]component.ID
+	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
 }
 
 // NewQuery3 builds a three-component query, auto-registering A, B, and C as
 // [component.StorageTable] components when first seen. Returns an error if
-// any two of the type parameters resolve to the same component.
-func NewQuery3[A, B, C any](w *world.World) (*Query3[A, B, C], error) {
+// any two of the type parameters resolve to the same component. Optional
+// [QueryFilter]s narrow the result set further.
+func NewQuery3[A, B, C any](w *world.World, filters ...QueryFilter) (*Query3[A, B, C], error) {
 	idA := componentIDFor[A](w)
 	idB := componentIDFor[B](w)
 	idC := componentIDFor[C](w)
 	if idA == idB || idA == idC || idB == idC {
 		return nil, errSameTypeInQuery
 	}
-	state, err := NewQueryState([]component.ID{idA, idB, idC}, nil, Access{})
+	b := applyFilters(w, []component.ID{idA, idB, idC}, filters)
+	state, err := NewQueryState(b.required, b.excluded, Access{})
 	if err != nil {
 		return nil, err
 	}
-	return &Query3[A, B, C]{state: state, ids: [3]component.ID{idA, idB, idC}}, nil
+	return &Query3[A, B, C]{
+		state:  state,
+		ids:    [3]component.ID{idA, idB, idC},
+		perRow: b.perRow,
+	}, nil
 }
 
 // State returns the underlying [QueryState].
@@ -52,6 +59,9 @@ func (q *Query3[A, B, C]) All(w *world.World) iter.Seq2[entity.Entity, Tuple3[A,
 			arch := w.Archetypes().At(archID)
 			entities := arch.Entities()
 			for row, e := range entities {
+				if !passesPerRow(w, q.perRow) {
+					continue
+				}
 				tup := Tuple3[A, B, C]{
 					A: (*A)(fetchComponent(w, arch, e, row, q.ids[0])),
 					B: (*B)(fetchComponent(w, arch, e, row, q.ids[1])),
@@ -68,9 +78,21 @@ func (q *Query3[A, B, C]) All(w *world.World) iter.Seq2[entity.Entity, Tuple3[A,
 // Count returns the number of entities currently matching the query.
 func (q *Query3[A, B, C]) Count(w *world.World) int {
 	q.refresh(w)
+	if len(q.perRow) == 0 {
+		n := 0
+		for _, archID := range q.matched {
+			n += w.Archetypes().At(archID).Len()
+		}
+		return n
+	}
 	n := 0
 	for _, archID := range q.matched {
-		n += w.Archetypes().At(archID).Len()
+		arch := w.Archetypes().At(archID)
+		for row := 0; row < arch.Len(); row++ {
+			if passesPerRow(w, q.perRow) {
+				n++
+			}
+		}
 	}
 	return n
 }

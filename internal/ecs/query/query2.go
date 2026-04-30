@@ -14,25 +14,31 @@ import (
 type Query2[A, B any] struct {
 	state    *QueryState
 	ids      [2]component.ID
+	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
 }
 
 // NewQuery2 builds a two-component query, auto-registering A and B as
 // [component.StorageTable] components when first seen. Returns an error if
-// A and B are the same Go type (a query asking for the same component twice
-// is a programmer error, not a runtime condition).
-func NewQuery2[A, B any](w *world.World) (*Query2[A, B], error) {
+// A and B are the same Go type. Optional [QueryFilter]s narrow the result
+// set the same way they do for [NewQuery1].
+func NewQuery2[A, B any](w *world.World, filters ...QueryFilter) (*Query2[A, B], error) {
 	idA := componentIDFor[A](w)
 	idB := componentIDFor[B](w)
 	if idA == idB {
 		return nil, errSameTypeInQuery
 	}
-	state, err := NewQueryState([]component.ID{idA, idB}, nil, Access{})
+	b := applyFilters(w, []component.ID{idA, idB}, filters)
+	state, err := NewQueryState(b.required, b.excluded, Access{})
 	if err != nil {
 		return nil, err
 	}
-	return &Query2[A, B]{state: state, ids: [2]component.ID{idA, idB}}, nil
+	return &Query2[A, B]{
+		state:  state,
+		ids:    [2]component.ID{idA, idB},
+		perRow: b.perRow,
+	}, nil
 }
 
 // State returns the underlying [QueryState].
@@ -54,6 +60,9 @@ func (q *Query2[A, B]) All(w *world.World) iter.Seq2[entity.Entity, Tuple2[A, B]
 			arch := w.Archetypes().At(archID)
 			entities := arch.Entities()
 			for row, e := range entities {
+				if !passesPerRow(w, q.perRow) {
+					continue
+				}
 				tup := Tuple2[A, B]{
 					A: (*A)(fetchComponent(w, arch, e, row, q.ids[0])),
 					B: (*B)(fetchComponent(w, arch, e, row, q.ids[1])),
@@ -69,9 +78,21 @@ func (q *Query2[A, B]) All(w *world.World) iter.Seq2[entity.Entity, Tuple2[A, B]
 // Count returns the number of entities currently matching the query.
 func (q *Query2[A, B]) Count(w *world.World) int {
 	q.refresh(w)
+	if len(q.perRow) == 0 {
+		n := 0
+		for _, archID := range q.matched {
+			n += w.Archetypes().At(archID).Len()
+		}
+		return n
+	}
 	n := 0
 	for _, archID := range q.matched {
-		n += w.Archetypes().At(archID).Len()
+		arch := w.Archetypes().At(archID)
+		for row := 0; row < arch.Len(); row++ {
+			if passesPerRow(w, q.perRow) {
+				n++
+			}
+		}
 	}
 	return n
 }

@@ -18,7 +18,8 @@ var ErrQueryNoMatch = errors.New("ecs: query matched zero entities")
 var ErrQueryMultipleMatches = errors.New("ecs: query matched more than one entity")
 
 // Query1 is a single-component query. It iterates every live entity whose
-// archetype contains T and yields (Entity, *T) pairs via [Query1.All].
+// archetype contains T (and satisfies any supplied [QueryFilter]s) and
+// yields (Entity, *T) pairs via [Query1.All].
 //
 // The matched-archetype list is grown lazily — every call to [Query1.All]
 // (and other terminal methods) scans archetypes created since the last
@@ -28,22 +29,23 @@ var ErrQueryMultipleMatches = errors.New("ecs: query matched more than one entit
 type Query1[T any] struct {
 	state    *QueryState
 	id       component.ID
+	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
 }
 
 // NewQuery1 builds a single-component query, auto-registering T as a
 // [component.StorageTable] component if it is not yet known to the world's
-// registry. Returns an error only when the implicit [Access] declaration
-// fails validation (currently impossible with the default policy, but kept
-// in the signature to match T-1D03 filter integration).
-func NewQuery1[T any](w *world.World) (*Query1[T], error) {
+// registry. Optional [QueryFilter]s narrow the result set further: see
+// [With], [Without], [Added], and [Changed].
+func NewQuery1[T any](w *world.World, filters ...QueryFilter) (*Query1[T], error) {
 	id := componentIDFor[T](w)
-	state, err := NewQueryState([]component.ID{id}, nil, Access{})
+	b := applyFilters(w, []component.ID{id}, filters)
+	state, err := NewQueryState(b.required, b.excluded, Access{})
 	if err != nil {
 		return nil, err
 	}
-	return &Query1[T]{state: state, id: id}, nil
+	return &Query1[T]{state: state, id: id, perRow: b.perRow}, nil
 }
 
 // State returns the underlying [QueryState] (used by the scheduler to read
@@ -67,6 +69,9 @@ func (q *Query1[T]) All(w *world.World) iter.Seq2[entity.Entity, *T] {
 			arch := w.Archetypes().At(archID)
 			entities := arch.Entities()
 			for row, e := range entities {
+				if !passesPerRow(w, q.perRow) {
+					continue
+				}
 				ptr := fetchComponent(w, arch, e, row, q.id)
 				if !yield(e, (*T)(ptr)) {
 					return
@@ -76,12 +81,26 @@ func (q *Query1[T]) All(w *world.World) iter.Seq2[entity.Entity, *T] {
 	}
 }
 
-// Count returns the number of entities currently matching the query.
+// Count returns the number of entities currently matching the query. When
+// per-row filters are present the count walks each row to apply them; with
+// archetype-only filters it sums archetype lengths in O(matched) time.
 func (q *Query1[T]) Count(w *world.World) int {
 	q.refresh(w)
+	if len(q.perRow) == 0 {
+		n := 0
+		for _, archID := range q.matched {
+			n += w.Archetypes().At(archID).Len()
+		}
+		return n
+	}
 	n := 0
 	for _, archID := range q.matched {
-		n += w.Archetypes().At(archID).Len()
+		arch := w.Archetypes().At(archID)
+		for row := 0; row < arch.Len(); row++ {
+			if passesPerRow(w, q.perRow) {
+				n++
+			}
+		}
 	}
 	return n
 }
@@ -100,6 +119,9 @@ func (q *Query1[T]) Single(w *world.World) (entity.Entity, *T, error) {
 		arch := w.Archetypes().At(archID)
 		entities := arch.Entities()
 		for row, e := range entities {
+			if !passesPerRow(w, q.perRow) {
+				continue
+			}
 			if found {
 				return entity.Entity{}, nil, ErrQueryMultipleMatches
 			}
