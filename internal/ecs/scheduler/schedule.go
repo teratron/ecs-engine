@@ -15,12 +15,15 @@ var ErrDuplicateSystem = errors.New("ecs: duplicate system name in schedule")
 // Before/After constraint references a system that was never added.
 var ErrUnknownSystem = errors.New("ecs: unknown system referenced in ordering constraint")
 
-// SystemNode pairs a [System] with its scheduling metadata. Phase 1 keeps
-// this minimal — run conditions and system-set membership land in T-1E03.
+// SystemNode pairs a [System] with its scheduling metadata: declared
+// component access (T-1E01), run conditions, and set memberships (both
+// added in T-1E03).
 type SystemNode struct {
-	id     SystemNodeID
-	system System
-	access query.Access
+	id         SystemNodeID
+	system     System
+	access     query.Access
+	conditions []RunCondition
+	sets       []SystemSet
 }
 
 // ID returns the node's index in the schedule.
@@ -31,6 +34,14 @@ func (n *SystemNode) System() System { return n.system }
 
 // Access returns the node's declared component access.
 func (n *SystemNode) Access() query.Access { return n.access }
+
+// Conditions returns the run conditions attached directly to this node.
+// Set-level conditions are NOT included here — they are evaluated by the
+// executor by walking the node's [SystemNode.Sets].
+func (n *SystemNode) Conditions() []RunCondition { return n.conditions }
+
+// Sets returns the [SystemSet]s this node has joined.
+func (n *SystemNode) Sets() []SystemSet { return n.sets }
 
 // Schedule is a named, ordered collection of [System]s. Construct it with
 // [NewSchedule], register systems with [Schedule.AddSystem] (chained with
@@ -53,6 +64,7 @@ type Schedule struct {
 	nameToID   map[string]SystemNodeID
 	beforeRefs []orderingRef
 	afterRefs  []orderingRef
+	setConfigs map[SystemSet]*systemSetConfig
 	dag        *DAG
 	order      []SystemNodeID
 	built      bool
@@ -134,7 +146,37 @@ func (s *Schedule) Build() error {
 		dag.AddEdge(target, ref.source)
 	}
 
-	// 3. Implicit Access-conflict edges. Walk pairs in registration order;
+	// 3. Set-level Before/After: expand each (setA → setB) into pairwise
+	// edges between every member of setA and every member of setB. Empty
+	// sets contribute nothing; cycles surface as ErrScheduleCycle below.
+	for set, cfg := range s.setConfigs {
+		members := s.membersOf(set)
+		if len(members) == 0 {
+			continue
+		}
+		for _, other := range cfg.beforeSets {
+			for _, otherID := range s.membersOf(other) {
+				for _, ownID := range members {
+					if ownID == otherID {
+						return cycleError([]SystemNodeID{ownID})
+					}
+					dag.AddEdge(ownID, otherID)
+				}
+			}
+		}
+		for _, other := range cfg.afterSets {
+			for _, otherID := range s.membersOf(other) {
+				for _, ownID := range members {
+					if ownID == otherID {
+						return cycleError([]SystemNodeID{ownID})
+					}
+					dag.AddEdge(otherID, ownID)
+				}
+			}
+		}
+	}
+
+	// 4. Implicit Access-conflict edges. Walk pairs in registration order;
 	// if the systems' Access sets conflict and neither node already has an
 	// explicit edge between them, add an edge from the earlier-registered
 	// system to the later one. This makes the schedule deterministic
@@ -200,6 +242,14 @@ func (s *Schedule) DAG() *DAG {
 	return s.dag
 }
 
+// ConfigureSet returns a [SystemSetBuilder] for declaring run conditions
+// and ordering relationships that apply to every member of the named set.
+// Multiple ConfigureSet calls for the same set name accumulate.
+func (s *Schedule) ConfigureSet(set SystemSet) *SystemSetBuilder {
+	s.setConfig(set) // ensure the entry exists
+	return &SystemSetBuilder{sched: s, set: set}
+}
+
 // SystemNodeBuilder is returned by [Schedule.AddSystem] for chaining
 // ordering constraints. Errors raised during construction (duplicate name,
 // nil system) are deferred to [SystemNodeBuilder.Err] and to
@@ -238,6 +288,36 @@ func (b *SystemNodeBuilder) After(targetName string) *SystemNodeBuilder {
 		return b
 	}
 	b.sched.afterRefs = append(b.sched.afterRefs, orderingRef{source: b.id, target: targetName})
+	b.sched.built = false
+	return b
+}
+
+// RunIf attaches a [RunCondition] directly to this system. The system is
+// skipped on a tick when this condition (or any condition inherited from
+// a [SystemSet] it belongs to) returns false. Multiple RunIf calls
+// accumulate; passing nil is a no-op.
+func (b *SystemNodeBuilder) RunIf(cond RunCondition) *SystemNodeBuilder {
+	if b.err != nil || cond == nil {
+		return b
+	}
+	b.sched.nodes[b.id].conditions = append(b.sched.nodes[b.id].conditions, cond)
+	return b
+}
+
+// InSet adds the system to the named [SystemSet]. The system inherits any
+// conditions and set-level Before/After constraints declared on the set
+// via [Schedule.ConfigureSet]. A system may join multiple sets; duplicate
+// joins to the same set are folded silently.
+func (b *SystemNodeBuilder) InSet(set SystemSet) *SystemNodeBuilder {
+	if b.err != nil {
+		return b
+	}
+	for _, existing := range b.sched.nodes[b.id].sets {
+		if existing == set {
+			return b
+		}
+	}
+	b.sched.nodes[b.id].sets = append(b.sched.nodes[b.id].sets, set)
 	b.sched.built = false
 	return b
 }

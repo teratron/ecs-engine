@@ -55,12 +55,39 @@ func (e *SequentialExecutor) Run(schedule *Schedule, w *world.World) error {
 		return ErrScheduleNotBuilt
 	}
 	for _, id := range schedule.order {
-		sys := schedule.nodes[id].system
-		if err := runSystemSafe(sys, w); err != nil {
+		node := &schedule.nodes[id]
+		if !shouldRun(schedule, node, w) {
+			continue
+		}
+		if err := runSystemSafe(node.system, w); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// shouldRun reports whether the system at node should execute on this
+// tick. A system runs iff every one of its own [RunCondition]s and every
+// condition inherited from a joined [SystemSet] returns true. Empty
+// condition lists trivially pass.
+func shouldRun(schedule *Schedule, node *SystemNode, w *world.World) bool {
+	for _, cond := range node.conditions {
+		if cond != nil && !cond(w) {
+			return false
+		}
+	}
+	for _, set := range node.sets {
+		cfg, ok := schedule.setConfigs[set]
+		if !ok {
+			continue
+		}
+		for _, cond := range cfg.conditions {
+			if cond != nil && !cond(w) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // runSystemSafe invokes sys.Run, recovering panics and translating them

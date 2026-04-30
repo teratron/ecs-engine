@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-29 23:30
+**Updated:** 2026-04-30 00:30
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track E (Scheduler) — T-1E03 RunCondition + SystemSet next
-- **Spec:** l2-system-scheduling-go.md, l1-system-scheduling.md
-- **Next Action:** T-1E02 done. Next: T-1E03 — `RunCondition` predicates and `SystemSet` grouping. Also parallelizable: Tracks F/G/H/I.
+- **Task:** Tracks F/G/H/I open in parallel; pick any. Recommended: T-1F01 (CommandBuffer) — required by T-1F02 + sets up the apply-point that DeferredWorld already stubs.
+- **Spec:** l2-command-system-go.md, l2-event-system-go.md, l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md
+- **Next Action:** Track E complete (3/3). Tracks F (Command), G (Event), H (Type Registry), I (Lifecycle Patterns) are all unblocked and file-independent — parallel-friendly.
 
 ## Progress
 
 ```
-Phase 1: [14/27] ████░░░░ 52%
-Overall: [14/27] ████░░░░ 52%
+Phase 1: [15/27] █████░░░ 56%
+Overall: [15/27] █████░░░ 56%
 ```
 
 ## Recent Decisions
@@ -42,6 +42,8 @@ Overall: [14/27] ████░░░░ 52%
 - 2026-04-29 **Done:** T-1E01 — `internal/ecs/scheduler/{system,dag,schedule}.go`. `System` interface (`Name()` + `Run(*World)`); optional `AccessAware` for conflict detection (FuncSystem implements it via `WithAccess`). DAG with Kahn's algorithm — deterministic order on ties (sorted ready frontier), self-loops + cycles rejected as `ErrScheduleCycle` with offending node IDs. Schedule.AddSystem returns a builder with deferred-error semantics; Build resolves explicit Before/After (forward references allowed), then adds implicit edges in registration order for any `query.Access`-conflicting pair without an explicit edge. 98.1% pkg coverage, `-race` clean.
 - 2026-04-29 **Pattern:** Implicit access-conflict edges go in registration order (first-added system runs first) only when no explicit edge already constrains the pair. This makes schedules deterministic without forcing callers to enumerate every pairwise constraint, and keeps the scheduler honest about ambiguity by recording Read-Read as non-conflicting.
 - 2026-04-29 **Done:** T-1E02 — `internal/ecs/scheduler/executor.go`. `Executor` interface, `SequentialExecutor` walks `Schedule.SystemsInOrder()` on the calling goroutine. Each `System.Run` is wrapped in `defer recover()` → `ErrSystemPanic` (with system name + recovered value); schedule halts on first panic. `ErrScheduleNotBuilt` guards executor calls before `Build()`. `Schedule.Run(w)` convenience uses `NewSequentialExecutor()` under the hood. 98.2% pkg coverage, `-race` clean.
+- 2026-04-30 **Done:** T-1E03 — `internal/ecs/scheduler/{condition,set}.go`. `RunCondition func(*World) bool` with Not/And/Or combinators (nil treated as "always true", short-circuiting). `SystemSet` (string alias) joined via `SystemNodeBuilder.InSet` (idempotent); `Schedule.ConfigureSet` returns a builder with RunIf (set-level conditions), Before/After (pairwise expansion: every member of source set → every member of target set at Build time). Executor evaluates own conditions, then per-set conditions; AND-semantics; system skipped on first false. 98.9% pkg coverage, `-race` clean. Track E complete.
+- 2026-04-30 **Pattern:** Set-level Before/After expands to N×M pairwise DAG edges at Build time, not as a separate node-set graph. Empty sets contribute zero edges (silent), self-membership in Before/After surfaces as a self-loop cycle. Conditions are evaluated at run time only — they are not part of DAG topology.
 
 ## Blockers
 
