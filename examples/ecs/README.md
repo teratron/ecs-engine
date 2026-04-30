@@ -1,1 +1,1 @@
-# Example ECS System
+# Example Entity/Component/System Core Patterns
