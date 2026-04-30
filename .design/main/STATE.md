@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-29 22:00
+**Updated:** 2026-04-29 23:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track E (Scheduler) — T-1E01 next; Tracks A/B/C/D closed
+- **Task:** Track E (Scheduler) — T-1E02 sequential executor next
 - **Spec:** l2-system-scheduling-go.md, l1-system-scheduling.md
-- **Next Action:** Track D complete. Next critical-path-adjacent step: T-1E01 — `System` interface + `Schedule` (DAG topology built from `Access`). Tracks F/G/H/I are also unblocked and parallelizable.
+- **Next Action:** T-1E01 done. Next: T-1E02 — sequential executor (single-goroutine) consuming `Schedule.SystemsInOrder()`. Also unblocked parallelizable: T-1E03 (RunCondition + SystemSet), Tracks F/G/H/I.
 
 ## Progress
 
 ```
-Phase 1: [12/27] ████░░░░ 44%
-Overall: [12/27] ████░░░░ 44%
+Phase 1: [13/27] ████░░░░ 48%
+Overall: [13/27] ████░░░░ 48%
 ```
 
 ## Recent Decisions
@@ -39,6 +39,8 @@ Overall: [12/27] ████░░░░ 44%
 - 2026-04-29 **Pattern:** Query iteration uses Go 1.23 range-over-func. `Tuple2[A,B]{A,B *...}` carries pointer fields (not values) so callers can mutate in place. `iter.Seq2` is the only ergonomic shape for (Entity, payload) — multi-component queries pack the components into a Tuple struct because the language caps Seq2 at two values per step.
 - 2026-04-29 **Done:** T-1D03 — `internal/ecs/query/{filter,par}.go`. `QueryFilter` is a sealed interface (unexported `apply`); With/Without contribute required/excluded IDs, Added/Changed also push tickFilterRecord into the per-row slice. `passesPerRow` is the Phase 1 scaffold and accepts every row — Added/Changed currently equivalent to With at the structural level (per-row tick comparison wired by Phase 2 change-detection). `Query1.ParIter` partitions matched archetypes into row-range chunks (≥256 rows/goroutine, 1 chunk per CPU otherwise) using `sync.WaitGroup`. Tiny archetypes run inline. 96.4% pkg coverage, `-race` clean. Track D complete.
 - 2026-04-29 **Pattern:** Per-row tick filters (Added/Changed) attach to the concrete `Query[N]` via a `tickFilterRecord{kind, id}` slice resolved at construction; iteration calls `passesPerRow` once per row. The scaffold is intentionally a same-shape stub so Phase 2 can replace it with `arch.Table().ChangeTick(id, row)` comparisons against `world.LastChangeTick()` without changing call sites.
+- 2026-04-29 **Done:** T-1E01 — `internal/ecs/scheduler/{system,dag,schedule}.go`. `System` interface (`Name()` + `Run(*World)`); optional `AccessAware` for conflict detection (FuncSystem implements it via `WithAccess`). DAG with Kahn's algorithm — deterministic order on ties (sorted ready frontier), self-loops + cycles rejected as `ErrScheduleCycle` with offending node IDs. Schedule.AddSystem returns a builder with deferred-error semantics; Build resolves explicit Before/After (forward references allowed), then adds implicit edges in registration order for any `query.Access`-conflicting pair without an explicit edge. 98.1% pkg coverage, `-race` clean.
+- 2026-04-29 **Pattern:** Implicit access-conflict edges go in registration order (first-added system runs first) only when no explicit edge already constrains the pair. This makes schedules deterministic without forcing callers to enumerate every pairwise constraint, and keeps the scheduler honest about ambiguity by recording Read-Read as non-conflicting.
 
 ## Blockers
 

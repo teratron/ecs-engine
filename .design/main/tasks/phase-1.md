@@ -70,7 +70,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track E — Scheduler
 
-- [ ] [T-1E01] Implement `System` interface + `Schedule` (DAG topology built from `Access`).
+- [x] [T-1E01] Implement `System` interface + `Schedule` (DAG topology built from `Access`). — `internal/ecs/scheduler/{system,dag,schedule}.go` + tests (98.1% pkg coverage). Kahn's algorithm; deterministic order on ties; explicit Before/After + implicit edges from `query.Access` conflicts. [Bootstrap]
 - [ ] [T-1E02] Implement sequential executor (single-goroutine) sufficient for POC validation.
 - [ ] [T-1E03] Implement `RunCondition` predicates and `SystemSet` grouping.
 
