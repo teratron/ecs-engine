@@ -64,7 +64,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track D — Query
 
-- [ ] [T-1D01] Implement `QueryState` with 128-bit bitmask archetype matching and `Access` tracking (read/write/exclusive).
+- [x] [T-1D01] Implement `QueryState` with 128-bit bitmask archetype matching and `Access` tracking (read/write/exclusive). — `internal/ecs/query/{mask,access,query}.go` + tests (100% coverage). [Bootstrap]
 - [ ] [T-1D02] Implement multi-arity generics `Query1[T]`, `Query2[T,U]`, `Query3[T,U,V]` with `iter.Seq2` traversal.
 - [ ] [T-1D03] Implement filters (`With`, `Without`, `Added`, `Changed`) and `ParIter` scaffold (work-stealing deferred to Phase 3).
 
@@ -132,9 +132,10 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 ### [T-1D01] Bitmask matching
 
 - **Spec:** [l2-query-system-go.md](../specifications/l2-query-system-go.md)
-- **Status:** Todo
+- **Status:** Done [Bootstrap]
 - **Handoff:** Unblocks T-1D02, T-1D03; required by Phase 2 change-detection filters.
 - **Notes:** 128-bit mask covers ~128 component types in POC. Document upgrade path to dynamic-width masks for Phase 2+.
+- **Changes:** Added `internal/ecs/query/{mask,access,query}.go`. `Mask` (lo/hi uint64 pair) with Set/Clear/Has/Equal/Contains/IsDisjoint/Intersects/Or/And/AndNot/Count/ForEach/IDs/String — IDs ≥128 panic on Set/Clear, return false on Has. `Access{Read, Write, Exclusive}` (each a Mask) with Conflicts (Read-Read OK; Write vs anything and Exclusive vs anything conflict), Merge, Validate (rejects Exclusive ∩ Read/Write — Read+Write overlap is allowed). `QueryState` holds required/excluded masks + access; `NewQueryState` auto-promotes required IDs to Read unless already Write/Exclusive. 100% coverage.
 
 ### [T-1E02] Sequential executor
 

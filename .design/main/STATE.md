@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-29 19:05
+**Updated:** 2026-04-29 20:10
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track D (Query) — T-1D01 bitmask matching, next critical path step
+- **Task:** Track D (Query) — T-1D02 multi-arity generics next
 - **Spec:** l2-query-system-go.md, l1-query-system.md
-- **Next Action:** Begin Track D — T-1D01 bitmask matching (QueryState, 128-bit archetype masks, Access tracking)
+- **Next Action:** T-1D01 done. Next: T-1D02 — Query1/Query2/Query3 wrappers with archetype-cache + iter.Seq2 traversal, building on Mask/Access/QueryState.
 
 ## Progress
 
 ```
-Phase 1: [9/27] ███░░░░░ 33%
-Overall: [9/27] ███░░░░░ 33%
+Phase 1: [10/27] ███░░░░░ 37%
+Overall: [10/27] ███░░░░░ 37%
 ```
 
 ## Recent Decisions
@@ -33,6 +33,8 @@ Overall: [9/27] ███░░░░░ 33%
 - 2026-04-26 **Done:** T-1C02 — `internal/ecs/world/deferred.go`. DeferredWorld wraps *World, satisfies component.HookContext (compile-time assertion), exposes resource ops (DeferredResource/SetDeferredResource/RemoveDeferredResource/ContainsDeferredResource), IsAlive, and ApplyDeferred stub (wired by T-1F02). World.NewDeferred() convenience constructor. 100% coverage.
 - 2026-04-26 **Done:** T-1C03 — `internal/ecs/world/{archetype,entity_ops}.go` + Table/Registry extensions. ArchetypeStore (sorted-IDs string key, generation counter), Archetype (componentIDs/table/entities/edges), entityRecord (archetypeID + row). Spawn/Insert/Remove/Get implemented with full archetype migration: extract RowValues from old table, swap-and-pop, AddRow into new archetype's table; SparseSet components survive migration without reload. Required components transitively auto-injected at Spawn. Track C complete. component 96.6%, world 94.7% coverage.
 - 2026-04-26 **Pattern:** Empty archetype (ID 0) is the home of SpawnEmpty entities; Insert from empty archetype to the spawn target follows the same migration path as later transitions. Archetype keys = LE-encoded sorted component IDs as a string (`componentSetKey`).
+- 2026-04-29 **Done:** T-1D01 — `internal/ecs/query/{mask,access,query}.go`. 128-bit `Mask` (lo/hi uint64) with full bitwise ops + ascending ForEach/IDs; mutators panic on id≥128, queries return false (asymmetric to catch programmer errors). `Access{Read, Write, Exclusive}` with Conflicts (Read-Read OK; Write conflicts with Read/Write; Exclusive conflicts with anything), Merge, Validate (Exclusive ∩ Read/Write rejected; Read+Write overlap allowed — Write supersedes). `QueryState` carries required/excluded masks + Access; NewQueryState auto-promotes required IDs to Read unless caller explicitly declared Write/Exclusive. 100% coverage.
+- 2026-04-29 **Pattern:** Query primitives live in `internal/ecs/query/` and depend only on `internal/ecs/component` (for `ID`). Archetype-side caching of a per-archetype Mask is deferred to T-1D02 to avoid reaching into `world` from `query`; for now `MaskFromIDs(arch.ComponentIDs())` is the bridge.
 
 ## Blockers
 
