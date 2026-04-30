@@ -7,6 +7,78 @@ import (
 	"github.com/teratron/ecs-engine/internal/ecs/entity"
 )
 
+// SpawnWithEntity parks a pre-allocated entity in the empty archetype.
+// The entity must already be alive in the EntityAllocator (reserved via
+// [entity.EntityAllocator.Allocate] before this call). Used by
+// [command.SpawnEmptyCommand] to honour pre-reserved entity IDs.
+func (w *World) SpawnWithEntity(e entity.Entity) {
+	empty := w.archetypes.get(0)
+	row := len(empty.entities)
+	empty.entities = append(empty.entities, e)
+	w.records[e.ID()] = entityRecord{archetypeID: 0, row: row}
+}
+
+// SpawnWithEntityAndData parks a pre-allocated entity into the archetype
+// matching data. If data is empty, it is equivalent to [World.SpawnWithEntity].
+// Used by [command.SpawnCommand] to honour pre-reserved entity IDs.
+func (w *World) SpawnWithEntityAndData(e entity.Entity, data ...component.Data) {
+	if len(data) == 0 {
+		w.SpawnWithEntity(e)
+		return
+	}
+	values := w.resolveData(data)
+	ids := make([]component.ID, 0, len(values))
+	for id := range values {
+		ids = append(ids, id)
+	}
+	ids = sortIDsAscending(ids)
+	arch := w.archetypes.findOrCreate(ids, w.components)
+	row := w.addEntityToArchetype(arch, e, values)
+	w.records[e.ID()] = entityRecord{archetypeID: arch.id, row: row}
+}
+
+// RemoveByID strips the component with the given ID from e, migrating e to
+// the archetype that lacks it. Returns [ErrEntityNotAlive] if the entity is
+// dead and [ErrComponentNotFound] if it does not carry the component.
+// Used by [command.RemoveCommand] for runtime-typed removal.
+func RemoveByID(w *World, e entity.Entity, id component.ID) error {
+	if !w.entities.IsAlive(e) {
+		return ErrEntityNotAlive
+	}
+	rec, ok := w.records[e.ID()]
+	if !ok {
+		return ErrEntityNotAlive
+	}
+	oldArch := w.archetypes.get(rec.archetypeID)
+	if !oldArch.Has(id) {
+		return ErrComponentNotFound
+	}
+
+	newIDs := withoutID(oldArch.componentIDs, id)
+	newArch := w.archetypes.findOrCreate(newIDs, w.components)
+
+	mergedValues := make(map[component.ID]any, len(newIDs))
+	if oldArch.table != nil {
+		for k, v := range oldArch.table.RowValues(rec.row) {
+			if k != id {
+				mergedValues[k] = v
+			}
+		}
+	}
+
+	info := w.components.Info(id)
+	if info.Storage == component.StorageSparseSet {
+		if ss, ok := w.sparseSets[id]; ok {
+			ss.Remove(e)
+		}
+	}
+
+	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
+	row := w.addEntityToArchetype(newArch, e, mergedValues)
+	w.records[e.ID()] = entityRecord{archetypeID: newArch.id, row: row}
+	return nil
+}
+
 // Spawn creates a new entity carrying the supplied components. Component
 // types are auto-registered (default StorageTable) and any required-component
 // dependencies declared via [component.RequiredComponents] are auto-injected

@@ -76,7 +76,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track F — Command
 
-- [ ] [T-1F01] Implement `Command` interface + `CommandBuffer` with `sync.Pool` reuse (C27).
+- [x] [T-1F01] Implement `Command` interface + `CommandBuffer` with `sync.Pool` reuse (C27). — `internal/ecs/command/{command,buffer,builtin,param}.go` + tests (100% pkg coverage). Built-ins: SpawnEmpty/Spawn/Despawn/Insert/Remove/Custom; `Commands`/`EntityCommands`/`ChildSpawner` builder API; `AcquireBuffer`/`ReleaseBuffer` pool round-trip. World extended with `SpawnWithEntity`/`SpawnWithEntityAndData`/`RemoveByID` (world 96.1% coverage, `-race` clean). **BenchmarkCommandFlush: 0 B/op, 0 allocs/op** — C27 ≤1 alloc/op satisfied.
 - [ ] [T-1F02] Implement entity reservation (pre-allocated IDs) and flush-at-apply-point semantics.
 
 ### Track G — Event

@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 00:30
+**Updated:** 2026-04-30 02:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Tracks F/G/H/I open in parallel; pick any. Recommended: T-1F01 (CommandBuffer) — required by T-1F02 + sets up the apply-point that DeferredWorld already stubs.
+- **Task:** T-1F01 done. Recommended next: T-1F02 (entity reservation + flush-at-apply-point) — wires DeferredWorld.ApplyDeferred and turns ReserveEntity into atomic pre-allocation. Tracks G/H/I remain file-independent.
 - **Spec:** l2-command-system-go.md, l2-event-system-go.md, l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md
-- **Next Action:** Track E complete (3/3). Tracks F (Command), G (Event), H (Type Registry), I (Lifecycle Patterns) are all unblocked and file-independent — parallel-friendly.
+- **Next Action:** T-1F02 — atomic entity reservation, ApplyDeferredCommands, wire into scheduler apply points.
 
 ## Progress
 
 ```
-Phase 1: [15/27] █████░░░ 56%
-Overall: [15/27] █████░░░ 56%
+Phase 1: [16/27] █████░░░ 59%
+Overall: [16/27] █████░░░ 59%
 ```
 
 ## Recent Decisions
@@ -44,6 +44,8 @@ Overall: [15/27] █████░░░ 56%
 - 2026-04-29 **Done:** T-1E02 — `internal/ecs/scheduler/executor.go`. `Executor` interface, `SequentialExecutor` walks `Schedule.SystemsInOrder()` on the calling goroutine. Each `System.Run` is wrapped in `defer recover()` → `ErrSystemPanic` (with system name + recovered value); schedule halts on first panic. `ErrScheduleNotBuilt` guards executor calls before `Build()`. `Schedule.Run(w)` convenience uses `NewSequentialExecutor()` under the hood. 98.2% pkg coverage, `-race` clean.
 - 2026-04-30 **Done:** T-1E03 — `internal/ecs/scheduler/{condition,set}.go`. `RunCondition func(*World) bool` with Not/And/Or combinators (nil treated as "always true", short-circuiting). `SystemSet` (string alias) joined via `SystemNodeBuilder.InSet` (idempotent); `Schedule.ConfigureSet` returns a builder with RunIf (set-level conditions), Before/After (pairwise expansion: every member of source set → every member of target set at Build time). Executor evaluates own conditions, then per-set conditions; AND-semantics; system skipped on first false. 98.9% pkg coverage, `-race` clean. Track E complete.
 - 2026-04-30 **Pattern:** Set-level Before/After expands to N×M pairwise DAG edges at Build time, not as a separate node-set graph. Empty sets contribute zero edges (silent), self-membership in Before/After surfaces as a self-loop cycle. Conditions are evaluated at run time only — they are not part of DAG topology.
+- 2026-04-30 **Done:** T-1F01 — `internal/ecs/command/{command,buffer,builtin,param}.go`. `Command` interface + `CommandBuffer` (slice-backed, `sync.Pool`-recycled via `AcquireBuffer`/`ReleaseBuffer`). Built-ins: SpawnEmpty/Spawn/Despawn/Insert/Remove/Custom — all FIFO. `Commands` facade + `EntityCommands` builder + `ChildSpawner`. World extended with `SpawnWithEntity`, `SpawnWithEntityAndData`, `RemoveByID` to honour pre-reserved IDs and runtime-typed removal. 100% command pkg coverage, world 96.1%, `-race` clean. **BenchmarkCommandFlush: 0 B/op, 0 allocs/op** (C27 ≤1 alloc/op satisfied with margin).
+- 2026-04-30 **Pattern:** `CommandBuffer.ReserveEntity` calls `EntityAllocator.Allocate` directly in T-1F01 (single-threaded contract). T-1F02 will replace this with atomic pre-reservation so concurrent systems can reserve IDs without synchronising on the World. Pre-reserved entity is "alive" in the allocator immediately but has no `entityRecord` until the SpawnCommand applies — interim window is documented and acceptable for Phase 1 where systems run sequentially.
 
 ## Blockers
 
