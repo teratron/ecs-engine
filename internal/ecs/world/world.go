@@ -78,6 +78,15 @@ func (w *World) Components() *component.Registry { return w.components }
 // iteration or direct map access (e.g., serialization).
 func (w *World) Resources() *ResourceMap { return w.resources }
 
+// SparseSet returns the global SparseSet for the given component ID, if one
+// has been created. Components stored in tables (the default) have no sparse
+// set and yield (nil, false). Used by query and observer subsystems to read
+// values for [component.StorageSparseSet] components without owning the map.
+func (w *World) SparseSet(id component.ID) (*component.SparseSet, bool) {
+	ss, ok := w.sparseSets[id]
+	return ss, ok
+}
+
 // SpawnEmpty allocates a new entity and parks it in the empty archetype.
 // The entity has no components and lives in archetype 0 until [World.Insert]
 // or a related operation moves it.

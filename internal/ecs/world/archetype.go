@@ -143,6 +143,34 @@ func (s *ArchetypeStore) Len() int { return len(s.archetypes) }
 // re-scan only when this value changes.
 func (s *ArchetypeStore) Generation() uint32 { return s.generation }
 
+// At returns the archetype with the given ID. Out-of-range IDs panic — only
+// IDs returned by [ArchetypeStore.Each] or stored in an [entityRecord] are
+// valid. Public mirror of the internal `get` helper.
+func (s *ArchetypeStore) At(id ArchetypeID) *Archetype { return &s.archetypes[id] }
+
+// Each invokes fn for every archetype in the store in creation order
+// (starting with the empty archetype, ID 0). Iteration stops early when fn
+// returns false. The pointer passed to fn is owned by the store — do not
+// retain it past archetype-graph mutations.
+func (s *ArchetypeStore) Each(fn func(*Archetype) bool) {
+	for i := range s.archetypes {
+		if !fn(&s.archetypes[i]) {
+			return
+		}
+	}
+}
+
+// EachFrom is like [ArchetypeStore.Each] but starts at the given index.
+// Used by query caches to re-scan only archetypes created since the last
+// cache update.
+func (s *ArchetypeStore) EachFrom(start int, fn func(*Archetype) bool) {
+	for i := start; i < len(s.archetypes); i++ {
+		if !fn(&s.archetypes[i]) {
+			return
+		}
+	}
+}
+
 // componentSetKey encodes a sorted slice of component IDs into a compact
 // binary string suitable as a map key. The empty slice maps to "".
 func componentSetKey(sortedIDs []component.ID) string {

@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-29 20:10
+**Updated:** 2026-04-29 21:05
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track D (Query) — T-1D02 multi-arity generics next
+- **Task:** Track D (Query) — T-1D03 filters (With/Without/Added/Changed) + ParIter scaffold
 - **Spec:** l2-query-system-go.md, l1-query-system.md
-- **Next Action:** T-1D01 done. Next: T-1D02 — Query1/Query2/Query3 wrappers with archetype-cache + iter.Seq2 traversal, building on Mask/Access/QueryState.
+- **Next Action:** T-1D02 done. Next: T-1D03 — concrete QueryFilter implementations and a `ParIter` scaffold (work-stealing deferred to Phase 3).
 
 ## Progress
 
 ```
-Phase 1: [10/27] ███░░░░░ 37%
-Overall: [10/27] ███░░░░░ 37%
+Phase 1: [11/27] ████░░░░ 41%
+Overall: [11/27] ████░░░░ 41%
 ```
 
 ## Recent Decisions
@@ -35,6 +35,8 @@ Overall: [10/27] ███░░░░░ 37%
 - 2026-04-26 **Pattern:** Empty archetype (ID 0) is the home of SpawnEmpty entities; Insert from empty archetype to the spawn target follows the same migration path as later transitions. Archetype keys = LE-encoded sorted component IDs as a string (`componentSetKey`).
 - 2026-04-29 **Done:** T-1D01 — `internal/ecs/query/{mask,access,query}.go`. 128-bit `Mask` (lo/hi uint64) with full bitwise ops + ascending ForEach/IDs; mutators panic on id≥128, queries return false (asymmetric to catch programmer errors). `Access{Read, Write, Exclusive}` with Conflicts (Read-Read OK; Write conflicts with Read/Write; Exclusive conflicts with anything), Merge, Validate (Exclusive ∩ Read/Write rejected; Read+Write overlap allowed — Write supersedes). `QueryState` carries required/excluded masks + Access; NewQueryState auto-promotes required IDs to Read unless caller explicitly declared Write/Exclusive. 100% coverage.
 - 2026-04-29 **Pattern:** Query primitives live in `internal/ecs/query/` and depend only on `internal/ecs/component` (for `ID`). Archetype-side caching of a per-archetype Mask is deferred to T-1D02 to avoid reaching into `world` from `query`; for now `MaskFromIDs(arch.ComponentIDs())` is the bridge.
+- 2026-04-29 **Done:** T-1D02 — `internal/ecs/query/{tuple,resolver,query1,query2,query3}.go`. Query1[T]/Query2[A,B]/Query3[A,B,C] auto-register T via reflect, hold a per-query `nextScan` watermark over `world.ArchetypeStore` (append-only ⇒ watermark is sufficient — generation counter unused for now). Iteration via `iter.Seq2[Entity, *T]` / `Tuple2` / `Tuple3`; per-row `fetchComponent` dispatches Table.CellPtrByID vs SparseSet.Get based on `component.Info.Storage`. NewQuery2/3 reject duplicate type parameters. 97.5% pkg coverage. Added world accessors `ArchetypeStore.At/Each/EachFrom` and `World.SparseSet(id)` to enable cross-package iteration without exporting the underlying maps.
+- 2026-04-29 **Pattern:** Query iteration uses Go 1.23 range-over-func. `Tuple2[A,B]{A,B *...}` carries pointer fields (not values) so callers can mutate in place. `iter.Seq2` is the only ergonomic shape for (Entity, payload) — multi-component queries pack the components into a Tuple struct because the language caps Seq2 at two values per step.
 
 ## Blockers
 

@@ -65,7 +65,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 ### Track D — Query
 
 - [x] [T-1D01] Implement `QueryState` with 128-bit bitmask archetype matching and `Access` tracking (read/write/exclusive). — `internal/ecs/query/{mask,access,query}.go` + tests (100% coverage). [Bootstrap]
-- [ ] [T-1D02] Implement multi-arity generics `Query1[T]`, `Query2[T,U]`, `Query3[T,U,V]` with `iter.Seq2` traversal.
+- [x] [T-1D02] Implement multi-arity generics `Query1[T]`, `Query2[T,U]`, `Query3[T,U,V]` with `iter.Seq2` traversal. — `internal/ecs/query/{tuple,resolver,query1,query2,query3}.go` + tests (97.5% pkg coverage). Cross-pkg cache via `world.ArchetypeStore.Each/EachFrom/At` and `world.SparseSet(id)` accessors. [Bootstrap]
 - [ ] [T-1D03] Implement filters (`With`, `Without`, `Added`, `Changed`) and `ParIter` scaffold (work-stealing deferred to Phase 3).
 
 ### Track E — Scheduler
