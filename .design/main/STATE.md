@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-29 23:00
+**Updated:** 2026-04-29 23:30
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track E (Scheduler) — T-1E02 sequential executor next
+- **Task:** Track E (Scheduler) — T-1E03 RunCondition + SystemSet next
 - **Spec:** l2-system-scheduling-go.md, l1-system-scheduling.md
-- **Next Action:** T-1E01 done. Next: T-1E02 — sequential executor (single-goroutine) consuming `Schedule.SystemsInOrder()`. Also unblocked parallelizable: T-1E03 (RunCondition + SystemSet), Tracks F/G/H/I.
+- **Next Action:** T-1E02 done. Next: T-1E03 — `RunCondition` predicates and `SystemSet` grouping. Also parallelizable: Tracks F/G/H/I.
 
 ## Progress
 
 ```
-Phase 1: [13/27] ████░░░░ 48%
-Overall: [13/27] ████░░░░ 48%
+Phase 1: [14/27] ████░░░░ 52%
+Overall: [14/27] ████░░░░ 52%
 ```
 
 ## Recent Decisions
@@ -41,6 +41,7 @@ Overall: [13/27] ████░░░░ 48%
 - 2026-04-29 **Pattern:** Per-row tick filters (Added/Changed) attach to the concrete `Query[N]` via a `tickFilterRecord{kind, id}` slice resolved at construction; iteration calls `passesPerRow` once per row. The scaffold is intentionally a same-shape stub so Phase 2 can replace it with `arch.Table().ChangeTick(id, row)` comparisons against `world.LastChangeTick()` without changing call sites.
 - 2026-04-29 **Done:** T-1E01 — `internal/ecs/scheduler/{system,dag,schedule}.go`. `System` interface (`Name()` + `Run(*World)`); optional `AccessAware` for conflict detection (FuncSystem implements it via `WithAccess`). DAG with Kahn's algorithm — deterministic order on ties (sorted ready frontier), self-loops + cycles rejected as `ErrScheduleCycle` with offending node IDs. Schedule.AddSystem returns a builder with deferred-error semantics; Build resolves explicit Before/After (forward references allowed), then adds implicit edges in registration order for any `query.Access`-conflicting pair without an explicit edge. 98.1% pkg coverage, `-race` clean.
 - 2026-04-29 **Pattern:** Implicit access-conflict edges go in registration order (first-added system runs first) only when no explicit edge already constrains the pair. This makes schedules deterministic without forcing callers to enumerate every pairwise constraint, and keeps the scheduler honest about ambiguity by recording Read-Read as non-conflicting.
+- 2026-04-29 **Done:** T-1E02 — `internal/ecs/scheduler/executor.go`. `Executor` interface, `SequentialExecutor` walks `Schedule.SystemsInOrder()` on the calling goroutine. Each `System.Run` is wrapped in `defer recover()` → `ErrSystemPanic` (with system name + recovered value); schedule halts on first panic. `ErrScheduleNotBuilt` guards executor calls before `Build()`. `Schedule.Run(w)` convenience uses `NewSequentialExecutor()` under the hood. 98.2% pkg coverage, `-race` clean.
 
 ## Blockers
 
