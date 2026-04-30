@@ -1,9 +1,15 @@
 package entity
 
+import "sync"
+
 // EntityAllocator manages entity ID allocation and recycling using a
-// generational freelist arena. Not thread-safe — must be used under exclusive
-// access (main thread or World lock).
+// generational freelist arena. Thread-safe via an internal sync.RWMutex —
+// concurrent reservation from multiple systems is supported (T-1F02).
+//
+// Reads (IsAlive, Len, Cap) take the read lock; mutations (Allocate,
+// AllocateMany, Free, Reserve) take the write lock.
 type EntityAllocator struct {
+	mu          sync.RWMutex
 	generations []uint32 // generation counter per slot index
 	freeList    []uint32 // LIFO stack of available indices
 	alive       uint32   // number of currently alive entities
@@ -26,7 +32,16 @@ func NewEntityAllocator(capacity int) *EntityAllocator {
 // The returned Entity carries the current generation for its slot. The first
 // allocation for any new slot uses generation 1, so the null sentinel
 // (Entity{}, index 0, generation 0) is never produced by the allocator.
+//
+// Safe for concurrent use; callers from multiple goroutines (e.g. parallel
+// command-buffer reservation) serialise on the allocator's write lock.
 func (a *EntityAllocator) Allocate() Entity {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	return a.allocateLocked()
+}
+
+func (a *EntityAllocator) allocateLocked() Entity {
 	var index uint32
 	if n := len(a.freeList); n > 0 {
 		index = a.freeList[n-1]
@@ -41,11 +56,14 @@ func (a *EntityAllocator) Allocate() Entity {
 
 // AllocateMany allocates n entities in a single batch. More efficient than
 // repeated Allocate calls because capacity is grown once. Returns nil for
-// n <= 0.
+// n <= 0. Safe for concurrent use.
 func (a *EntityAllocator) AllocateMany(n int) []Entity {
 	if n <= 0 {
 		return nil
 	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
 	out := make([]Entity, 0, n)
 
 	reuse := len(a.freeList)
@@ -79,11 +97,13 @@ func (a *EntityAllocator) AllocateMany(n int) []Entity {
 
 // Free releases an Entity. Increments the slot's generation and pushes the
 // index onto the freelist. A no-op for the null entity, out-of-range indices,
-// or already-dead entities (stale generation).
+// or already-dead entities (stale generation). Safe for concurrent use.
 func (a *EntityAllocator) Free(entity Entity) {
 	if !entity.IsValid() {
 		return
 	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	idx := entity.Index()
 	if int(idx) >= len(a.generations) {
 		return
@@ -98,10 +118,13 @@ func (a *EntityAllocator) Free(entity Entity) {
 
 // IsAlive reports whether the given Entity matches the current generation for
 // its slot. Returns false for the null entity and for out-of-range indices.
+// Safe for concurrent use; takes a read lock.
 func (a *EntityAllocator) IsAlive(entity Entity) bool {
 	if !entity.IsValid() {
 		return false
 	}
+	a.mu.RLock()
+	defer a.mu.RUnlock()
 	idx := entity.Index()
 	if int(idx) >= len(a.generations) {
 		return false
@@ -109,14 +132,19 @@ func (a *EntityAllocator) IsAlive(entity Entity) bool {
 	return a.generations[idx] == entity.Generation()
 }
 
-// Len returns the number of currently alive entities.
+// Len returns the number of currently alive entities. Safe for concurrent use.
 func (a *EntityAllocator) Len() int {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
 	return int(a.alive)
 }
 
 // Cap returns the number of slots currently tracked by the allocator
 // (alive + freed). Useful for diagnostics and capacity tuning.
+// Safe for concurrent use.
 func (a *EntityAllocator) Cap() int {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
 	return len(a.generations)
 }
 
@@ -127,6 +155,8 @@ func (a *EntityAllocator) Reserve(n int) {
 	if n <= 0 {
 		return
 	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	need := len(a.generations) + n
 	if cap(a.generations) < need {
 		grown := make([]uint32, len(a.generations), need)

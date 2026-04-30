@@ -94,8 +94,42 @@ func (cb *CommandBuffer) Len() int { return len(cb.commands) }
 // The entity is immediately alive in the allocator but has no archetype
 // record in the World until the corresponding SpawnCommand is applied.
 //
-// T-1F02 upgrades this to a lock-free atomic pre-reservation so that
-// concurrent systems can reserve IDs without holding the World lock.
+// Thread-safe (T-1F02): the underlying [entity.EntityAllocator] serialises
+// concurrent reservations on its internal RWMutex, so multiple systems may
+// reserve from the same buffer pool without external coordination.
 func (cb *CommandBuffer) ReserveEntity() entity.Entity {
 	return cb.entities.Allocate()
+}
+
+// Flush is shorthand for Apply(w) followed by Reset(). Used as the default
+// flusher when a CommandBuffer is registered with a [world.World] via
+// [CommandBuffer.RegisterWith].
+func (cb *CommandBuffer) Flush(w *world.World) {
+	cb.Apply(w)
+	cb.Reset()
+}
+
+// RegisterWith installs cb's [CommandBuffer.Flush] as a deferred flusher on w.
+// Every subsequent call to [world.World.ApplyDeferred] will Apply this buffer
+// then Reset it. Intended for long-lived per-system buffers — pool-rented
+// buffers (Acquire/Release) must NOT be registered, since pool reuse would
+// dangle the registration.
+func (cb *CommandBuffer) RegisterWith(w *world.World) {
+	w.RegisterDeferredFlusher(cb.Flush)
+}
+
+// ApplyDeferredCommands flushes every buffer in execution order. nil entries
+// in buffers are skipped. Each non-nil buffer is Applied then Reset.
+//
+// This top-level helper is the explicit alternative to the world-registered
+// flusher path: callers that manage their own buffer slice (e.g. ad-hoc tests
+// or specialised executors) can flush them in a single call without going
+// through [world.World.RegisterDeferredFlusher].
+func ApplyDeferredCommands(w *world.World, buffers []*CommandBuffer) {
+	for _, buf := range buffers {
+		if buf == nil {
+			continue
+		}
+		buf.Flush(w)
+	}
 }

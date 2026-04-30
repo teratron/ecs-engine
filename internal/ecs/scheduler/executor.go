@@ -41,12 +41,15 @@ type SequentialExecutor struct{}
 // added in later phases.
 func NewSequentialExecutor() *SequentialExecutor { return &SequentialExecutor{} }
 
-// Run executes every system in topological order. Returns:
+// Run executes every system in topological order. After all systems finish
+// successfully, it invokes [world.World.ApplyDeferred] to flush registered
+// command buffers — this is the Phase 1 tick-level apply point. Returns:
 //
-//   - nil when every system runs to completion.
+//   - nil when every system runs to completion and the deferred flush completes.
 //   - [ErrScheduleNotBuilt] when the schedule has not been built yet.
 //   - [ErrSystemPanic] (wrapped with the offending system's name) when a
-//     system panics; subsequent systems are NOT executed.
+//     system panics; subsequent systems are NOT executed and the deferred
+//     flush is skipped to avoid compounding inconsistent state.
 func (e *SequentialExecutor) Run(schedule *Schedule, w *world.World) error {
 	if schedule == nil {
 		return errors.New("ecs: nil schedule")
@@ -63,6 +66,7 @@ func (e *SequentialExecutor) Run(schedule *Schedule, w *world.World) error {
 			return err
 		}
 	}
+	w.ApplyDeferred()
 	return nil
 }
 

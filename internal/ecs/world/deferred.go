@@ -41,17 +41,10 @@ func (dw *DeferredWorld) IsAlive(e entity.Entity) bool {
 	return dw.world.Contains(e)
 }
 
-// ApplyDeferred flushes all pending command buffers into the World.
-// Called by the scheduler at synchronisation points after systems that
-// declared command access. The buffer-registration logic is wired in T-1F02.
+// ApplyDeferred flushes every registered deferred flusher on the underlying
+// World. Equivalent to calling [World.ApplyDeferred] directly.
 func (dw *DeferredWorld) ApplyDeferred() {
-	// stub: command buffer flush is wired by T-1F02
-}
-
-// ApplyDeferred on World is the same apply point, usable without first
-// obtaining a DeferredWorld view.
-func (w *World) ApplyDeferred() {
-	// stub: wired by T-1F02
+	dw.world.ApplyDeferred()
 }
 
 // DeferredResource returns a read-only pointer to the singleton resource of

@@ -77,7 +77,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 ### Track F — Command
 
 - [x] [T-1F01] Implement `Command` interface + `CommandBuffer` with `sync.Pool` reuse (C27). — `internal/ecs/command/{command,buffer,builtin,param}.go` + tests (100% pkg coverage). Built-ins: SpawnEmpty/Spawn/Despawn/Insert/Remove/Custom; `Commands`/`EntityCommands`/`ChildSpawner` builder API; `AcquireBuffer`/`ReleaseBuffer` pool round-trip. World extended with `SpawnWithEntity`/`SpawnWithEntityAndData`/`RemoveByID` (world 96.1% coverage, `-race` clean). **BenchmarkCommandFlush: 0 B/op, 0 allocs/op** — C27 ≤1 alloc/op satisfied.
-- [ ] [T-1F02] Implement entity reservation (pre-allocated IDs) and flush-at-apply-point semantics.
+- [x] [T-1F02] Implement entity reservation (pre-allocated IDs) and flush-at-apply-point semantics. — `internal/ecs/entity/allocator.go` (sync.RWMutex; Allocate/AllocateMany/Free/IsAlive/Len/Cap/Reserve thread-safe), `internal/ecs/world/{world,deferred}.go` (deferredFlushers FIFO list + RegisterDeferredFlusher/ApplyDeferred/ResetDeferredFlushers + DeferredWorld delegation), `internal/ecs/command/buffer.go` (CommandBuffer.Flush/RegisterWith + top-level ApplyDeferredCommands), `internal/ecs/scheduler/executor.go` (calls w.ApplyDeferred after successful run; skipped on panic). Concurrency tests: 8×1024 parallel Allocate yields no duplicates; balanced alloc/free races clean. Coverage: entity 99.3%, world 96.2%, scheduler 98.9%, command 100% — all `-race` clean. Track F complete.
 
 ### Track G — Event
 

@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 02:00
+**Updated:** 2026-04-30 03:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-1F01 done. Recommended next: T-1F02 (entity reservation + flush-at-apply-point) — wires DeferredWorld.ApplyDeferred and turns ReserveEntity into atomic pre-allocation. Tracks G/H/I remain file-independent.
-- **Spec:** l2-command-system-go.md, l2-event-system-go.md, l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md
-- **Next Action:** T-1F02 — atomic entity reservation, ApplyDeferredCommands, wire into scheduler apply points.
+- **Task:** Track F complete (2/2). Tracks G (Event), H (TypeRegistry), I (Lifecycle Patterns) remain — all file-independent and parallel-friendly.
+- **Spec:** l2-event-system-go.md, l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md
+- **Next Action:** T-1G01 (EventBus + double-buffered MessageChannel) recommended — required by T-1G02 observers and pairs naturally with the deferred-flusher pattern T-1F02 just established.
 
 ## Progress
 
 ```
-Phase 1: [16/27] █████░░░ 59%
-Overall: [16/27] █████░░░ 59%
+Phase 1: [17/27] █████░░░ 63%
+Overall: [17/27] █████░░░ 63%
 ```
 
 ## Recent Decisions
@@ -45,7 +45,9 @@ Overall: [16/27] █████░░░ 59%
 - 2026-04-30 **Done:** T-1E03 — `internal/ecs/scheduler/{condition,set}.go`. `RunCondition func(*World) bool` with Not/And/Or combinators (nil treated as "always true", short-circuiting). `SystemSet` (string alias) joined via `SystemNodeBuilder.InSet` (idempotent); `Schedule.ConfigureSet` returns a builder with RunIf (set-level conditions), Before/After (pairwise expansion: every member of source set → every member of target set at Build time). Executor evaluates own conditions, then per-set conditions; AND-semantics; system skipped on first false. 98.9% pkg coverage, `-race` clean. Track E complete.
 - 2026-04-30 **Pattern:** Set-level Before/After expands to N×M pairwise DAG edges at Build time, not as a separate node-set graph. Empty sets contribute zero edges (silent), self-membership in Before/After surfaces as a self-loop cycle. Conditions are evaluated at run time only — they are not part of DAG topology.
 - 2026-04-30 **Done:** T-1F01 — `internal/ecs/command/{command,buffer,builtin,param}.go`. `Command` interface + `CommandBuffer` (slice-backed, `sync.Pool`-recycled via `AcquireBuffer`/`ReleaseBuffer`). Built-ins: SpawnEmpty/Spawn/Despawn/Insert/Remove/Custom — all FIFO. `Commands` facade + `EntityCommands` builder + `ChildSpawner`. World extended with `SpawnWithEntity`, `SpawnWithEntityAndData`, `RemoveByID` to honour pre-reserved IDs and runtime-typed removal. 100% command pkg coverage, world 96.1%, `-race` clean. **BenchmarkCommandFlush: 0 B/op, 0 allocs/op** (C27 ≤1 alloc/op satisfied with margin).
-- 2026-04-30 **Pattern:** `CommandBuffer.ReserveEntity` calls `EntityAllocator.Allocate` directly in T-1F01 (single-threaded contract). T-1F02 will replace this with atomic pre-reservation so concurrent systems can reserve IDs without synchronising on the World. Pre-reserved entity is "alive" in the allocator immediately but has no `entityRecord` until the SpawnCommand applies — interim window is documented and acceptable for Phase 1 where systems run sequentially.
+- 2026-04-30 **Pattern:** `CommandBuffer.ReserveEntity` calls `EntityAllocator.Allocate` directly in T-1F01 (single-threaded contract). T-1F02 replaces this with atomic pre-reservation so concurrent systems can reserve IDs without synchronising on the World. Pre-reserved entity is "alive" in the allocator immediately but has no `entityRecord` until the SpawnCommand applies — interim window is documented and acceptable for Phase 1 where systems run sequentially.
+- 2026-04-30 **Done:** T-1F02 — `internal/ecs/entity/allocator.go` (sync.RWMutex), `internal/ecs/world/{world,deferred}.go` (deferredFlushers list + ApplyDeferred + ResetDeferredFlushers), `internal/ecs/command/buffer.go` (CommandBuffer.Flush/RegisterWith + top-level ApplyDeferredCommands), `internal/ecs/scheduler/executor.go` (calls w.ApplyDeferred after successful run, skips on panic). Allocator concurrency: 8×1024 parallel Allocate produces no duplicates; balanced alloc/free across goroutines settles to Len=0 cleanly. Coverage: command 100%, entity 99.3%, world 96.2%, scheduler 98.9%, all `-race` clean. Track F complete.
+- 2026-04-30 **Pattern:** Apply-point is **after all systems run, before tick boundary** — single sync point per Phase 1 schedule. World.deferredFlushers is FIFO; flushers register once at setup and persist for World lifetime. Pool-rented buffers (Acquire/Release) MUST NOT register, only long-lived per-system buffers. Panic in any system aborts the schedule AND skips ApplyDeferred (state may be inconsistent on panic — pool nothing, flush nothing).
 
 ## Blockers
 

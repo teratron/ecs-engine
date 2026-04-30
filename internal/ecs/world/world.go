@@ -34,14 +34,15 @@ const (
 // the global change tick. Not thread-safe — concurrent access must be
 // coordinated by the schedule executor.
 type World struct {
-	entities       *entity.EntityAllocator
-	components     *component.Registry
-	resources      *ResourceMap
-	archetypes     *ArchetypeStore
-	sparseSets     map[component.ID]*component.SparseSet
-	records        map[entity.EntityID]entityRecord
-	changeTick     Tick
-	lastChangeTick Tick
+	entities         *entity.EntityAllocator
+	components       *component.Registry
+	resources        *ResourceMap
+	archetypes       *ArchetypeStore
+	sparseSets       map[component.ID]*component.SparseSet
+	records          map[entity.EntityID]entityRecord
+	changeTick       Tick
+	lastChangeTick   Tick
+	deferredFlushers []func(*World) // T-1F02: registered command-buffer flushers
 }
 
 // NewWorld creates a World with default initial capacities.
@@ -138,4 +139,32 @@ func (w *World) IncrementChangeTick() Tick {
 // typically at the end of the update schedule.
 func (w *World) ClearTrackers() {
 	w.lastChangeTick = w.changeTick
+}
+
+// RegisterDeferredFlusher installs fn as a deferred flusher. Every call to
+// [World.ApplyDeferred] invokes the registered flushers in registration order.
+// Used by long-lived [command.CommandBuffer] instances to participate in the
+// schedule's apply-point flush. Registration is intended to happen at world
+// setup time (single-threaded); concurrent registration during a flush is a
+// programming error.
+func (w *World) RegisterDeferredFlusher(fn func(*World)) {
+	if fn == nil {
+		return
+	}
+	w.deferredFlushers = append(w.deferredFlushers, fn)
+}
+
+// ApplyDeferred invokes every registered deferred flusher in registration
+// order. Called by the schedule executor at sync points after all systems in
+// a tick have run. Idempotent when no flushers are registered.
+func (w *World) ApplyDeferred() {
+	for _, fn := range w.deferredFlushers {
+		fn(w)
+	}
+}
+
+// ResetDeferredFlushers drops every registered flusher. Intended for tests
+// and teardown only; production code registers flushers once at setup.
+func (w *World) ResetDeferredFlushers() {
+	w.deferredFlushers = w.deferredFlushers[:0]
 }
