@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 06:00
+**Updated:** 2026-04-30 07:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-1I01 done. Archetype listener mechanism is in place — T-1G02 (observers + ChildOf bubbling) is now unblockable as soon as a ChildOf component type is defined. Track H last task (T-1H02 DynamicObject) and Track I last task (T-1I02 sync.Pool wrappers) remain.
-- **Spec:** l1-ecs-lifecycle-patterns.md, l2-type-registry-go.md, l2-event-system-go.md
-- **Next Action:** T-1I02 (sync.Pool wrappers for short-lived components and command payloads) — small task, completes Track I. Then T-1G02 (observer registration + ChildOf bubbling) which now has all dependencies in place.
+- **Task:** Track I complete (2/2). T-1G02 (observers + ChildOf bubbling) and T-1H02 (DynamicObject + serialize hooks) are all that remain before Validation Track T. T-1G02 now has every dependency in place (archetype listeners from T-1I01, command queue from Track F).
+- **Spec:** l2-event-system-go.md (T-1G02), l2-type-registry-go.md (T-1H02)
+- **Next Action:** T-1G02 (observer registration + entity event bubbling along ChildOf chains).
 
 ## Progress
 
 ```
-Phase 1: [20/27] ██████░░ 74%
-Overall: [20/27] ██████░░ 74%
+Phase 1: [21/27] ███████░ 78%
+Overall: [21/27] ███████░ 78%
 ```
 
 ## Recent Decisions
@@ -54,6 +54,8 @@ Overall: [20/27] ██████░░ 74%
 - 2026-04-30 **Pattern:** TypeRegistry is **independent from ComponentRegistry** in Phase 1 — no auto-registration cross-link yet (deferred to Phase 2 where DynamicObject and serialization need both). `byID` slice with `[nil, reg1, reg2, ...]` shape so `TypeID(0)` is the universal invalid sentinel and `ResolveByID` is a single bounds-check + index op. Type-level tags use a synthetic `_` field with struct tag because Go has no derive-macro mechanism; the field is skipped from `FieldInfo` but its tag drives `TypeTags.Storage`.
 - 2026-04-30 **Done:** T-1I01 — `internal/ecs/view/{view,tagger}.go` + `world/archetype.go` listener API + `World.ArchetypeOf`. `View` is a cached set of matching ArchetypeIDs constructed from a `query.QueryState`; subscribes to `ArchetypeStore.OnArchetypeCreated` so new matching archetypes append automatically (no polling). `Requiring(w, ids...)` shorthand; `Entities(w) iter.Seq[Entity]`, `Count`, `Contains`, `MatchedArchetypes` (defensive copy), `Close` for unsubscription. Tagger: generic `TagOf[T]`/`MaskOf[T]`/`MaskOf2`/`MaskOf3`/`MaskOfIDs`. World: `OnArchetypeCreated(fn) ListenerID`, `UnregisterListener(id)`, `World.ArchetypeOf(e) (ArchetypeID, bool)`. 97.9% view pkg coverage, world 96.3%, `-race` clean. Benchmarks: View.Entities 0.3 µs/1000-entity 0-alloc, View.Count 2.7 ns 0-alloc, Contains 29 ns 0-alloc, MaskOf 36 ns 0-alloc.
 - 2026-04-30 **Pattern:** Archetype listeners use a `map[ListenerID]func(*Archetype)` — fanout fires inside `ArchetypeStore.findOrCreate` *only on new archetype creation*, never on reuse. ListenerID 0 is reserved as invalid sentinel; nil callbacks return 0. View's listener does a `query.QueryState.Matches(MaskFromIDs(arch.ComponentIDs()))` test and appends the ID — push-based reactivity replaces the watermark/poll model used by Query1/2/3 in T-1D02 (which still uses `nextScan` since it carries per-row tick filters that views don't need).
+- 2026-04-30 **Done:** T-1I02 — `internal/ecs/pool/pool.go`. Generic `Pool[T]` (single-value) with `New`/`NewWithReset`/`NewWithFactory` constructors; `Get() *T` / `Put(*T)`; nil-safe Put; reset hook runs before pool re-entry. `SlicePool[T]` uses canonical `*SliceBuf[T]` wrapper to keep slice headers off the boxing path — Get/Put round-trip is 0 allocs after warm-up. `clear(buf.Data)` on Put drops element references so backing arrays don't pin GC roots. 100% pkg coverage, `-race` clean. Benchmarks: Pool 14 ns/0-alloc, Pool+Reset 15 ns/0-alloc, SlicePool 19 ns/0-alloc, SlicePool large-fill 526 ns (200 appends) /0-alloc. Track I complete.
+- 2026-04-30 **Pattern:** `SlicePool[T]` returns `*SliceBuf[T]` (a `struct{ Data []T }` wrapper) instead of plain `[]T`. The wrapper exists because `pool.Put(s)` where `s` is `[]T` would force the slice header (24 bytes) to escape via `&s` — costing 1 alloc per Put. With the wrapper, a single stable `*SliceBuf[T]` pointer is recycled and the underlying `Data` slice survives across Get/Put. Slightly less ergonomic at call site (`buf.Data = append(buf.Data, ...)`) but achieves true 0-alloc reuse — the canonical Go idiom for sync.Pool of slices.
 
 ## Blockers
 
