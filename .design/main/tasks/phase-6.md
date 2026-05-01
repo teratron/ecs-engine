@@ -2,11 +2,12 @@
 phase: 6
 name: "UI, Tooling & Quality"
 status: Hold
-subsystem: "pkg/ui, pkg/window, pkg/diag, cmd/cli, pkg/build, pkg/codegen, pkg/platform, pkg/plugin, pkg/plugins/aiapi, pkg/assistant, pkg/errs, pkg/definition"
+subsystem: "pkg/ui, pkg/window, pkg/diag, cmd/cli, pkg/build, pkg/codegen, pkg/platform, pkg/plugin, pkg/plugins/aiapi, pkg/assistant, pkg/errs, pkg/definition, pkg/visualgraph, pkg/editor"
 requires:
   - "Phase 1–3 Stable"
 provides:
   - "Declarative definition layer (JSON / templates)"
+  - "Visual programming node graph + external editor interfaces"
   - "Window + multi-window + platform abstraction"
   - "Diagnostics + profiling overlay + gizmos + error codes"
   - "UI layout, interaction, text, widgets, styling"
@@ -55,6 +56,7 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 | M | Codegen Tools (`cmd/codegen/`) | l2-codegen-tools | T-6M01..02 |
 | **N** | **Plugin Distribution (`pkg/plugin/`)** | **l1-plugin-distribution** | **T-6N01..04** |
 | **O** | **AI API Plugin (`pkg/plugins/aiapi/`)** | **l1-ai-api-plugin** | **T-6O01..05** |
+| **P** | **Visual Graph System (`pkg/visualgraph/`, `pkg/editor/`)** | **l1-visual-graph-system** | **T-6P01..04** |
 | T | Validation (cross-track) | — | T-6T01..05 |
 
 **Hard dependencies inside Phase 6:**
@@ -67,6 +69,7 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 
 - Track O → Phase 3 Task System (HTTP off main loop), Phase 1 Event System (streaming events), Phase 1 Type Registry (component schema for `suggest_components`).
 - Track N → Phase 2 App Framework (Plugin trait re-export from `pkg/plugin/`), Phase 2 Multi-Repo Architecture (pkg/ boundary contract).
+- Track P → Phase 1 Type Registry (auto-registration of node definitions), Phase 1 Event System.
 
 ## Atomic Checklist
 
@@ -157,6 +160,13 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 - [ ] [T-6O04] Credentials (env / OS keyring / age-encrypted file) + redaction writer + diagnostics (latency, token count, cost USD) + cost-budget event; error mapping to E-PLUGIN-AIAPI-{NNN} via Track K. — `pkg/plugins/aiapi/{credentials,redact,diag,errors}.go` `[Bootstrap]`
 - [ ] [T-6O05] Mode-parity test harness: identical integration suite runs in-process AND out-of-process via Track N OOP loader; FakeProvider for deterministic CI; `-race` clean across both modes (INV-7). — `pkg/plugins/aiapi/testing/`, `internal/plugin/testbench/` `[Bootstrap]`
 
+### Track P — Visual Graph System (NEW)
+
+- [ ] [T-6P01] Graph Data Model: `GraphDefinition`, `Node`, `Pin`, `Connection` structs; integration with Definition System. — `pkg/visualgraph/{model,definition}.go` `[Bootstrap]`
+- [ ] [T-6P02] Node Registry: Automatic generation of nodes from TypeRegistry components/events/states. — `pkg/visualgraph/registry.go` `[Bootstrap]`
+- [ ] [T-6P03] Graph Interpreter: Execution engine (imperative chain + lazy data evaluation); cyclic dependency detection; context passing. — `pkg/visualgraph/{interpreter,execution}.go` `[Bootstrap]`
+- [ ] [T-6P04] Editor Gateway: `GraphEditorPlugin`, `NodeRegistryQuery`, `GraphDebugger` interface implementations for external editor (`ecs-editor`) integration via `pkg/editor/`. — `pkg/editor/graph.go`, `pkg/visualgraph/debug.go` `[Bootstrap]`
+
 ### Track T — Validation
 
 - [ ] [T-6T01] Plugin SDK contract tests: manifest schema fuzz, capability enforcement (denial paths), in-process lifecycle proxy, in/out-of-process behavioural parity. — `pkg/plugin/contract_test.go`, `internal/plugin/testbench/` `[Bootstrap]`
@@ -208,6 +218,13 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 - **Status:** Todo `[Bootstrap]`
 - **Notes:** Gated by `live-ai` CI label. Default CI does NOT run this. Project secrets injected at job level. Cost budget caps spend per run.
 
+### [T-6P04] Editor Gateway
+
+- **Spec:** [l1-visual-graph-system.md](../specifications/l1-visual-graph-system.md) §5.0
+- **Status:** Todo `[Bootstrap]`
+- **Handoff:** Closes Track P. Blocks multi-repo external editor integration logic.
+- **Notes:** Must provide JSON/Protobuf-serializable boundary across `pkg/editor/`.
+
 ## Validation Strategy
 
 - **Per-track local tests** (table-driven, `_test.go`) land alongside each implementation task; minimum 80% coverage per RULES.md C24/C28.
@@ -227,8 +244,9 @@ Phase 6 is `Done` when **all** of:
 1. Every atomic task above is `[x]`.
 2. CI gates green on `master` (vet, lint, race, bench, contract, parity).
 3. `examples/plugin/distribution/` and `examples/plugin/aiapi/` validate end-to-end (C29 unblock for `l1-plugin-distribution` + `l1-ai-api-plugin`).
-4. `magic.spec` promotes the Phase 6 spec cohort `Draft → Stable` (C29 unblocked).
-5. STATE.md `Phase` advances to `7 — Networking & Hot-Reload` and `Status: Active` (subject to Phase Gate C9).
+4. `examples/ecs/poc/` visual graph validation POC verifies execution (C29 unblock for `l1-visual-graph-system`).
+5. `magic.spec` promotes the Phase 6 spec cohort `Draft → Stable` (C29 unblocked).
+6. STATE.md `Phase` advances to `7 — Networking & Hot-Reload` and `Status: Active` (subject to Phase Gate C9).
 
 ## Open Coordination Items
 

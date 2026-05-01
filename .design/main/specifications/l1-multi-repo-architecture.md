@@ -5,7 +5,7 @@
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
 | **Version** | 1.4.0 |
-| **Related Specifications** | [app-framework.md](l1-app-framework.md), [hot-reload.md](l1-hot-reload.md), [ai-assistant-system.md](l1-ai-assistant-system.md), [definition-system.md](l1-definition-system.md), [diagnostic-system.md](l1-diagnostic-system.md) |
+| **Related Specifications** | [app-framework.md](l1-app-framework.md), [hot-reload.md](l1-hot-reload.md), [ai-assistant-system.md](l1-ai-assistant-system.md), [definition-system.md](l1-definition-system.md), [diagnostic-system.md](l1-diagnostic-system.md), [visual-graph-system.md](l1-visual-graph-system.md) |
 
 ## Overview
 

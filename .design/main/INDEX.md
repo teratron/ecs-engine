@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.22.0
+**Version:** 2.23.0
 **Status:** Active
 
 ## Overview
@@ -95,6 +95,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.4.0 |
 | [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.3.0 |
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.2.0 |
+| [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Draft | concept | 0.1.0 |
 
 ## P7 — Advanced Core
 
@@ -129,4 +130,4 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-01
-- **Total Specifications**: 78 (62 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 78
+- **Total Specifications**: 79 (63 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 79

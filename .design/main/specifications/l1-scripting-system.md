@@ -30,6 +30,7 @@ This specification preserves the architectural design and API shape for future i
 - [hot-reload.md](l1-hot-reload.md) — Go code hot-restart (the primary iteration mechanism for now)
 - [definition-system.md](l1-definition-system.md) — JSON data-driven layer (covers most non-code iteration needs)
 - [app-framework.md](l1-app-framework.md) — ScriptingPlugin registration, ServiceRegistry access
+- [visual-graph-system.md](l1-visual-graph-system.md) — Complementary visual authoring; visual graphs target designers, scripting targets programmers
 
 ## 1. Motivation
 

@@ -21,6 +21,7 @@ This is the foundation for data-driven game development: **code defines capabili
 - [component-system.md](l1-component-system.md) — Component values deserialized from JSON via registry
 - [hierarchy-system.md](l1-hierarchy-system.md) — Parent-child trees expressed in nested JSON structure
 - [ai-assistant-system.md](l1-ai-assistant-system.md) — AI agents read and write definition files
+- [visual-graph-system.md](l1-visual-graph-system.md) — Visual graphs are a definition type ("graph") loaded by this system
 
 ## 1. Motivation
 
