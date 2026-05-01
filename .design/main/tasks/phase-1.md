@@ -91,7 +91,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track I — Lifecycle Patterns
 
-- [ ] [T-1I01] Implement bitmask tagging utilities + cached query views (subscribe to archetype graph deltas).
+- [x] [T-1I01] Implement bitmask tagging utilities + cached query views (subscribe to archetype graph deltas). — `internal/ecs/view/{view,tagger}.go` + `world/archetype.go` listener API + `World.ArchetypeOf`. `View` caches matched ArchetypeIDs from a `query.QueryState`, subscribes to `ArchetypeStore.OnArchetypeCreated` for push-based reactivity (no polling). `Requiring(w, ids...)` shorthand; `Entities`/`Count`/`Contains`/`MatchedArchetypes`/`Close`. Tagger: `TagOf[T]`/`MaskOf[T]`/`MaskOf2`/`MaskOf3`/`MaskOfIDs`. View 97.9% coverage, world 96.3% (`-race` clean). Benchmarks: View.Entities 324 ns/1000-entity 0-alloc, Count 2.7 ns 0-alloc, Contains 29 ns 0-alloc, MaskOf 36 ns 0-alloc.
 - [ ] [T-1I02] Implement object pool primitives for short-lived components and command payloads (`sync.Pool` wrappers).
 
 ### Track T — Validation

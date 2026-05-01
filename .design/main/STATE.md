@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 05:00
+**Updated:** 2026-04-30 06:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-1H01 done. Track I (Lifecycle Patterns, T-1I01/T-1I02) and T-1H02 (DynamicObject + serialize hooks) remain unblocked. T-1G02 still blocked on Track I (needs ChildOf). Recommend T-1I01 next — unblocks T-1G02.
-- **Spec:** l1-ecs-lifecycle-patterns.md, l2-type-registry-go.md (T-1H02), l2-event-system-go.md (T-1G02)
-- **Next Action:** T-1I01 (bitmask tagging utilities + cached query views, subscribe to archetype graph deltas).
+- **Task:** T-1I01 done. Archetype listener mechanism is in place — T-1G02 (observers + ChildOf bubbling) is now unblockable as soon as a ChildOf component type is defined. Track H last task (T-1H02 DynamicObject) and Track I last task (T-1I02 sync.Pool wrappers) remain.
+- **Spec:** l1-ecs-lifecycle-patterns.md, l2-type-registry-go.md, l2-event-system-go.md
+- **Next Action:** T-1I02 (sync.Pool wrappers for short-lived components and command payloads) — small task, completes Track I. Then T-1G02 (observer registration + ChildOf bubbling) which now has all dependencies in place.
 
 ## Progress
 
 ```
-Phase 1: [19/27] ██████░░ 70%
-Overall: [19/27] ██████░░ 70%
+Phase 1: [20/27] ██████░░ 74%
+Overall: [20/27] ██████░░ 74%
 ```
 
 ## Recent Decisions
@@ -52,6 +52,8 @@ Overall: [19/27] ██████░░ 70%
 - 2026-04-30 **Pattern:** EventBus uses a **global monotonic counter** (sentCount) + boundary (baseCount = sentCount at last Swap). previous buffer spans `[baseCount-len(prev), baseCount)`, current spans `[baseCount, sentCount)`. Reader stores a single int cursor; `readAt` fast-forwards past lost (>2 frames old) entries. Lossy MessageChannel cursor follows the same fast-forward logic on ring wrap. No locks — schedule-enforced exclusivity per the spec.
 - 2026-04-30 **Done:** T-1H01 — `internal/ecs/typereg/{typereg,field,registry}.go`. `TypeRegistry` with three indices (byType `map[reflect.Type]*Reg`, byName `map[string]*Reg`, byID `[]*Reg` dense; index 0 reserved as nil sentinel). `RegisterType[T]`/`RegisterByType` idempotent; `Resolve`/`ResolveByName`/`ResolveByID`/`MustResolve`. `FieldInfo` caches Offset/Type/Index/Tags/Exported at registration; lazy `FieldByName` map built on first call. Struct-tag parsers for `ecs:"storage:..,ignore"`, `editor:"hidden,readonly,label:..."`, `range:"min,max"`. Type-level `_ struct{}\`ecs:"storage:sparse"\`` meta-field convention for type tags. Late-bind `FieldInfo.TypeID` via `BindFieldTypeIDs` for forward-referenced types. 96.5% pkg coverage, `-race` clean. Benchmarks: ResolveByID **0.3 ns**, ByType 19 ns, ByName 17 ns, FieldByName 16 ns — all 0 allocs/op.
 - 2026-04-30 **Pattern:** TypeRegistry is **independent from ComponentRegistry** in Phase 1 — no auto-registration cross-link yet (deferred to Phase 2 where DynamicObject and serialization need both). `byID` slice with `[nil, reg1, reg2, ...]` shape so `TypeID(0)` is the universal invalid sentinel and `ResolveByID` is a single bounds-check + index op. Type-level tags use a synthetic `_` field with struct tag because Go has no derive-macro mechanism; the field is skipped from `FieldInfo` but its tag drives `TypeTags.Storage`.
+- 2026-04-30 **Done:** T-1I01 — `internal/ecs/view/{view,tagger}.go` + `world/archetype.go` listener API + `World.ArchetypeOf`. `View` is a cached set of matching ArchetypeIDs constructed from a `query.QueryState`; subscribes to `ArchetypeStore.OnArchetypeCreated` so new matching archetypes append automatically (no polling). `Requiring(w, ids...)` shorthand; `Entities(w) iter.Seq[Entity]`, `Count`, `Contains`, `MatchedArchetypes` (defensive copy), `Close` for unsubscription. Tagger: generic `TagOf[T]`/`MaskOf[T]`/`MaskOf2`/`MaskOf3`/`MaskOfIDs`. World: `OnArchetypeCreated(fn) ListenerID`, `UnregisterListener(id)`, `World.ArchetypeOf(e) (ArchetypeID, bool)`. 97.9% view pkg coverage, world 96.3%, `-race` clean. Benchmarks: View.Entities 0.3 µs/1000-entity 0-alloc, View.Count 2.7 ns 0-alloc, Contains 29 ns 0-alloc, MaskOf 36 ns 0-alloc.
+- 2026-04-30 **Pattern:** Archetype listeners use a `map[ListenerID]func(*Archetype)` — fanout fires inside `ArchetypeStore.findOrCreate` *only on new archetype creation*, never on reuse. ListenerID 0 is reserved as invalid sentinel; nil callbacks return 0. View's listener does a `query.QueryState.Matches(MaskFromIDs(arch.ComponentIDs()))` test and appends the ID — push-based reactivity replaces the watermark/poll model used by Query1/2/3 in T-1D02 (which still uses `nextScan` since it carries per-row tick filters that views don't need).
 
 ## Blockers
 

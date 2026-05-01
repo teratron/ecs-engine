@@ -73,6 +73,10 @@ type entityRecord struct {
 	row         int
 }
 
+// ListenerID identifies a registered archetype-creation listener so the
+// caller can later unregister it. Zero is reserved as the invalid sentinel.
+type ListenerID uint32
+
 // ArchetypeStore manages every archetype in a [World]. The empty archetype
 // (no components, ID 0) is created at construction so SpawnEmpty has a
 // well-defined home for its entities.
@@ -80,6 +84,12 @@ type ArchetypeStore struct {
 	archetypes []Archetype
 	index      map[string]ArchetypeID
 	generation uint32
+
+	// listeners receive a callback whenever findOrCreate produces a new
+	// archetype. Used by [view.View] (Track I) and observers (Track G/T-1G02)
+	// to react to graph deltas without polling.
+	listeners      map[ListenerID]func(*Archetype)
+	nextListenerID ListenerID
 }
 
 // newArchetypeStore creates a store seeded with the empty archetype.
@@ -127,7 +137,41 @@ func (s *ArchetypeStore) findOrCreate(sortedIDs []component.ID, registry *compon
 	})
 	s.index[key] = id
 	s.generation++
-	return &s.archetypes[id]
+	arch := &s.archetypes[id]
+	for _, fn := range s.listeners {
+		fn(arch)
+	}
+	return arch
+}
+
+// OnArchetypeCreated registers fn as a listener that is invoked once with
+// every new [Archetype] produced by [ArchetypeStore.findOrCreate]. Returns a
+// [ListenerID] that can be passed to [ArchetypeStore.UnregisterListener] to
+// drop the subscription. nil callbacks are silently ignored and yield 0.
+//
+// Listeners are intended for caches that need to react to archetype-graph
+// deltas (cached views, observers). Registration is single-threaded — the
+// store's mutating paths are scheduler-coordinated.
+func (s *ArchetypeStore) OnArchetypeCreated(fn func(*Archetype)) ListenerID {
+	if fn == nil {
+		return 0
+	}
+	s.nextListenerID++
+	id := s.nextListenerID
+	if s.listeners == nil {
+		s.listeners = make(map[ListenerID]func(*Archetype))
+	}
+	s.listeners[id] = fn
+	return id
+}
+
+// UnregisterListener drops the listener registered under id. No-op when id
+// is 0 or unknown.
+func (s *ArchetypeStore) UnregisterListener(id ListenerID) {
+	if id == 0 {
+		return
+	}
+	delete(s.listeners, id)
 }
 
 // get returns a pointer to the archetype with the given ID. Out-of-range IDs

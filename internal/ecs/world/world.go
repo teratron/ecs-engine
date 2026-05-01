@@ -105,6 +105,18 @@ func (w *World) Contains(e entity.Entity) bool {
 	return w.entities.IsAlive(e)
 }
 
+// ArchetypeOf returns the archetype identifier that currently holds e. The
+// second return is false when e has no record in the world — either because
+// it is dead, or because it was reserved via [command.CommandBuffer.ReserveEntity]
+// but its SpawnCommand has not yet applied.
+func (w *World) ArchetypeOf(e entity.Entity) (ArchetypeID, bool) {
+	rec, ok := w.records[e.ID()]
+	if !ok {
+		return 0, false
+	}
+	return rec.archetypeID, true
+}
+
 // Despawn removes the entity from the World, evicting it from its archetype
 // (table row + sparse-set slots) and freeing its ID. Returns ErrEntityNotAlive
 // if the entity is already dead.
