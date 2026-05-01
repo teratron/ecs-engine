@@ -15,6 +15,7 @@ The App framework is the top-level entry point for the engine. It provides a bui
 - [event-system.md](l1-event-system.md) — Event clearing runs in First
 - [definition-system.md](l1-definition-system.md) — App configuration and game flow expressible as JSON definitions
 - [ai-assistant-system.md](l1-ai-assistant-system.md) — AI assistant registers as an editor plugin
+- [plugin-distribution.md](l1-plugin-distribution.md) — Third-party extension of the internal Plugin trait: manifest, modes, capabilities, public SDK
 
 ## 1. Motivation
 

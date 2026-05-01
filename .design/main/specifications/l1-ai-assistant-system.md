@@ -17,6 +17,8 @@ This is not about in-game AI (NPC behavior, pathfinding) — it is about develop
 - [type-registry.md](l1-type-registry.md) — Agents query the type registry for component metadata and field info
 - [scene-system.md](l1-scene-system.md) — Agents can compose and modify scenes programmatically
 - [diagnostic-system.md](l1-diagnostic-system.md) — Agents receive diagnostics data for intelligent debugging
+- [plugin-distribution.md](l1-plugin-distribution.md) — General third-party plugin model whose capability/transport contract this system specialises for AI agents
+- [ai-api-plugin.md](l1-ai-api-plugin.md) — First-party reference plugin implementing this system over HTTP for OpenAI/Anthropic/Gemini/local providers
 
 ## 1. Motivation
 

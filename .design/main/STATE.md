@@ -4,7 +4,7 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 07:00
+**Updated:** 2026-05-01 18:56
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
@@ -12,7 +12,7 @@
 
 - **Task:** Track I complete (2/2). T-1G02 (observers + ChildOf bubbling) and T-1H02 (DynamicObject + serialize hooks) are all that remain before Validation Track T. T-1G02 now has every dependency in place (archetype listeners from T-1I01, command queue from Track F).
 - **Spec:** l2-event-system-go.md (T-1G02), l2-type-registry-go.md (T-1H02)
-- **Next Action:** T-1G02 (observer registration + entity event bubbling along ChildOf chains).
+- **Next Action:** Continue Phase 1: T-1G02 (observers + ChildOf bubbling). Phase 6 expanded with plugin-distribution + ai-api-plugin (Hold).
 
 ## Progress
 

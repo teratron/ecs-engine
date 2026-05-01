@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-04-29
+**Generated:** 2026-05-01
 
 ## Active Technologies
 
@@ -18,15 +18,48 @@
 │   ├── wiki/
 │   └── workspace.json
 ├── cmd/
-│   └── cli/
+│   ├── ci/
+│   ├── cli/
+│   └── showcase/
 ├── examples/
-│   └── ecs/
+│   ├── 2d/
+│   ├── 3d/
+│   ├── app/
+│   ├── asset/
+│   ├── audio/
+│   ├── diagnostic/
+│   ├── ecs/
+│   ├── networking/
+│   ├── physics/
+│   ├── stress_test/
+│   ├── ui/
+│   └── world/
 ├── internal/
-│   └── ecs/
+│   ├── app/
+│   ├── asset/
+│   ├── audio/
+│   ├── definition/
+│   ├── ecs/
+│   ├── events/
+│   ├── hierarchy/
+│   ├── hotreload/
+│   ├── input/
+│   ├── network/
+│   ├── physics/
+│   ├── registry/
+│   ├── render/
+│   ├── scene/
+│   ├── state/
+│   ├── time/
+│   ├── ui/
+│   └── window/
 └── pkg/
+    ├── codegen/
     ├── diagnostic/
+    ├── editor/
     ├── math/
-    └── platform/
+    ├── platform/
+    └── protocol/
 ```
 
 ## Recent Changes

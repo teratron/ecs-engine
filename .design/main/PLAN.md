@@ -1,15 +1,15 @@
 # Implementation Plan — ECS Engine
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Generated:** 2026-04-25
-**Based on:** .design/main/INDEX.md v2.21.0
+**Based on:** .design/main/INDEX.md v2.22.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
 **Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until C29 unblock via `examples/ecs/poc/`.
 
 ## Overview
 
-Force-Bootstrap regeneration of the implementation plan. Every registered specification (76 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
+Force-Bootstrap regeneration of the implementation plan. Every registered specification (78 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
 
 - **STOP FACTOR**: phases ≥ 4 are frozen (`Hold`) until Phase 1 (POC) is validated by code in `examples/ecs/poc/` (C29).
 - **Layer Order**: every L1 concept spec is scheduled before its L2 Go implementation within the same phase.
@@ -18,7 +18,7 @@ Force-Bootstrap regeneration of the implementation plan. Every registered specif
 Dependency analysis (Implements: chains):
 
 - 14 hard L2→L1 edges, all 1:1, no chains, no cycles.
-- 60 L1 specs are roots. `Related Specifications` cycles within a single phase are non-blocking (Circular Guard Semantic Split — Soft).
+- 62 L1 specs are roots. `Related Specifications` cycles within a single phase are non-blocking (Circular Guard Semantic Split — Soft).
 
 ## Phase 1 — ECS Core POC (Active) `[Bootstrap]`
 
@@ -101,6 +101,8 @@ Dependency analysis (Implements: chains):
 - [ ] **CLI Tooling** ([l1-cli-tooling.md](specifications/l1-cli-tooling.md)) [L1]
 - [ ] **Platform System** ([l1-platform-system.md](specifications/l1-platform-system.md)) [L1]
 - [ ] **AI Assistant System** ([l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md)) [L1]
+- [ ] **Plugin Distribution** ([l1-plugin-distribution.md](specifications/l1-plugin-distribution.md)) [L1] `[Bootstrap]`
+- [ ] **AI API Plugin** ([l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md)) [L1] `[Bootstrap]`
 - [ ] **Examples Framework** ([l1-examples-framework.md](specifications/l1-examples-framework.md)) [L1]
 - [ ] **Compatibility Policy** ([l1-compatibility-policy.md](specifications/l1-compatibility-policy.md)) [L1]
 - [ ] **Error Core** ([l1-error-core.md](specifications/l1-error-core.md)) [L1]
@@ -165,3 +167,4 @@ Dependency analysis (Implements: chains):
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 1.0.0 | 2026-04-25 | Force-Bootstrap regeneration; 76 specs mapped across 8 phases |
+| 1.1.0 | 2026-05-01 | Added `l1-plugin-distribution` + `l1-ai-api-plugin` to Phase 6 (UI, Tooling & Quality); INDEX v2.22.0 |
