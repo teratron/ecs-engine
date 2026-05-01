@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 03:00
+**Updated:** 2026-04-30 04:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track F complete (2/2). Tracks G (Event), H (TypeRegistry), I (Lifecycle Patterns) remain — all file-independent and parallel-friendly.
-- **Spec:** l2-event-system-go.md, l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md
-- **Next Action:** T-1G01 (EventBus + double-buffered MessageChannel) recommended — required by T-1G02 observers and pairs naturally with the deferred-flusher pattern T-1F02 just established.
+- **Task:** T-1G01 done. T-1G02 (observers + ChildOf bubbling) is blocked on the ChildOf component type from Track I. Tracks H (TypeRegistry) and I (Lifecycle Patterns) remain unblocked — recommend T-1H01 next, then T-1I01 to unblock T-1G02.
+- **Spec:** l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md, l2-event-system-go.md (T-1G02)
+- **Next Action:** T-1H01 (TypeRegistry + reflect-based FieldInfo + cached lookups) — file-independent, no upstream blockers.
 
 ## Progress
 
 ```
-Phase 1: [17/27] █████░░░ 63%
-Overall: [17/27] █████░░░ 63%
+Phase 1: [18/27] ██████░░ 67%
+Overall: [18/27] ██████░░ 67%
 ```
 
 ## Recent Decisions
@@ -48,6 +48,8 @@ Overall: [17/27] █████░░░ 63%
 - 2026-04-30 **Pattern:** `CommandBuffer.ReserveEntity` calls `EntityAllocator.Allocate` directly in T-1F01 (single-threaded contract). T-1F02 replaces this with atomic pre-reservation so concurrent systems can reserve IDs without synchronising on the World. Pre-reserved entity is "alive" in the allocator immediately but has no `entityRecord` until the SpawnCommand applies — interim window is documented and acceptable for Phase 1 where systems run sequentially.
 - 2026-04-30 **Done:** T-1F02 — `internal/ecs/entity/allocator.go` (sync.RWMutex), `internal/ecs/world/{world,deferred}.go` (deferredFlushers list + ApplyDeferred + ResetDeferredFlushers), `internal/ecs/command/buffer.go` (CommandBuffer.Flush/RegisterWith + top-level ApplyDeferredCommands), `internal/ecs/scheduler/executor.go` (calls w.ApplyDeferred after successful run, skips on panic). Allocator concurrency: 8×1024 parallel Allocate produces no duplicates; balanced alloc/free across goroutines settles to Len=0 cleanly. Coverage: command 100%, entity 99.3%, world 96.2%, scheduler 98.9%, all `-race` clean. Track F complete.
 - 2026-04-30 **Pattern:** Apply-point is **after all systems run, before tick boundary** — single sync point per Phase 1 schedule. World.deferredFlushers is FIFO; flushers register once at setup and persist for World lifetime. Pool-rented buffers (Acquire/Release) MUST NOT register, only long-lived per-system buffers. Panic in any system aborts the schedule AND skips ApplyDeferred (state may be inconsistent on panic — pool nothing, flush nothing).
+- 2026-04-30 **Done:** T-1G01 — `internal/ecs/event/{event,bus,channel}.go`. `EventBus[T]` (double-buffered, monotonic sentCount/baseCount cursor model — events live exactly 2 frames), `EventWriter[T]`/`EventReader[T]` (independent cursors, `iter.Seq[T]` via `All()`, frontier-positioned ctor `NewEventReaderAt`), `MessageChannel[T]` (fixed-capacity ring, lossy-on-wrap, per-reader cursor IDs), `MessageWriter[T]`/`MessageReader[T]` (independent cursors, Close releases). `Registry` (per-World, lazy via `EnsureRegistry`) tracks every bus + channel; `SwapAll` rotates buses, `CleanupAll` is a ring no-op (parity hook). 98.7% pkg coverage, `-race` clean. Benchmarks: Send 3 ns 0-alloc, Write 9 ns 0-alloc, ReadDrain 0 allocs/op.
+- 2026-04-30 **Pattern:** EventBus uses a **global monotonic counter** (sentCount) + boundary (baseCount = sentCount at last Swap). previous buffer spans `[baseCount-len(prev), baseCount)`, current spans `[baseCount, sentCount)`. Reader stores a single int cursor; `readAt` fast-forwards past lost (>2 frames old) entries. Lossy MessageChannel cursor follows the same fast-forward logic on ring wrap. No locks — schedule-enforced exclusivity per the spec.
 
 ## Blockers
 

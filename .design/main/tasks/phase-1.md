@@ -81,7 +81,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track G — Event
 
-- [ ] [T-1G01] Implement `EventBus` + typed `MessageChannel` (double-buffered, drained per tick).
+- [x] [T-1G01] Implement `EventBus` + typed `MessageChannel` (double-buffered, drained per tick). — `internal/ecs/event/{event,bus,channel}.go` + tests (98.7% pkg coverage, `-race` clean). EventBus[T] with monotonic-cursor double-buffering (events visible for 2 frames); EventWriter/EventReader with independent cursors and `iter.Seq[T]` traversal; frontier-position ctor `NewEventReaderAt`. MessageChannel[T] = fixed-capacity ring (lossy-on-wrap), per-reader cursor IDs, Close releases. Per-World `Registry` (lazy `EnsureRegistry`); `SwapAll`/`CleanupAll` iterate every registered bus/channel. Benchmarks: Send 3 ns 0-alloc, Write 9 ns 0-alloc, ReadDrain 0 allocs/op, SwapAll 0 allocs/op.
 - [ ] [T-1G02] Implement observer registration + entity event bubbling along `ChildOf` chains.
 
 ### Track H — Type Registry
