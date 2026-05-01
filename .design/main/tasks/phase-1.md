@@ -86,7 +86,7 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track H — Type Registry
 
-- [ ] [T-1H01] Implement `TypeRegistry` + `FieldInfo` via `reflect`; cache lookups.
+- [x] [T-1H01] Implement `TypeRegistry` + `FieldInfo` via `reflect`; cache lookups. — `internal/ecs/typereg/{typereg,field,registry}.go` + tests (96.5% pkg coverage, `-race` clean). TypeRegistry with three indices (byType / byName / byID-dense; ID 0 reserved as nil sentinel). `RegisterType[T]`/`RegisterByType` idempotent; `Resolve`/`ResolveByName`/`ResolveByID`/`MustResolve`. FieldInfo caches Offset/Type/Index/Tags/Exported; lazy `FieldByName`; struct-tag parsers for `ecs`/`editor`/`range`; type-level `_` meta-field convention for `TypeTags`; `BindFieldTypeIDs` late-binds forward-referenced field types. Benchmarks: ResolveByID 0.3 ns, ByType 19 ns, ByName 17 ns, FieldByName 16 ns — all 0 allocs/op.
 - [ ] [T-1H02] Implement `DynamicObject` + serialization-hook contract (no actual codecs in Phase 1).
 
 ### Track I — Lifecycle Patterns

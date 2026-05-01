@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-04-30 04:00
+**Updated:** 2026-04-30 05:00
 **Phase:** 1 — ECS Core POC
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-1G01 done. T-1G02 (observers + ChildOf bubbling) is blocked on the ChildOf component type from Track I. Tracks H (TypeRegistry) and I (Lifecycle Patterns) remain unblocked — recommend T-1H01 next, then T-1I01 to unblock T-1G02.
-- **Spec:** l2-type-registry-go.md, l1-ecs-lifecycle-patterns.md, l2-event-system-go.md (T-1G02)
-- **Next Action:** T-1H01 (TypeRegistry + reflect-based FieldInfo + cached lookups) — file-independent, no upstream blockers.
+- **Task:** T-1H01 done. Track I (Lifecycle Patterns, T-1I01/T-1I02) and T-1H02 (DynamicObject + serialize hooks) remain unblocked. T-1G02 still blocked on Track I (needs ChildOf). Recommend T-1I01 next — unblocks T-1G02.
+- **Spec:** l1-ecs-lifecycle-patterns.md, l2-type-registry-go.md (T-1H02), l2-event-system-go.md (T-1G02)
+- **Next Action:** T-1I01 (bitmask tagging utilities + cached query views, subscribe to archetype graph deltas).
 
 ## Progress
 
 ```
-Phase 1: [18/27] ██████░░ 67%
-Overall: [18/27] ██████░░ 67%
+Phase 1: [19/27] ██████░░ 70%
+Overall: [19/27] ██████░░ 70%
 ```
 
 ## Recent Decisions
@@ -50,6 +50,8 @@ Overall: [18/27] ██████░░ 67%
 - 2026-04-30 **Pattern:** Apply-point is **after all systems run, before tick boundary** — single sync point per Phase 1 schedule. World.deferredFlushers is FIFO; flushers register once at setup and persist for World lifetime. Pool-rented buffers (Acquire/Release) MUST NOT register, only long-lived per-system buffers. Panic in any system aborts the schedule AND skips ApplyDeferred (state may be inconsistent on panic — pool nothing, flush nothing).
 - 2026-04-30 **Done:** T-1G01 — `internal/ecs/event/{event,bus,channel}.go`. `EventBus[T]` (double-buffered, monotonic sentCount/baseCount cursor model — events live exactly 2 frames), `EventWriter[T]`/`EventReader[T]` (independent cursors, `iter.Seq[T]` via `All()`, frontier-positioned ctor `NewEventReaderAt`), `MessageChannel[T]` (fixed-capacity ring, lossy-on-wrap, per-reader cursor IDs), `MessageWriter[T]`/`MessageReader[T]` (independent cursors, Close releases). `Registry` (per-World, lazy via `EnsureRegistry`) tracks every bus + channel; `SwapAll` rotates buses, `CleanupAll` is a ring no-op (parity hook). 98.7% pkg coverage, `-race` clean. Benchmarks: Send 3 ns 0-alloc, Write 9 ns 0-alloc, ReadDrain 0 allocs/op.
 - 2026-04-30 **Pattern:** EventBus uses a **global monotonic counter** (sentCount) + boundary (baseCount = sentCount at last Swap). previous buffer spans `[baseCount-len(prev), baseCount)`, current spans `[baseCount, sentCount)`. Reader stores a single int cursor; `readAt` fast-forwards past lost (>2 frames old) entries. Lossy MessageChannel cursor follows the same fast-forward logic on ring wrap. No locks — schedule-enforced exclusivity per the spec.
+- 2026-04-30 **Done:** T-1H01 — `internal/ecs/typereg/{typereg,field,registry}.go`. `TypeRegistry` with three indices (byType `map[reflect.Type]*Reg`, byName `map[string]*Reg`, byID `[]*Reg` dense; index 0 reserved as nil sentinel). `RegisterType[T]`/`RegisterByType` idempotent; `Resolve`/`ResolveByName`/`ResolveByID`/`MustResolve`. `FieldInfo` caches Offset/Type/Index/Tags/Exported at registration; lazy `FieldByName` map built on first call. Struct-tag parsers for `ecs:"storage:..,ignore"`, `editor:"hidden,readonly,label:..."`, `range:"min,max"`. Type-level `_ struct{}\`ecs:"storage:sparse"\`` meta-field convention for type tags. Late-bind `FieldInfo.TypeID` via `BindFieldTypeIDs` for forward-referenced types. 96.5% pkg coverage, `-race` clean. Benchmarks: ResolveByID **0.3 ns**, ByType 19 ns, ByName 17 ns, FieldByName 16 ns — all 0 allocs/op.
+- 2026-04-30 **Pattern:** TypeRegistry is **independent from ComponentRegistry** in Phase 1 — no auto-registration cross-link yet (deferred to Phase 2 where DynamicObject and serialization need both). `byID` slice with `[nil, reg1, reg2, ...]` shape so `TypeID(0)` is the universal invalid sentinel and `ResolveByID` is a single bounds-check + index op. Type-level tags use a synthetic `_` field with struct tag because Go has no derive-macro mechanism; the field is skipped from `FieldInfo` but its tag drives `TypeTags.Storage`.
 
 ## Blockers
 
