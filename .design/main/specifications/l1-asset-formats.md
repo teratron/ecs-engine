@@ -1,20 +1,25 @@
 # Asset Formats
+
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** concept
 
 ## Overview
+
 This specification enumerates the file formats the engine can load and describes how each format maps to one or more engine asset types. Every format is handled by a dedicated `AssetLoader` registered with the `AssetServer`. Format support is modular — each loader can be included or excluded via build tags, keeping the binary size minimal for projects that do not need every format.
 
 ## Related Specifications
+
 - [Asset System](l1-asset-system.md)
 - [Mesh & Image](l1-mesh-and-image.md)
 - [Audio System](l1-audio-system.md)
 
 ## 1. Motivation
+
 A game engine must consume diverse content authored in external tools. Centralizing format knowledge in well-defined loaders keeps the rest of the engine format-agnostic. Modular inclusion means a 2D-only project need not compile glTF parsing, and a headless server need not compile image decoders.
 
 ## 2. Constraints & Assumptions
+
 - Loaders are stateless — all context comes from the `AssetServer` and load settings.
 - A single file may produce multiple assets (e.g., a glTF file yields scenes, meshes, materials, textures, and animations).
 - Loaders must report structured errors; panicking inside a loader is not permitted.
@@ -22,6 +27,7 @@ A game engine must consume diverse content authored in external tools. Centraliz
 - All loaders execute asynchronously on the asset task pool.
 
 ## 3. Core Invariants
+
 1. Each file extension maps to exactly one loader; duplicate registrations are a hard error.
 2. A loader must return a fully constructed asset or an error — partial assets are never inserted into the asset store.
 3. Disabling a format via build tags removes its loader entirely; attempting to load that format yields a clear "unsupported format" error rather than a silent failure.
@@ -30,6 +36,7 @@ A game engine must consume diverse content authored in external tools. Centraliz
 ## 4. Detailed Design
 
 ### 4.1 glTF 2.0 Loader
+
 The glTF loader consumes `.gltf` (JSON + separate binary) and `.glb` (single binary) files. It produces:
 
 ```plaintext
@@ -48,6 +55,7 @@ GltfAsset
 Supported glTF extensions: `KHR_materials_unlit`, `KHR_texture_transform`, `KHR_draco_mesh_compression` (behind build tag), `KHR_lights_punctual`.
 
 ### 4.2 Image Format Loaders
+
 Each image format has its own loader producing an `Image` asset:
 
 | Format | Extensions | Notes |
@@ -64,6 +72,7 @@ Each image format has its own loader producing an `Image` asset:
 GPU-compressed formats (DDS, KTX2) are uploaded directly; the loader selects a transcode target matching the current GPU backend capabilities.
 
 ### 4.3 Audio Format Loaders
+
 Each audio format produces an `AudioSource` asset:
 
 | Format | Extensions | Notes |
@@ -75,9 +84,11 @@ Each audio format produces an `AudioSource` asset:
 | AAC | `.aac`, `.m4a` | Lossy, behind optional build tag |
 
 ### 4.4 Font Loader
+
 Loads `.ttf` and `.otf` files into a `Font` asset containing glyph outlines and metrics. Rasterization into glyph atlases is deferred to the text pipeline at render time.
 
 ### 4.5 Scene File Format
+
 The engine defines its own JSON-based scene format (`.scene.json`). A scene file is a serialized snapshot of entities and their components, using the reflection system for type resolution. The loader produces a `DynamicScene` asset that can be spawned into any World.
 
 ```plaintext
@@ -90,6 +101,7 @@ The engine defines its own JSON-based scene format (`.scene.json`). A scene file
 ```
 
 ### 4.6 Loader Registration
+
 At app build time, each format plugin registers its loader:
 
 ```
@@ -100,6 +112,7 @@ AssetServer.register_loader(GltfLoader, &["gltf", "glb"])
 Build tags control which registration calls are compiled. A convenience `DefaultFormatsPlugin` registers all enabled loaders in one step.
 
 ## 5. Open Questions
+
 - Should the engine support a custom binary scene format for faster load times in shipping builds?
 - How should format-specific load settings (e.g., JPEG quality threshold, glTF coordinate system override) be passed through the asset pipeline?
 - Is runtime format detection (magic bytes) worth the complexity, or is extension-based sufficient?
@@ -117,6 +130,7 @@ Build tags control which registration calls are compiled. A convenience `Default
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
 
 ## Document History
+
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |

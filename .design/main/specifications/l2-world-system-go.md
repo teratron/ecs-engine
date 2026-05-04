@@ -22,6 +22,7 @@ It leverages Go 1.23+ features such as the `unique` package for identity managem
 ## 1. Motivation
 
 A concrete Go implementation of the World is needed to:
+
 - Provide the actual data structures (archetypes, tables, sparse sets) for component storage.
 - Implement the safety mechanisms described in the concept spec using Go's type system and memory model.
 - Enable high-performance entity and component access via raw memory blocks and unsafe pointers.

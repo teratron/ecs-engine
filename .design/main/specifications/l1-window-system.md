@@ -18,6 +18,7 @@ The window system manages operating-system windows as ECS entities. Each window 
 ## 1. Motivation
 
 Entity-based windows unify single-window and multi-window applications under one model. A game that opens a second viewport or a debug inspector window simply spawns another entity with a `Window` component. Decoupling from any specific windowing library lets the engine run on platforms with very different window management semantics. Without this:
+
 - User code would depend on platform-specific APIs (Win32, X11, Wayland, Cocoa).
 - Multi-window support would require ad-hoc bookkeeping.
 - Render surface creation would be tightly coupled to a single windowing library.

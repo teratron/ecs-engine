@@ -56,7 +56,9 @@ Render Schedule (Render World)
 Extract functions are registered per plugin. Each receives a read-only view of the main World and a mutable reference to the render World. Data is copied, not shared.
 
 ### 4.2 Render Graph
+
 The graph is a directed acyclic graph of `RenderPass` nodes. Each node declares:
+
 - **Inputs**: texture handles or buffer handles it reads.
 - **Outputs**: texture handles or buffer handles it writes.
 - **Phase**: which render phase it belongs to (or `None` for utility passes).

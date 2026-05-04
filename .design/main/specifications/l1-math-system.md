@@ -15,6 +15,7 @@ The math system is a pure math library with no ECS dependencies. It provides vec
 ## 1. Motivation
 
 Every engine subsystem depends on math primitives. A dedicated math library must:
+
 - Provide correct, well-tested implementations of common 3D math operations.
 - Use value semantics to avoid aliasing bugs in concurrent systems.
 - Offer both convenience (euler angles) and performance (quaternions, affine transforms).
@@ -285,6 +286,7 @@ TransformOperation (interface)
 **UseTRS bypass**: When `UseTRS` is false, the system skips Position/Rotation/Scale decomposition and uses `LocalMatrix` directly. This is used for bone transforms driven by animation — the animation system writes matrices directly, bypassing the TRS pipeline.
 
 **Post-operations**: A chain of modifiers applied after the local matrix is computed but before world matrix multiplication. Use cases:
+
 - Bone attachment: sync a transform to an animation skeleton node.
 - Procedural offset: add a breathing or idle sway effect on top of the base transform.
 - Billboard: override rotation to always face the camera.

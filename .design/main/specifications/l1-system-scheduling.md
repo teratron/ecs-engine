@@ -19,6 +19,7 @@ Systems are functions that process components. The scheduling system organizes s
 ## 1. Motivation
 
 A game engine runs dozens to hundreds of systems per frame. The scheduler must:
+
 - Maximize parallelism by running independent systems concurrently.
 - Guarantee deterministic ordering where dependencies exist.
 - Detect cycles and ambiguities at build time, not at runtime.
@@ -113,6 +114,7 @@ Sets support: `Before`, `After`, `Chain` (sequential ordering of all members), `
 ### 4.5 DAG Building and Cycle Detection
 
 At schedule build time:
+
 1. Collect all systems and their ordering constraints.
 2. Build a directed graph (system → dependency edges).
 3. Run Tarjan's SCC algorithm to detect cycles.
@@ -129,6 +131,7 @@ Runs systems sequentially in topological order. Used for debugging, deterministi
 #### Multi-Threaded Executor
 
 Runs non-conflicting systems in parallel:
+
 1. Maintain a ready queue of systems whose dependencies are satisfied.
 2. For each ready system, check if its access set conflicts with currently running systems.
 3. If no conflict, spawn the system on a worker thread.
@@ -149,6 +152,7 @@ Conditions are evaluated before the system runs. If false, the system is skipped
 ### 4.8 Apply Deferred (Sync Points)
 
 Command buffers accumulate during system execution. They are applied at:
+
 - Explicit `ApplyDeferred` sync points inserted between system sets.
 - Automatically between sets that have structural dependencies.
 - At the end of each schedule run.
@@ -158,6 +162,7 @@ During apply, all pending commands execute sequentially against the World.
 ### 4.9 System Stepping (Debug)
 
 A debug tool that pauses schedule execution and allows stepping through systems one at a time. Useful for:
+
 - Inspecting World state between system runs.
 - Identifying which system introduces a### 4.10 Automatic System Discovery
 
@@ -172,6 +177,7 @@ ComponentDescriptor {
 ```
 
 When the world encounters a component type for the first time:
+
 1. Check if `DefaultProcessor` is set on its descriptor.
 2. If set, instantiate the processor (if not already registered).
 3. **Recursive Resolution**: Examine the new processor's `RequiredTypes`. For each required type, repeat the discovery process. This ensures that adding a `MeshComponent` automatically brings in the `RenderSystem`, which in turn might pull in a `MaterialSystem`.
@@ -210,6 +216,7 @@ SystemDescriptor {
 ```
 
 The scheduler builds a mapping: `ComponentType → []System`, tracking both direct processors and dependents. When a component changes on an entity:
+
 1. **Direct Processors**: Notified to recheck the entity's matching status.
 2. **Dependent Processors**: Notified to revalidate their **Associated Data** (§4.10 in [component-system.md](l1-component-system.md)).
 

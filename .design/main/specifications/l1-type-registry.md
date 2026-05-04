@@ -30,12 +30,12 @@ A static language like Go requires a centralized dynamic metadata store for syst
 - **INV-2**: The registry MUST support complex types, including nested structs, slices, and maps.
 - **INV-3**: Registration must be possible from anywhere (ideally via an `init()` hook or similar engine entry point).
 
-
 ## 4. Detailed Design
 
 ### 4.1 Registry Store
 
 The central `TypeRegistry` stores the following for each type:
+
 1. **Type ID**: The human-readable unique string.
 2. **Reflect.Type**: The Go reflect type handle.
 3. **Field Metadata**: Names, types, offsets, and custom Go tags (e.g., `editor:"hidden"`, `range:"0,10"`).
@@ -44,14 +44,15 @@ The central `TypeRegistry` stores the following for each type:
 ### 4.2 Attribute System
 
 The registry supports attaching metadata (attributes) to fields or types:
+
 - **Min/Max Range**: For numeric fields.
 - **Visibility**: Whether it should be shown in the editor.
 - **Tooltips**: Documentation strings.
 
-
 ### 4.3 Proxy Operations
 
 The registry provides a generic `DynamicObject` wrapper (proxy) to:
+
 - Get/Set fields by name.
 - Iterate fields of an arbitrary struct.
 - Construct new instances of a type by its string ID.
@@ -71,6 +72,7 @@ TypeRegistration
 ```
 
 When the World encounters a component type for the first time:
+
 1. Query the registry for `default_processor`.
 2. If set and `execution_mode` matches the current build, instantiate the system.
 3. Recursively check the new system's `RequiredTypes` for their own default processors.
@@ -94,6 +96,7 @@ renderables := registry.GetTypesByInterface(reflect.TypeOf((*Renderable)(nil)).E
 This enables system dependency declarations like "I require any component implementing `Spatial`" rather than naming a specific concrete type. The registry builds an interface-to-types index at registration time, so lookups are O(1) per interface.
 
 **Use cases**:
+
 - A transform system processes any component implementing `Transformable`.
 - An inspector plugin displays properties for any component implementing `Editable`.
 - A serialization system handles any component implementing `Serializable`.

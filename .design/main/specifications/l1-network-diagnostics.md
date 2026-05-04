@@ -21,6 +21,7 @@ Network Diagnostics extends the engine's diagnostic system with networking-speci
 ## 1. Motivation
 
 Network bugs are the hardest to reproduce and diagnose. A player reports "the game felt laggy" — but was it:
+
 - High RTT (network distance)?
 - Packet loss (unreliable connection)?
 - Bandwidth saturation (too many entities replicated)?
@@ -127,6 +128,7 @@ NetworkDiagnosticsSystem (runs in Last schedule, after all gameplay)
 ```
 
 **Server-side aggregation**: On the server, connection metrics are per-client. The collection system reports:
+
 - Per-connection metrics tagged with ConnectionID (for per-client debugging)
 - Aggregate metrics (average RTT across all clients, total bandwidth, worst-case packet loss)
 

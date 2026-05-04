@@ -66,6 +66,7 @@ ComponentSnapshot
 ```
 
 When a new snapshot arrives:
+
 ```plaintext
 1. If tick <= latest buffered tick → discard (out-of-order or duplicate).
 2. Insert into sorted position.

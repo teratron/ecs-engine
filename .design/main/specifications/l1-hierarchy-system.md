@@ -18,6 +18,7 @@ The hierarchy system provides parent-child relationships between entities, trans
 ## 1. Motivation
 
 Games need entity hierarchies: a character's weapon moves with the character, UI panels contain child widgets, a vehicle's wheels follow the chassis. Without a built-in hierarchy:
+
 - Every game would reimplement parent-child logic.
 - Transform propagation would be inconsistent and error-prone.
 - Systems like visibility culling and physics would lack a shared tree structure.
@@ -46,6 +47,7 @@ Games need entity hierarchies: a character's weapon moves with the character, UI
 - **Children** — Automatically-maintained ordered list of child entities on the parent. Read-only for users.
 
 Adding `ChildOf` to an entity triggers:
+
 1. Validation that the parent exists and no cycle is formed.
 2. Insertion of the child into the parent's `Children` list.
 3. Component hooks fire for both `ChildOf` (on child) and `Children` (on parent).
@@ -53,15 +55,19 @@ Adding `ChildOf` to an entity triggers:
 ### 4.2 Transform Components
 
 - **Transform** — Local position, rotation, and scale relative to parent (or world origin if no parent).
+
   ```
   Transform { Translation: Vec3, Rotation: Quat, Scale: Vec3 }
   ```
+
   Users mutate this directly.
 
 - **GlobalTransform** — Computed world-space affine transform. Read-only.
+
   ```
   GlobalTransform(Affine3A)
   ```
+
   Automatically computed by the propagation system. Provides: `Translation()`, `Right()`, `Up()`, `Forward()`.
 
 - Adding `Transform` to an entity automatically adds `GlobalTransform` (required component pattern).
@@ -92,6 +98,7 @@ Use cases: visibility inheritance, render layers, physics groups.
 ### 4.5 Hierarchy Validation
 
 A plugin that warns when hierarchy constraints are violated:
+
 - "Entity has MeshRenderer but parent lacks Transform."
 - Runs in `Last` schedule as a diagnostic.
 - Configurable per component type.

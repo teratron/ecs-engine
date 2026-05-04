@@ -16,6 +16,7 @@ This specification defines the Go implementation of the query system. Queries ar
 ## 1. Motivation
 
 The Go implementation of the Query system provides the primary mechanism for efficient entity data access. It ensures:
+
 - Type-safe iteration over entities with specific component sets.
 - High-performance caching of matched archetypes to avoid repeated searches.
 - Parallel iteration capabilities for massive entity counts.

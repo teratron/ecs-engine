@@ -19,6 +19,7 @@ The scene system captures and restores collections of entities with their compon
 ## 1. Motivation
 
 Games need to persist and restore world state for saving, loading, level streaming, and editor workflows. A scene system must:
+
 - Serialize a subset of the World to a portable format.
 - Instantiate scenes multiple times (prefab pattern) with unique entity IDs.
 - Support both fast binary snapshots and human-editable text formats.
@@ -241,6 +242,7 @@ Scene
 ```
 
 **Scene offset**: Each child scene carries an offset applied to all its entities. This enables:
+
 - Level streaming: load adjacent areas as child scenes at spatial offsets.
 - Instancing: the same scene definition spawned at different world positions.
 - Editor multi-scene: multiple scenes open simultaneously, each at its own position.

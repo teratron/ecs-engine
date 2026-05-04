@@ -1,26 +1,32 @@
 # Materials & Lighting
+
 **Version:** 0.1.0
 **Status:** Draft
 **Layer:** concept
 
 ## Overview
+
 Materials define the visual properties of a surface — which shader to use and what parameters to bind. Lighting components describe light sources and environmental illumination. Together they drive the shading pipeline: material parameters are combined with incoming light to produce final pixel colors.
 
 ## Related Specifications
+
 - [Render Core](l1-render-core.md)
 - [Mesh & Image](l1-mesh-and-image.md)
 - [Camera & Visibility](l1-camera-and-visibility.md)
 
 ## 1. Motivation
+
 A unified material model lets artists and developers describe surfaces declaratively. Separating light definitions from material parameters allows the engine to evaluate any combination of materials and lights without combinatorial explosion in user code.
 
 ## 2. Constraints & Assumptions
+
 - The default shading model is PBR (metallic-roughness workflow).
 - Custom materials may override the shading model entirely via custom shaders.
 - Shadow map resolution and cascade count are configurable but bounded by GPU memory.
 - Light counts are unlimited in the scene; the engine clusters or culls them per tile/frustum.
 
 ## 3. Core Invariants
+
 1. Every material must reference a valid shader asset.
 2. PBR parameter values must be clamped to physically plausible ranges (e.g., metallic in [0, 1]).
 3. A directional light's cascaded shadow maps must cover at least the camera's near plane to the configured max distance.
@@ -47,6 +53,7 @@ Material
 Materials are assets loaded through the asset system. When a material changes, the engine invalidates affected bind groups and recompiles pipelines if the shader variant key changes.
 
 ### 4.2 PBR Parameters
+
 The standard PBR material exposes:
 
 | Parameter | Type | Default | Description |
@@ -59,6 +66,7 @@ The standard PBR material exposes:
 | occlusion | Texture | white | Ambient occlusion |
 
 ### 4.3 Alpha Modes
+
 - **Opaque** — fully solid, written to depth buffer normally.
 - **Mask(threshold)** — fragment discarded if alpha < threshold.
 - **Blend** — standard alpha blending, rendered in Transparent phase.
@@ -88,6 +96,7 @@ graph LR
 - **AmbientLight / GlobalAmbientLight**: flat color added to all fragments.
 
 ### 4.5 Image-Based Lighting
+
 - **EnvironmentMapLight**: a cube map (diffuse irradiance + specular pre-filtered) attached to an entity. Provides reflections and ambient lighting.
 - **IrradianceVolume**: a 3D grid of spherical harmonic probes for baked global illumination. Entities sample the nearest probes based on world position.
 
@@ -102,14 +111,17 @@ graph LR
 `CascadeShadowConfig` controls cascade count, split distances (logarithmic or manual), overlap factor, and map resolution. Shadow maps are rendered in a dedicated render graph pass before the main lighting pass.
 
 ### 4.7 Atmosphere, Fog & Skybox
+
 - **Atmosphere**: a volumetric sky model computing scattering based on sun direction and altitude. Rendered into a lookup table each frame (or cached if sun position is static).
 - **FogVolume**: axis-aligned volume with density, color, and falloff. **VolumetricFog** uses a froxel grid for per-cell density and lighting.
 - **Skybox**: an `EnvironmentMapLight` cube map rendered as the background at infinite depth.
 
 ### 4.8 Material Specialization
+
 Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) produces a pipeline variant. The material system generates a specialization key and looks it up in the pipeline cache. See [Render Core — Pipeline Specialization](l1-render-core.md#46-pipeline-specialization).
 
 ## 5. Open Questions
+
 1. Should the engine support a secondary specular-glossiness PBR workflow?
 2. How many cascades should the default `CascadeShadowConfig` use?
 3. What is the light count threshold before clustered shading becomes mandatory?
@@ -127,6 +139,7 @@ Each unique combination of (shader, vertex_layout, alpha_mode, render_phase) pro
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
 
 ## Document History
+
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |

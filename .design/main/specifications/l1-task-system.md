@@ -16,6 +16,7 @@ The task system provides structured parallelism for the engine. Rather than expo
 ## 1. Motivation
 
 Game engines must exploit multi-core hardware, but uncontrolled thread creation leads to oversubscription and contention. A task system provides:
+
 - Bounded parallelism matching available cores.
 - Separation of CPU-bound work (systems) from IO-bound work (asset loading, networking).
 - Safe patterns for borrowing stack data across parallel tasks.
@@ -173,6 +174,7 @@ This ensures that the thread waiting for the result actively contributes to its 
 ### 4.10 Task Priorities and Fairness
 
 The compute pool maintains multiple priority levels (Critical, Normal, Low):
+
 1. Workers always prefer batches from higher priority deques.
 2. To prevent starvation, long-running tasks must periodically "check-in" or yield.
 3. The IO pool is excluded from work-stealing to prevent blocking compute threads on high-latency IO operations.

@@ -150,6 +150,7 @@ UI definitions describe a tree of UI nodes with layout and style properties. Ana
 ```
 
 **Key properties:**
+
 - `type` — Node type from the UI system (`Node`, `Text`, `Button`, `ImageNode`, `ScrollView`).
 - `style` — Flat key-value map of style properties. Mirrors the `Style` component fields (flexbox layout + visual).
 - `children` — Nested array defining the UI hierarchy (maps to ECS ChildOf relationships).
@@ -197,6 +198,7 @@ Scene definitions describe entity hierarchies with component data. An extension 
 ```
 
 **Integration with Scene System:**
+
 - Component names resolve through the TypeRegistry to ComponentIDs.
 - Component values are deserialized via reflection using registered field metadata.
 - `children` nesting maps to ChildOf relationships.
@@ -269,6 +271,7 @@ Flow definitions describe game state graphs — the high-level scenario of the a
 ```
 
 **Each state declares:**
+
 - `ui` — Asset path to a UI definition file to show while in this state.
 - `scene` — Asset path to a scene definition to spawn on enter.
 - `systems` — Named systems to activate only during this state (maps to RunConditions).
@@ -277,6 +280,7 @@ Flow definitions describe game state graphs — the high-level scenario of the a
 - `transitions` — Event→target mappings defining edges in the state graph.
 
 **Integration with State System:**
+
 - Each state name maps to a value in an engine-managed `FlowState` enum.
 - Transitions generate the same `NextState` writes as code-driven state machines.
 - `on_enter`/`on_exit` actions are executed as Commands during the StateTransition schedule.

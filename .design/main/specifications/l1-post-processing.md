@@ -73,6 +73,7 @@ The stack is a component on the camera entity. Each entry is an effect descripto
 Only one spatial AA method (FXAA, SMAA) should be active at a time. TAA may combine with either. MSAA is mutually exclusive with TAA.
 
 **Ambient Occlusion:**
+
 - SSAO — Screen-space ambient occlusion. Samples depth buffer in a hemisphere per pixel. Parameters: `radius`, `bias`, `intensity`, `sample_count`.
 - GTAO — Ground-truth ambient occlusion. Higher quality variant using horizon-based integration. Same parameter set with improved accuracy.
 

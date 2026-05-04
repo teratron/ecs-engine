@@ -18,6 +18,7 @@ The diagnostic system provides runtime introspection tools for development and p
 ## 1. Motivation
 
 Without instrumentation, diagnosing performance regressions or logic errors in a game is guesswork. A first-party diagnostic layer ensures every project has baseline observability from day one:
+
 - Frame time spikes need to be detected and attributed to specific systems.
 - Spatial relationships and collision shapes need visual debugging.
 - Entity counts and resource usage must be trackable over time.
@@ -72,6 +73,7 @@ DiagnosticEntry {
 ```
 
 Provides computed accessors:
+
 - `Average()` — Mean over the history buffer.
 - `SmoothedAverage()` — Exponentially weighted moving average.
 - `Min()`, `Max()` — Extremes within the buffer.

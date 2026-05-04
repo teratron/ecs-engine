@@ -54,6 +54,7 @@ VariableCurve {
 ```
 
 Keyframes with interpolation modes:
+
 - **Step** — holds the previous keyframe value until the next keyframe.
 - **Linear** — linearly interpolates between adjacent keyframes (lerp for scalars, slerp for quaternions).
 - **CubicSpline** — cubic spline with in/out tangents per keyframe for smooth curves.
@@ -85,6 +86,7 @@ stateDiagram-v2
 ```
 
 Node types:
+
 - **ClipNode** — plays a single AnimationClip.
 - **BlendNode** — mixes child nodes based on a parameter (1D blend by speed, 2D blend by direction). Weights are computed from the parameter value and child thresholds.
 - **AddNode** — additively layers an animation on top of a base pose (e.g., breathing overlay).

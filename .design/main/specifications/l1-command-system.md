@@ -97,9 +97,11 @@ In addition to deferred buffers, systems can use "Command Components" to trigger
 ## 5. Patterns
 
 ### 5.1 One-Shot Actions
+
 Use `Command Components` for actions that should be processed by specific systems in the standard update loop.
 
 ### 5.2 Structural Changes
+
 Use `CommandBuffer` for spawn, despawn, and component insert/remove to ensure iterator safety.
 
 ## 6. Open Questions

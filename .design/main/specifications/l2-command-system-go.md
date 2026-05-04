@@ -16,6 +16,7 @@ Go-level design for the command system. Commands are deferred mutations that buf
 ## 1. Motivation
 
 The Go implementation of the Command system provides a safe, deferred mechanism for modifying the World. It ensures:
+
 - Structural changes (spawn, despawn) do not invalidate pointers during system execution.
 - Systems can express mutations without direct, mutable access to the entire World.
 - Atomicity of changes at well-defined synchronization points.

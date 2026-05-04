@@ -18,6 +18,7 @@ The event system provides three communication mechanisms between systems: **Even
 ## 1. Motivation
 
 Systems need to communicate without direct coupling. Three patterns emerge:
+
 1. **Broadcast**: "Something happened" — any interested system can react (Events).
 2. **Point-to-point**: "System A tells System B" — ordered, reliable delivery (Messages).
 3. **Reactive**: "When X is added to entity Y, do Z immediately" — no frame delay (Observers).
@@ -78,6 +79,7 @@ fn movement_system(mut reader: MessageReader[MoveCommand]) {
 ```
 
 **Key differences from Events:**
+
 - Messages are not frame-limited — they persist until all readers consume them.
 - Each reader tracks its own cursor, so late readers don't miss messages.
 - Messages are ordered (FIFO within a single writer).
@@ -100,11 +102,13 @@ world.Entity(player).Observe(func(trigger: On[Damage]) {
 ```
 
 **Trigger types:**
+
 - **Component lifecycle**: `OnAdd[T]`, `OnInsert[T]`, `OnReplace[T]`, `OnRemove[T]`
 - **Custom events**: Any user-defined event type
 - **Entity events**: Events with an `Entity` field — dispatched to entity's observers
 
 **Execution model:**
+
 1. Trigger fires (e.g., component added).
 2. All matching observers execute immediately, synchronously.
 3. Observers can enqueue Commands and trigger additional events.

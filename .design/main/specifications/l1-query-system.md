@@ -18,6 +18,7 @@ Queries are the primary mechanism for systems to access entity data. A query dec
 ## 1. Motivation
 
 Systems need a safe, declarative way to access entity data. The query system provides:
+
 - Type-safe component access (read or write).
 - Automatic archetype matching (only iterate relevant entities).
 - Access tracking for safe parallelism (two read-only queries can overlap; a write query is exclusive).
@@ -42,6 +43,7 @@ Systems need a safe, declarative way to access entity data. The query system pro
 ### 4.1 Query Declaration
 
 A query specifies:
+
 - **Fetch items**: Component references to retrieve (`&Position`, `&mut Velocity`, `Entity`).
 - **Filters**: Constraints on which entities match (`With[T]`, `Without[T]`, `Changed[T]`, `Added[T]`).
 
@@ -84,6 +86,7 @@ This fetches Position (read) and Velocity (write) for entities that have Player 
 ### 4.5 QueryState (Caching)
 
 QueryState caches which archetypes match the query's component requirements:
+
 - Built lazily on first iteration.
 - Incrementally updated when new archetypes are created (archetype generation counter).
 - Stored per-system for reuse across frames.
@@ -92,10 +95,12 @@ QueryState caches which archetypes match the query's component requirements:
 ### 4.6 Access Tracking
 
 Each query declares its access set:
+
 - **Read set**: Component types read.
 - **Write set**: Component types written.
 
 The scheduler compares access sets between systems:
+
 - Two systems with disjoint access sets can run in parallel.
 - Two systems where one writes a component the other reads must be ordered.
 - Resource access (`Res[T]` / `ResMut[T]`) is tracked the same way.
@@ -109,6 +114,7 @@ The scheduler compares access sets between systems:
 ### 4.8 World Queries
 
 Special query types with broader access:
+
 - **WorldQuery**: Trait that defines how a query item is fetched from the World.
 - Custom WorldQuery implementations enable user-defined fetch patterns.
 

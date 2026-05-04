@@ -22,6 +22,7 @@ Go's static nature and lack of variadic generics often lead to boilerplate or re
 A command-line tool that scans Go source files for ECS-specific annotations and generates corresponding code.
 
 **Command Usage:**
+
 ```bash
 go run cmd/ecs-gen/main.go --path ./internal/game --output ./internal/game/ecs_gen.go
 ```

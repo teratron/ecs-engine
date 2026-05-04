@@ -16,6 +16,7 @@ This specification defines the Go implementation of the change detection system 
 ## 1. Motivation
 
 The Go implementation of change detection provides the high-performance tracking needed for reactive systems. It ensures:
+
 - Tick-based change metadata is stored inline with component data for cache locality.
 - Entity-level and archetype-level (column) change detection for efficient query evaluation.
 - Type-safe wrappers (`Ref[T]`, `Mut[T]`) for automatic mutation marking.

@@ -19,6 +19,7 @@ The UI system provides a declarative, component-driven interface layer rendered 
 ## 1. Motivation
 
 Every game needs menus, HUDs, health bars, inventories, and debug panels. Building UI from ECS entities and components lets the same query, event, and scheduling infrastructure serve both gameplay and interface logic. Without a built-in UI system:
+
 - Every project would implement its own layout engine.
 - Interaction (hover, click, focus) would be inconsistent.
 - Text rendering and font management would be duplicated across projects.
@@ -47,6 +48,7 @@ Every game needs menus, HUDs, health bars, inventories, and debug panels. Buildi
 A flexbox-based layout algorithm (equivalent to Taffy or Morphorm) computes position and size for every UI node, operating over the entity hierarchy.
 
 Layout computation:
+
 1. Collect all root UI nodes (entities with Node but without ChildOf pointing to another UI node).
 2. Traverse top-down, resolving flex properties.
 3. Write computed `LayoutRect` (position, size in logical pixels) to each entity.
@@ -196,6 +198,7 @@ TextSection {
 ```
 
 Two text paths exist:
+
 - **UI text** — positioned by the layout engine within a `Node`.
 - **Text2D** — world-space text (see 2D Rendering spec).
 
