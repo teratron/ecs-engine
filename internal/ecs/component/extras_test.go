@@ -9,8 +9,8 @@ func TestRegisterByTypeIdempotent(t *testing.T) {
 	t.Parallel()
 
 	r := NewRegistry()
-	id1 := r.RegisterByType(reflect.TypeOf(Position{}))
-	id2 := r.RegisterByType(reflect.TypeOf(Position{}))
+	id1 := r.RegisterByType(reflect.TypeFor[Position]())
+	id2 := r.RegisterByType(reflect.TypeFor[Position]())
 	if id1 != id2 {
 		t.Fatalf("RegisterByType must be idempotent; got %d and %d", id1, id2)
 	}
@@ -36,7 +36,7 @@ func TestRegisterByTypeMatchesGenericRegisterType(t *testing.T) {
 
 	r := NewRegistry()
 	idGeneric := RegisterType[Position](r)
-	idReflect := r.RegisterByType(reflect.TypeOf(Position{}))
+	idReflect := r.RegisterByType(reflect.TypeFor[Position]())
 	if idGeneric != idReflect {
 		t.Fatalf("RegisterType[T] and RegisterByType(reflect.Type) must agree; got %d vs %d",
 			idGeneric, idReflect)

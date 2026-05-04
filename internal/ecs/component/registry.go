@@ -137,7 +137,7 @@ func (r *Registry) Each(fn func(*Info) bool) {
 // Re-registration of the same T is idempotent: the previously assigned ID
 // is returned without modifying the existing [Info].
 func RegisterType[T any](r *Registry) ID {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	return r.Register(Info{
 		Type:    t,
 		Storage: StorageTable,

@@ -102,11 +102,11 @@ func TestSparseSetAccessor(t *testing.T) {
 
 	w := NewWorld()
 	w.Components().Register(component.Info{
-		Type:    reflect.TypeOf(accSparse{}),
+		Type:    reflect.TypeFor[accSparse](),
 		Storage: component.StorageSparseSet,
 	})
 
-	id, ok := w.Components().Lookup(reflect.TypeOf(accSparse{}))
+	id, ok := w.Components().Lookup(reflect.TypeFor[accSparse]())
 	if !ok {
 		t.Fatal("accSparse must be registered")
 	}

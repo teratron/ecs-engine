@@ -12,10 +12,10 @@ import (
 // registry, registering T on first use. The returned ID is stable for the
 // lifetime of the World.
 //
-// Use this helper to avoid scattering `reflect.TypeOf((*T)(nil)).Elem()` and
+// Use this helper to avoid scattering `reflect.TypeFor[T]()` and
 // `Components().Lookup` plumbing across system code.
 func TagOf[T any](w *world.World) component.ID {
-	return w.Components().RegisterByType(reflect.TypeOf((*T)(nil)).Elem())
+	return w.Components().RegisterByType(reflect.TypeFor[T]())
 }
 
 // MaskOf returns a [query.Mask] with only the bit for type T set.

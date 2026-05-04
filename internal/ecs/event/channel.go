@@ -52,7 +52,7 @@ func RegisterMessage[T any](w *world.World, capacity int) *MessageChannel[T] {
 	ch := newMessageChannel[T](capacity)
 	world.SetResource(w, ch)
 	reg := EnsureRegistry(w)
-	reg.channels[reflect.TypeOf((*T)(nil)).Elem()] = ch
+	reg.channels[reflect.TypeFor[T]()] = ch
 	return ch
 }
 

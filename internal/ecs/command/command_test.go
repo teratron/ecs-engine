@@ -261,7 +261,7 @@ func TestRemoveCommand_RemovesComponent(t *testing.T) {
 	w := newWorld()
 	e := w.Spawn(component.Data{Value: posComp{X: 5}})
 	// Look up the component ID.
-	id, ok := w.Components().Lookup(reflect.TypeOf(posComp{}))
+	id, ok := w.Components().Lookup(reflect.TypeFor[posComp]())
 	if !ok {
 		t.Fatal("posComp not registered after Spawn")
 	}
@@ -279,7 +279,7 @@ func TestRemoveCommand_DeadEntityNoOp(t *testing.T) {
 	t.Parallel()
 	w := newWorld()
 	e := w.Spawn(component.Data{Value: posComp{}})
-	id, _ := w.Components().Lookup(reflect.TypeOf(posComp{}))
+	id, _ := w.Components().Lookup(reflect.TypeFor[posComp]())
 	_ = w.Despawn(e)
 	buf := command.NewCommandBuffer(w.Entities(), 4)
 	cmds := command.NewCommands(buf)

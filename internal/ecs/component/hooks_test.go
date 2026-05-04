@@ -45,7 +45,7 @@ func TestHooksAttachToInfo(t *testing.T) {
 	r := NewRegistry()
 	called := 0
 	id := r.Register(Info{
-		Type: reflect.TypeOf(hookProbe{}),
+		Type: reflect.TypeFor[hookProbe](),
 		Hooks: Hooks{
 			OnAdd: func(_ HookContext, _ entity.Entity) { called++ },
 		},

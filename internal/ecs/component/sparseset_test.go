@@ -221,7 +221,7 @@ func TestSparseSetSpecAccessor(t *testing.T) {
 
 	spec := newPositionSpec(t)
 	s := NewSparseSet(spec)
-	if s.Spec().Type != reflect.TypeOf(Position{}) {
+	if s.Spec().Type != reflect.TypeFor[Position]() {
 		t.Fatalf("Spec() type mismatch")
 	}
 }

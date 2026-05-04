@@ -19,7 +19,7 @@ func TestNewRegistryIsEmpty(t *testing.T) {
 	if r.Len() != 0 {
 		t.Fatalf("Len() = %d, want 0", r.Len())
 	}
-	if id, ok := r.Lookup(reflect.TypeOf(Position{})); ok || id != 0 {
+	if id, ok := r.Lookup(reflect.TypeFor[Position]()); ok || id != 0 {
 		t.Fatalf("Lookup on empty registry returned (%d, %v)", id, ok)
 	}
 }
@@ -71,13 +71,13 @@ func TestRegisterPanicsOnNameCollision(t *testing.T) {
 	t.Parallel()
 
 	r := NewRegistry()
-	r.Register(Info{Type: reflect.TypeOf(Position{}), Name: "shared"})
+	r.Register(Info{Type: reflect.TypeFor[Position](), Name: "shared"})
 	defer func() {
 		if recover() == nil {
 			t.Fatal("name collision must panic")
 		}
 	}()
-	r.Register(Info{Type: reflect.TypeOf(Velocity{}), Name: "shared"})
+	r.Register(Info{Type: reflect.TypeFor[Velocity](), Name: "shared"})
 }
 
 func TestInfoMetadataDerivedFromReflection(t *testing.T) {
@@ -90,7 +90,7 @@ func TestInfoMetadataDerivedFromReflection(t *testing.T) {
 	if info.ID != id {
 		t.Fatalf("Info.ID = %d, want %d", info.ID, id)
 	}
-	if info.Type != reflect.TypeOf(Position{}) {
+	if info.Type != reflect.TypeFor[Position]() {
 		t.Fatalf("Info.Type mismatch")
 	}
 	if info.Size != unsafe.Sizeof(Position{}) {
@@ -215,7 +215,7 @@ func TestRegisterIgnoresCallerSuppliedID(t *testing.T) {
 	t.Parallel()
 
 	r := NewRegistry()
-	id := r.Register(Info{ID: 999, Type: reflect.TypeOf(Position{})})
+	id := r.Register(Info{ID: 999, Type: reflect.TypeFor[Position]()})
 	if id != 1 {
 		t.Fatalf("Register must override caller-supplied ID; got %d", id)
 	}
@@ -244,10 +244,10 @@ func TestConcurrentReadsAfterRegistrationAreSafe(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			if got, _ := r.Lookup(reflect.TypeOf(Position{})); got != idP {
+			if got, _ := r.Lookup(reflect.TypeFor[Position]()); got != idP {
 				t.Errorf("concurrent Lookup(Position) = %d, want %d", got, idP)
 			}
-			if got, _ := r.Lookup(reflect.TypeOf(Velocity{})); got != idV {
+			if got, _ := r.Lookup(reflect.TypeFor[Velocity]()); got != idV {
 				t.Errorf("concurrent Lookup(Velocity) = %d, want %d", got, idV)
 			}
 			if r.Len() != 2 {
@@ -281,7 +281,7 @@ func BenchmarkRegisterType(b *testing.B) {
 func BenchmarkLookup(b *testing.B) {
 	r := NewRegistry()
 	_ = RegisterType[Position](r)
-	t := reflect.TypeOf(Position{})
+	t := reflect.TypeFor[Position]()
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
@@ -295,10 +295,10 @@ func FuzzRegisterOrderingIsDeterministic(f *testing.F) {
 	f.Add(uint8(0xff))
 
 	types := []reflect.Type{
-		reflect.TypeOf(Position{}),
-		reflect.TypeOf(Velocity{}),
-		reflect.TypeOf(Health{}),
-		reflect.TypeOf(EnemyTag{}),
+		reflect.TypeFor[Position](),
+		reflect.TypeFor[Velocity](),
+		reflect.TypeFor[Health](),
+		reflect.TypeFor[EnemyTag](),
 	}
 
 	f.Fuzz(func(t *testing.T, mask uint8) {

@@ -39,7 +39,7 @@ func newWorldWithSparseLoot(t *testing.T) (*World, component.ID) {
 	t.Helper()
 	w := NewWorld()
 	id := w.Components().Register(component.Info{
-		Type:    reflect.TypeOf(Loot{}),
+		Type:    reflect.TypeFor[Loot](),
 		Storage: component.StorageSparseSet,
 	})
 	return w, id

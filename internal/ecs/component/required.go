@@ -18,7 +18,7 @@ type RequiredComponents interface {
 	Required() []Data
 }
 
-var requiredComponentsIface = reflect.TypeOf((*RequiredComponents)(nil)).Elem()
+var requiredComponentsIface = reflect.TypeFor[RequiredComponents]()
 
 // asRequiredComponents returns the RequiredComponents view of the zero
 // value of t, or nil if t (and *t) do not implement the interface.

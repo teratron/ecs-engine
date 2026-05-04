@@ -68,7 +68,7 @@ func (r *TypeRegistry) Len() int { return len(r.byID) - 1 }
 // Panics if T's fully-qualified name collides with a different registered
 // type, since that's a programming error caught at init time.
 func RegisterType[T any](r *TypeRegistry) *TypeRegistration {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	return r.RegisterByType(t)
 }
 
@@ -149,7 +149,7 @@ func (r *TypeRegistry) ResolveByID(id TypeID) *TypeRegistration {
 // when T has not been registered — convenient for setup-time code that knows
 // the type was registered at init.
 func MustResolve[T any](r *TypeRegistry) *TypeRegistration {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	reg := r.Resolve(t)
 	if reg == nil {
 		panic(fmt.Sprintf("%s: %v", ErrTypeNotRegistered, t))

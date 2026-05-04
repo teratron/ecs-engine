@@ -92,8 +92,8 @@ func TestRegisterType_Idempotent(t *testing.T) {
 func TestRegisterByType_NonGenericPath(t *testing.T) {
 	t.Parallel()
 	r := typereg.NewTypeRegistry()
-	reg := r.RegisterByType(reflect.TypeOf(position{}))
-	if reg == nil || reg.Type != reflect.TypeOf(position{}) {
+	reg := r.RegisterByType(reflect.TypeFor[position]())
+	if reg == nil || reg.Type != reflect.TypeFor[position]() {
 		t.Fatal("RegisterByType must populate the registration")
 	}
 }
@@ -105,7 +105,7 @@ func TestResolve_RoundTrips(t *testing.T) {
 	r := typereg.NewTypeRegistry()
 	reg := typereg.RegisterType[position](r)
 
-	if got := r.Resolve(reflect.TypeOf(position{})); got != reg {
+	if got := r.Resolve(reflect.TypeFor[position]()); got != reg {
 		t.Fatal("Resolve(reflect.Type) must yield the registration")
 	}
 	if got := r.ResolveByName(reg.Name); got != reg {
@@ -119,7 +119,7 @@ func TestResolve_RoundTrips(t *testing.T) {
 func TestResolve_UnknownReturnsNil(t *testing.T) {
 	t.Parallel()
 	r := typereg.NewTypeRegistry()
-	if got := r.Resolve(reflect.TypeOf(position{})); got != nil {
+	if got := r.Resolve(reflect.TypeFor[position]()); got != nil {
 		t.Fatal("Resolve on unregistered type must return nil")
 	}
 	if got := r.ResolveByName("nonexistent"); got != nil {
@@ -157,7 +157,7 @@ func TestRegistration_SizeAlign(t *testing.T) {
 	t.Parallel()
 	r := typereg.NewTypeRegistry()
 	reg := typereg.RegisterType[position](r)
-	want := reflect.TypeOf(position{})
+	want := reflect.TypeFor[position]()
 	if reg.Size != want.Size() {
 		t.Fatalf("Size = %d, want %d", reg.Size, want.Size())
 	}
@@ -216,7 +216,7 @@ func TestExtractFields_OffsetsMatchReflect(t *testing.T) {
 	t.Parallel()
 	r := typereg.NewTypeRegistry()
 	reg := typereg.RegisterType[position](r)
-	rt := reflect.TypeOf(position{})
+	rt := reflect.TypeFor[position]()
 	for i, f := range reg.Fields {
 		if f.Offset != rt.Field(i).Offset {
 			t.Fatalf("Fields[%d].Offset = %d, want %d", i, f.Offset, rt.Field(i).Offset)

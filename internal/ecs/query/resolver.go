@@ -13,7 +13,7 @@ import (
 // in the world's registry. Used by query constructors to translate type
 // parameters into IDs at build time.
 func componentIDFor[T any](w *world.World) component.ID {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	return w.Components().RegisterByType(t)
 }
 

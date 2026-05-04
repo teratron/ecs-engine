@@ -167,7 +167,7 @@ func Get[T any](w *World, e entity.Entity) (*T, bool) {
 	if !w.entities.IsAlive(e) {
 		return nil, false
 	}
-	id, ok := w.components.Lookup(reflect.TypeOf((*T)(nil)).Elem())
+	id, ok := w.components.Lookup(reflect.TypeFor[T]())
 	if !ok {
 		return nil, false
 	}
@@ -211,7 +211,7 @@ func Remove[T any](w *World, e entity.Entity) error {
 	if !w.entities.IsAlive(e) {
 		return ErrEntityNotAlive
 	}
-	id, ok := w.components.Lookup(reflect.TypeOf((*T)(nil)).Elem())
+	id, ok := w.components.Lookup(reflect.TypeFor[T]())
 	if !ok {
 		return ErrComponentNotFound
 	}

@@ -16,7 +16,7 @@ type Misaligned3 struct {
 
 func newSpec[T any](t *testing.T, id ID) ColumnSpec {
 	t.Helper()
-	rt := reflect.TypeOf((*T)(nil)).Elem()
+	rt := reflect.TypeFor[T]()
 	return ColumnSpec{
 		ID:    id,
 		Size:  rt.Size(),
@@ -178,7 +178,7 @@ func TestTableMultiChunkAllocation(t *testing.T) {
 
 	// Tight chunk size to force chunk crossings within a small test.
 	specs := []ColumnSpec{newSpec[Position](t, 1)}
-	chunkSize := int(reflect.TypeOf(Position{}).Size()) * 4 // exactly 4 rows per chunk
+	chunkSize := int(reflect.TypeFor[Position]().Size()) * 4 // exactly 4 rows per chunk
 	tbl := NewTable(specs, chunkSize)
 	if tbl.ChunkRows() != 4 {
 		t.Fatalf("chunkRows = %d, want 4", tbl.ChunkRows())
@@ -342,7 +342,7 @@ func TestTableRemoveRowReleasesEmptyChunk(t *testing.T) {
 	t.Parallel()
 
 	specs := []ColumnSpec{newSpec[Position](t, 1)}
-	chunkSize := int(reflect.TypeOf(Position{}).Size()) * 2 // 2 rows per chunk
+	chunkSize := int(reflect.TypeFor[Position]().Size()) * 2 // 2 rows per chunk
 	tbl := NewTable(specs, chunkSize)
 
 	// Fill exactly two chunks.

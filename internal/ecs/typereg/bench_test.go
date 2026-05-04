@@ -25,7 +25,7 @@ func BenchmarkResolveByID(b *testing.B) {
 func BenchmarkResolveByType(b *testing.B) {
 	r := typereg.NewTypeRegistry()
 	typereg.RegisterType[position](r)
-	t := reflect.TypeOf(position{})
+	t := reflect.TypeFor[position]()
 
 	b.ReportAllocs()
 	b.ResetTimer()

@@ -60,7 +60,7 @@ func (m *ResourceMap) Len() int {
 // SetResource inserts or overwrites the singleton resource of type T.
 // The value is heap-allocated so Resource[T] can return a stable pointer.
 func SetResource[T any](w *World, value T) {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	p := new(T)
 	*p = value
 	w.resources.set(t, p)
@@ -69,7 +69,7 @@ func SetResource[T any](w *World, value T) {
 // Resource returns a read-only pointer to the singleton resource of type T.
 // Returns (nil, false) if the resource has not been set.
 func Resource[T any](w *World) (*T, bool) {
-	t := reflect.TypeOf((*T)(nil)).Elem()
+	t := reflect.TypeFor[T]()
 	v, ok := w.resources.get(t)
 	if !ok {
 		return nil, false
@@ -79,10 +79,10 @@ func Resource[T any](w *World) (*T, bool) {
 
 // RemoveResource removes the resource of type T and returns true if it existed.
 func RemoveResource[T any](w *World) bool {
-	return w.resources.remove(reflect.TypeOf((*T)(nil)).Elem())
+	return w.resources.remove(reflect.TypeFor[T]())
 }
 
 // ContainsResource reports whether a resource of type T exists.
 func ContainsResource[T any](w *World) bool {
-	return w.resources.contains(reflect.TypeOf((*T)(nil)).Elem())
+	return w.resources.contains(reflect.TypeFor[T]())
 }

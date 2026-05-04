@@ -63,7 +63,7 @@ func TestRequiredSingleDependencyAutoRegistersDep(t *testing.T) {
 	r := NewRegistry()
 	id := RegisterType[Renderable](r)
 
-	depID, ok := r.Lookup(reflect.TypeOf(Transform{}))
+	depID, ok := r.Lookup(reflect.TypeFor[Transform]())
 	if !ok {
 		t.Fatal("Transform must be auto-registered as a dependency of Renderable")
 	}
@@ -79,8 +79,8 @@ func TestRequiredTransitiveLeavesFirst(t *testing.T) {
 	r := NewRegistry()
 	id := RegisterType[Animator](r)
 
-	transformID, _ := r.Lookup(reflect.TypeOf(Transform{}))
-	renderID, _ := r.Lookup(reflect.TypeOf(Renderable{}))
+	transformID, _ := r.Lookup(reflect.TypeFor[Transform]())
+	renderID, _ := r.Lookup(reflect.TypeFor[Renderable]())
 
 	got := r.Info(id).RequiredBy
 	want := []ID{transformID, renderID}
@@ -130,7 +130,7 @@ func TestRequiredPointerReceiverDetected(t *testing.T) {
 
 	r := NewRegistry()
 	id := RegisterType[ptrRcvr](r)
-	transformID, ok := r.Lookup(reflect.TypeOf(Transform{}))
+	transformID, ok := r.Lookup(reflect.TypeFor[Transform]())
 	if !ok {
 		t.Fatal("pointer-receiver Required() must still register Transform")
 	}

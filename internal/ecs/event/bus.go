@@ -47,7 +47,7 @@ func RegisterEvent[T any](w *world.World) *EventBus[T] {
 	bus := newEventBus[T]()
 	world.SetResource(w, bus)
 	reg := EnsureRegistry(w)
-	reg.buses[reflect.TypeOf((*T)(nil)).Elem()] = bus
+	reg.buses[reflect.TypeFor[T]()] = bus
 	return bus
 }
 

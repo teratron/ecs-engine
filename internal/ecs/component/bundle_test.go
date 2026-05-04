@@ -48,7 +48,7 @@ func TestNewDataAutoRegistersType(t *testing.T) {
 	if !d.IsValid() {
 		t.Fatalf("NewData must return a valid Data; got %+v", d)
 	}
-	got, ok := r.Lookup(reflect.TypeOf(Position{}))
+	got, ok := r.Lookup(reflect.TypeFor[Position]())
 	if !ok || got != d.ID {
 		t.Fatalf("NewData must register Position; lookup=(%d,%v), data.ID=%d", got, ok, d.ID)
 	}
